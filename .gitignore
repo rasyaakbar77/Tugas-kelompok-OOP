@@ -1,0 +1,36 @@
+# --- JAVA ---
+*.class
+*.log
+*.jar
+*.war
+bin/
+out/
+
+# --- C++ ---
+*.exe
+*.out
+*.o
+*.obj
+*.ilk
+*.pdb
+
+# --- PYTHON ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+env/
+venv/
+
+# --- IDEs & EDITORS (VS Code, NetBeans, IntelliJ, dll) ---
+.vscode/
+.idea/
+*.iml
+.settings/
+.classpath
+.project
+
+# --- OS / SYSTEM ---
+Thumbs.db
+.DS_Store
