@@ -5,13 +5,10 @@ Anggota Kelompok - NPM:
     2. Ghiyats Khairul Mala - 140810250102
 Kelas : A
 Tanggal Pengerjaan : 29-09-2026
-Deskripsi Program : Sebuah program untuk mencari selisih antara waktu datang dan waktu keluar dengan metode OOP, 
-                    menggunakan 3 objek denga 3 cara input berbeda da 2 method proses (selisih waktu) dengan 
-                    rerturn value yang berbeda (fungsi dan void).
+Deskripsi Program : Sebuah program untukmenghitung gaji karyawan dengan input NIP, nama, gol, waktu datang, waktu pulang.
+                    Dengan perhitungan Gaji Lembur = >= 8 jam (minimal kelebihan 1 jam / pembulatan ke bawah) dan
+                    untuk pegawai yg kurang dari 8 jam diberi status peringatan. Ddengan aturan Gaji = gapok + lembur secara OOP.
 */
-#include <iostream>
-#include <string>
-
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -170,7 +167,7 @@ public:
             std::cout << "Waktu Pulang :\n";
             pulang.inputWaktu();
             if (pulang.totalDetik() <= datang.totalDetik())
-                std::cout << "Waktu pulang harus setelah waktu datang, ulangi!\n";
+                std::cout << "Waktu pulang sama dengan waktu datang, Proses diulang.\n";
         } while (pulang.totalDetik() <= datang.totalDetik());
     }
 
@@ -190,11 +187,21 @@ public:
     void setPulang(Waktu pulang) { this->pulang = pulang; }
 
     // Getter
-    std::string getNip() { return nip; }
-    std::string getNama() { return nama; }
-    int getGol() { return gol; }
-    int getTotal() { return total; }
-    std::string getStatusPeringatan() { return statusPeringatan; }
+    std::string getNip() { 
+        return nip; 
+    }
+    std::string getNama() {
+         return nama; 
+        }
+    int getGol() { 
+        return gol; 
+    }
+    int getTotal() { 
+        return total; 
+    }
+    std::string getStatusPeringatan() { 
+        return statusPeringatan; 
+    }
 
     // Proses Gaji
     void prosesGaji() {
@@ -298,7 +305,6 @@ int main() {
             }
             case 4: {
                 std::cout << "\nPegawai 4\n";
-                std::cin.ignore(10000, '\n'); // Bersihkan buffer jaga-jaga
                 std::string nip, nama;
                 std::cout << "Masukkan NIP  : ";
                 std::getline(std::cin, nip);

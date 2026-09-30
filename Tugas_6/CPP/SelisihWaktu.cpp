@@ -63,15 +63,14 @@ class SelisihWaktu {
         }
 
         // Method Proses Cara 1: Fungsi Return
-        SelisihWaktu hitungSelisihReturn(SelisihWaktu w2) {
+        SelisihWaktu hitungSelisihFungsi(SelisihWaktu w2) {
             int totalDetik1 = (this->jam * 3600) + (this->menit * 60) + this->detik;
             int totalDetik2 = (w2.jam * 3600) + (w2.menit * 60) + w2.detik;
             int selisihTotal = std::abs(totalDetik1 - totalDetik2);
 
             SelisihWaktu hasil;
             hasil.jam = selisihTotal / 3600;
-            selisihTotal %= 3600;
-            hasil.menit = selisihTotal / 60;
+            hasil.menit = (selisihTotal % 3600) / 60;
             hasil.detik = selisihTotal % 60;
 
             return hasil;
@@ -84,8 +83,7 @@ class SelisihWaktu {
             int selisihTotal = std::abs(totalDetik1 - totalDetik2);
 
             this->jam = selisihTotal / 3600;
-            selisihTotal %= 3600;
-            this->menit = selisihTotal / 60;
+            this->menit = (selisihTotal % 3600) / 60;
             this->detik = selisihTotal % 60;
         }
 };
@@ -111,7 +109,7 @@ int main() {
 
     // Contoh Penggunaan Method Proses : Fungsi Return
     SelisihWaktu selisih;
-    selisih = waktu1.hitungSelisihReturn(waktu2);
+    selisih = waktu1.hitungSelisihFungsi(waktu2);
     std::cout << "\nSelisih Waktu 1 dan Waktu 2 (Cara 1 - Return): ";
     selisih.OutputDalam();
 
