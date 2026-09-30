@@ -1,4 +1,3 @@
-package Matkul.Tugas-kelompok-OOP.Tugas_6;
 import java.util.Scanner;
 
 class Waktu {
