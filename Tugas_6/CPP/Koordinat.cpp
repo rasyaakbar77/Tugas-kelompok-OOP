@@ -1,3 +1,17 @@
+/*
+Nama Program : Koordinat.cpp
+Anggota Kelompok - NPM: 
+    1. Rasya Islami Akbar - 140810250009
+    2. Ghiyats Khairul Mala - 140810250102
+Kelas : A
+Tanggal Pengerjaan : 29-09-2026
+Deskripsi Program : Sebuah program untuk melakukan operasi perhitungan koordinat kartesius berupa 
+                    1. mencari titik tengah
+                    2. mencari jarak antara 2 titik
+                    3. hasil pencerminan terhadap sumbu x atau sumbu y
+                    dengan input dalam, input luar, output dalam dan output luar berbasis OOP.
+*/
+
 #include <iostream>
 #include <cmath>
 
