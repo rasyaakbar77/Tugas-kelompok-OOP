@@ -100,7 +100,17 @@ public:
         return jarak;
     }
 
-    
+    // Output Dalam
+    void outputDalam(Koordinat k2, Koordinat k3, Koordinat k4) {
+        std::cout << "\n=========================================\n";
+        std::cout << "          OUTPUT DALAM (SEMUA OBJEK)     \n";
+        std::cout << "=========================================\n";
+        std::cout << "Objek Koordinat ke-1 : (" << this->absis << ", " << this->ordinat << ")\n";
+        std::cout << "Objek Koordinat ke-2 : (" << k2.getAbsis() << ", " << k2.getOrdinat() << ")\n";
+        std::cout << "Objek Koordinat ke-3 : (" << k3.getAbsis() << ", " << k3.getOrdinat() << ")\n";
+        std::cout << "Objek Koordinat ke-4 : (" << k4.getAbsis() << ", " << k4.getOrdinat() << ")\n";
+        std::cout << "=========================================\n";
+    }
 };
 
 // Input Luar Class 
@@ -117,7 +127,7 @@ void inputLuar(Koordinat &k) {
 // Output Luar 
 void outputLuar(Koordinat k1, Koordinat k2, Koordinat k3, Koordinat k4) {
     std::cout << "\n=========================================\n";
-    std::cout << "          OUTPUT SELURUH DATA & OPERASI    \n";
+    std::cout << "               OUTPUT LUAR                \n";
     std::cout << "=========================================\n";
     
     Koordinat daftarObjek[4] = {k1, k2, k3, k4};
@@ -256,11 +266,24 @@ int main() {
                 break;
             }
             case 5: {
-                outputLuar(koor1, koor2, koor3, koor4);
+                int pilihOut;
+                std::cout << "=========================================\n";
+                std::cout << "Pilih Menu Output\n";
+                std::cout << "1. Output Dalam (Menampilkan semua objek via Method Class)\n";
+                std::cout << "2. Output Luar (Menampilkan semua objek via Fungsi Luar)\n";
+                std::cout << "=========================================\n";
+                std::cout << ">> Pilih Menu Output : "; std::cin >> pilihOut;
+                
+                if (pilihOut == 1) {
+                    koor1.outputDalam(koor2, koor3, koor4);
+                }
+                else if (pilihOut == 2) {
+                    outputLuar(koor1, koor2, koor3, koor4);
+                }
                 break;
             }
             case 0:
-                std::cout << "\nBye-bye! Terima kasih sudah menggunakan program ini.\n";
+                std::cout << "\nBye-bye!.\n";
                 break;
             default:
                 std::cout << "Pilihan tidak valid! Silakan coba lagi.\n";
