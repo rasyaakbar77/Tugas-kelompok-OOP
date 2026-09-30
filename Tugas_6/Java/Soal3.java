@@ -1,3 +1,15 @@
+/*
+Nama Program : Soal3.java
+Anggota Kelompok - NPM: 
+    1. Rasya Islami Akbar - 140810250009
+    2. Ghiyats Khairul Mala - 140810250102
+Kelas : A
+Tanggal Pengerjaan : 29-09-2026
+Deskripsi Program : Sebuah program untukmenghitung gaji karyawan dengan input NIP, nama, gol, waktu datang, waktu pulang.
+                    Dengan perhitungan Gaji Lembur = >= 8 jam (minimal kelebihan 1 jam / pembulatan ke bawah) dan
+                    untuk pegawai yg kurang dari 8 jam diberi status peringatan. Ddengan aturan Gaji = gapok + lembur secara OOP.
+*/
+
 import java.util.Scanner;
 
 class Waktu {
@@ -41,14 +53,27 @@ class Waktu {
         this.detik = (detik >= 0 && detik <= 59) ? detik : 0;
     }
 
-    public void setJam(int jam) { this.jam = (jam >= 0 && jam <= 23) ? jam : 0; }
-    public void setMenit(int menit) { this.menit = (menit >= 0 && menit <= 59) ? menit : 0; }
-    public void setDetik(int detik) { this.detik = (detik >= 0 && detik <= 59) ? detik : 0; }
+    public void setJam(int jam) { 
+        this.jam = (jam >= 0 && jam <= 23) ? jam : 0; 
+    }
+    public void setMenit(int menit) { 
+        this.menit = (menit >= 0 && menit <= 59) ? menit : 0; 
+
+    }
+    public void setDetik(int detik) { 
+        this.detik = (detik >= 0 && detik <= 59) ? detik : 0; 
+    }
 
     // Getter
-    public int getJam() { return jam; }
-    public int getMenit() { return menit; }
-    public int getDetik() { return detik; }
+    public int getJam() { 
+        return jam; 
+    }
+    public int getMenit() { 
+        return menit; 
+    }
+    public int getDetik() { 
+        return detik; 
+    }
 
     // Proses
     public int totalDetik() {
@@ -141,17 +166,37 @@ class Pegawai {
         this.pulang = pulang;
     }
 
-    public void setNip(String nip) { this.nip = nip; }
-    public void setNama(String nama) { this.nama = nama; }
-    public void setGol(int gol) { this.gol = gol; }
-    public void setDatang(Waktu datang) { this.datang = datang; }
-    public void setPulang(Waktu pulang) { this.pulang = pulang; }
+    public void setNip(String nip) { 
+        this.nip = nip; 
+    }
+    public void setNama(String nama) { 
+        this.nama = nama; 
+    }
+    public void setGol(int gol) { 
+        this.gol = gol; 
+    }
+    public void setDatang(Waktu datang) { 
+        this.datang = datang; 
+    }
+    public void setPulang(Waktu pulang) { 
+        this.pulang = pulang; 
+    }
 
-    public String getNip() { return nip; }
-    public String getNama() { return nama; }
-    public int getGol() { return gol; }
-    public int getTotal() { return total; }
-    public String getStatusPeringatan() { return statusPeringatan; }
+    public String getNip() { 
+        return nip; 
+    }
+    public String getNama() { 
+        return nama; 
+    }
+    public int getGol() { 
+        return gol; 
+    }
+    public int getTotal() { 
+        return total; 
+    }
+    public String getStatusPeringatan() { 
+        return statusPeringatan; 
+    }
 
     // Proses
     public void prosesGaji() {
