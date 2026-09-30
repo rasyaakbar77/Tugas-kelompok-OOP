@@ -80,7 +80,8 @@ class Waktu {
         return jam * 3600 + menit * 60 + detik;
     }
 
-    public Waktu selisih(Waktu P) {
+    // Method 1: Mengembalikan Objek (Fungsi)
+    public Waktu selisihFungsi(Waktu P) {
         Waktu pHasil = new Waktu();
         int sel = this.totalDetik() - P.totalDetik();
         if (sel < 0) sel = 0; // Mencegah nilai minus
@@ -88,6 +89,15 @@ class Waktu {
         pHasil.menit = (sel % 3600) / 60;
         pHasil.detik = sel % 60;
         return pHasil;
+    }
+
+    // Method 2: Passing Objek (Void)
+    public void selisihVoid(Waktu P, Waktu pHasil) {
+        int sel = this.totalDetik() - P.totalDetik();
+        if (sel < 0) sel = 0; // Mencegah nilai minus
+        pHasil.jam = sel / 3600;
+        pHasil.menit = (sel % 3600) / 60;
+        pHasil.detik = sel % 60;
     }
 
     // Output
@@ -199,12 +209,17 @@ class Pegawai {
     }
 
     // Proses
+
+    // Proses
     public void prosesGaji() {
-        lamaKerja = pulang.selisih(datang);
+        // Menggunakan Cara 1 (Fungsi) untuk menghitung lama kerja
+        lamaKerja = pulang.selisihFungsi(datang);
 
         Waktu batas = new Waktu(8, 0, 0);
         if (lamaKerja.totalDetik() >= batas.totalDetik()) {
-            jamLembur = lamaKerja.selisih(batas);
+            // Menggunakan Cara 2 (Void) untuk menghitung jam lembur
+            jamLembur = new Waktu();
+            lamaKerja.selisihVoid(batas, jamLembur);
             statusPeringatan = "ok";
         } else {
             jamLembur = new Waktu();

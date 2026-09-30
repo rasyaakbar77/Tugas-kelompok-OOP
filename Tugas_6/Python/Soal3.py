@@ -51,7 +51,8 @@ class Waktu:
     def total_detik(self):
         return self.jam * 3600 + self.menit * 60 + self.detik
 
-    def selisih(self, p):
+    # Cara 1: Fungsi Return
+    def selisih_fungsi(self, p):
         p_hasil = Waktu()
         sel = self.total_detik() - p.total_detik()
         if sel < 0: sel = 0
@@ -59,6 +60,14 @@ class Waktu:
         p_hasil.menit = (sel % 3600) // 60
         p_hasil.detik = sel % 60
         return p_hasil
+
+    # Cara 2: Void / Mutasi Objek Penampung
+    def selisih_void(self, p, p_hasil):
+        sel = self.total_detik() - p.total_detik()
+        if sel < 0: sel = 0
+        p_hasil.jam = sel // 3600
+        p_hasil.menit = (sel % 3600) // 60
+        p_hasil.detik = sel % 60
 
     def __str__(self):
         return f"{self.jam:02d}:{self.menit:02d}:{self.detik:02d}"
@@ -119,12 +128,16 @@ class Pegawai:
     def get_total(self): return self.total
     def get_status_peringatan(self): return self.status_peringatan
 
+ 
     def proses_gaji(self):
-        self.lama_kerja = self.pulang.selisih(self.datang)
-        batas = Waktu(8, 0, 0)
+        # Menggunakan Cara 1 (Fungsi Return)
+        self.lama_kerja = self.pulang.selisih_fungsi(self.datang)
         
+        batas = Waktu(8, 0, 0)
         if self.lama_kerja.total_detik() >= batas.total_detik():
-            self.jam_lembur = self.lama_kerja.selisih(batas)
+            # Menggunakan Cara 2 (Void)
+            self.jam_lembur = Waktu()
+            self.lama_kerja.selisih_void(batas, self.jam_lembur)
             self.status_peringatan = "ok"
         else:
             self.jam_lembur = Waktu()

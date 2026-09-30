@@ -88,14 +88,24 @@ public:
         return jam * 3600 + menit * 60 + detik;
     }
 
-    // Fungsi selisih 
-    Waktu selisih(Waktu P) {
+    // Cara 1: Fungsi Return
+    Waktu selisihFungsi(Waktu P) {
         Waktu pHasil;
         int sel = this->totalDetik() - P.totalDetik();
+        if (sel < 0) sel = 0;
         pHasil.jam = sel / 3600;
         pHasil.menit = (sel % 3600) / 60;
         pHasil.detik = sel % 60;
         return pHasil;
+    }
+
+    // Cara 2: Void (Passing Object via Reference/Pointer)
+    void selisihVoid(Waktu P, Waktu &pHasil) {
+        int sel = this->totalDetik() - P.totalDetik();
+        if (sel < 0) sel = 0;
+        pHasil.jam = sel / 3600;
+        pHasil.menit = (sel % 3600) / 60;
+        pHasil.detik = sel % 60;
     }
 
     // Format string waktu Jam:Menit:Detik
@@ -180,11 +190,21 @@ public:
         this->pulang = pulang;
     }
 
-    void setNip(std::string nip) { this->nip = nip; }
-    void setNama(std::string nama) { this->nama = nama; }
-    void setGol(int gol) { this->gol = gol; }
-    void setDatang(Waktu datang) { this->datang = datang; }
-    void setPulang(Waktu pulang) { this->pulang = pulang; }
+    void setNip(std::string nip) { 
+        this->nip = nip; 
+    }
+    void setNama(std::string nama) { 
+        this->nama = nama; 
+    }
+    void setGol(int gol) { 
+        this->gol = gol; 
+    }
+    void setDatang(Waktu datang) { 
+        this->datang = datang; 
+    }
+    void setPulang(Waktu pulang) { 
+        this->pulang = pulang; 
+    }
 
     // Getter
     std::string getNip() { 
@@ -204,12 +224,15 @@ public:
     }
 
     // Proses Gaji
+   
     void prosesGaji() {
-        lamaKerja = pulang.selisih(datang);
+        // Menggunakan Cara 1 (Fungsi)
+        lamaKerja = pulang.selisihFungsi(datang);
 
         Waktu batas(8, 0, 0);
         if (lamaKerja.totalDetik() >= batas.totalDetik()) {
-            jamLembur = lamaKerja.selisih(batas);
+            // Menggunakan Cara 2 (Void)
+            lamaKerja.selisihVoid(batas, jamLembur);
             statusPeringatan = "ok";
         } else {
             jamLembur = Waktu();
@@ -227,7 +250,7 @@ public:
         lembur = jamLembur.getJam() * tarif;
         total = gajiHarian + lembur;
     }
-
+    
     // Format Rupiah 
     std::string rupiah(int nilai) {
         std::string s = std::to_string(nilai);
