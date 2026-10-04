@@ -85,6 +85,16 @@ class SelisihWaktu {
         this.menit = selisihTotal / 60;
         this.detik = selisihTotal % 60;
     }
+}
+
+class Main {
+    // Method inputLuar dijadikan static agar bisa dipanggil langsung di dalam main
+    public static void inputLuar(Scanner input, SelisihWaktu waktu) {
+        System.out.println("Masukkan Waktu : ");
+        System.out.print("Jam   : "); waktu.setJam(input.nextInt());
+        System.out.print("Menit : "); waktu.setMenit(input.nextInt());
+        System.out.print("Detik : "); waktu.setDetik(input.nextInt());
+    }
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
@@ -102,10 +112,15 @@ class SelisihWaktu {
         SelisihWaktu waktu3 = new SelisihWaktu();
         waktu3.inputDalam(input);
 
+        // 4. Objek 4: Input Menggunakan fungsi Input di Luar Class 
+        SelisihWaktu waktu4 = new SelisihWaktu();
+        inputLuar(input, waktu4);
+
         System.out.println("\n--- Data Waktu ---");
         System.out.print("Waktu 1 (Setter): "); waktu1.OutputDalam();
         System.out.print("Waktu 2 (Constructor): "); waktu2.OutputDalam();
         System.out.print("Waktu 3 (Input Dalam): "); waktu3.OutputDalam();
+        System.out.print("Waktu 4 (Input Luar): "); waktu4.OutputDalam();
 
         // Contoh Penggunaan Method Proses : Fungsi Return
         SelisihWaktu selisih;

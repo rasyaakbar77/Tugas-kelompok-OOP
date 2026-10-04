@@ -74,9 +74,17 @@ public:
         this->detik = detik;
     }
 
-    void setJam(int jam) { this->jam = jam; }
-    void setMenit(int menit) { this->menit = menit; }
-    void setDetik(int detik) { this->detik = detik; }
+    void setJam(int jam) { 
+        this->jam = jam; 
+    }
+
+    void setMenit(int menit) { 
+        this->menit = menit; 
+    }
+    
+    void setDetik(int detik) { 
+        this->detik = detik; 
+    }
 
     // Getter
     int getJam() { return jam; }
