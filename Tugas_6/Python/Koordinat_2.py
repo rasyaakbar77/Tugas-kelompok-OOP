@@ -1,5 +1,5 @@
-"""
-Nama Program : Koordinat_2.java
+'''
+Nama Program : Koordinat.py
 Anggota Kelompok - NPM: 
     1. Rasya Islami Akbar - 140810250009
     2. Ghiyats Khairul Mala - 140810250102
@@ -10,216 +10,262 @@ Deskripsi Program : Sebuah program untuk melakukan operasi perhitungan koordinat
                     2. mencari jarak antara 2 titik
                     3. hasil pencerminan terhadap sumbu x atau sumbu y
                     dengan input dalam, input luar, output dalam dan output luar berbasis OOP.
-"""
+'''
 
 import math
 
 class Koordinat:
+    # Default & Constructor Parameter (Python menggunakan default argumen)
     def __init__(self, absis=0.0, ordinat=0.0):
-        self.absis = float(absis)
-        self.ordinat = float(ordinat)
+        self.absis = absis
+        self.ordinat = ordinat
 
-    def set_absis(self, absis):
-        self.absis = float(absis)
+    # Setter Absis
+    def setAbsis(self, absis):
+        self.absis = absis
 
-    def set_ordinat(self, ordinat):
-        self.ordinat = float(ordinat)
+    # Setter Ordinat
+    def setOrdinat(self, ordinat):
+        self.ordinat = ordinat
+          
+    # Getter Absis
+    def getAbsis(self):
+        return self.absis
 
-    def get_absis(self): return self.absis
-    def get_ordinat(self): return self.ordinat
+    # Getter Ordinat
+    def getOrdinat(self):
+        return self.ordinat
 
-    def input_dalam(self):
+    # Input Dalam Class
+    def inputDalam(self):
         self.absis = float(input("Masukkan Nilai Absis (input dalam): "))
         self.ordinat = float(input("Masukkan Nilai Ordinat (input dalam): "))
 
-    def titik_tengah_void(self, a, b):
+    # Method Mencari titik Tengah (void) 
+    def titikTengahVoid(self, a, b):
         self.absis = (a.absis + b.absis) / 2
         self.ordinat = (a.ordinat + b.ordinat) / 2
 
-    def titik_tengah_fungsi(self, p):
+    # Method Mencari titik Tengah (Fungsi)
+    def titikTengahFungsi(self, p):
         tengah = Koordinat()
         tengah.absis = (p.absis + self.absis) / 2
         tengah.ordinat = (p.ordinat + self.ordinat) / 2
         return tengah
 
-    def pencerminan_x_void(self, p_hasil):
-        p_hasil.absis = self.absis
-        p_hasil.ordinat = -1 * self.ordinat
+    # Method Pencerminan terhadap sumbu X (void)
+    def pencerminanXVoid(self, pHasil):
+        pHasil.absis = self.absis
+        pHasil.ordinat = -1 * self.ordinat
 
-    def pencerminan_x_fungsi(self):
-        p_cermin = Koordinat()
-        p_cermin.absis = self.absis
-        p_cermin.ordinat = -1 * self.ordinat
-        return p_cermin
+    # Method Pencerminan terhadap sumbu x (fungsi)
+    def pencerminanXFungsi(self):
+        pCermin = Koordinat()
+        pCermin.absis = self.absis
+        pCermin.ordinat = -1 * self.ordinat
+        return pCermin
 
-    def pencerminan_y_void(self, p_hasil):
-        p_hasil.absis = -1 * self.absis
-        p_hasil.ordinat = self.ordinat
+    # Method Pencerminan terhadap sumbu y (void)
+    def pencerminanYVoid(self, pHasil):
+        pHasil.absis = -1 * self.absis
+        pHasil.ordinat = self.ordinat
 
-    def pencerminan_y_fungsi(self):
-        p_cermin = Koordinat()
-        p_cermin.absis = -1 * self.absis
-        p_cermin.ordinat = self.ordinat
-        return p_cermin
+    # Method Pencerminan terhadap sumbu y (Fungsi)
+    def pencerminanYFungsi(self):
+        pCermin = Koordinat()
+        pCermin.absis = -1 * self.absis
+        pCermin.ordinat = self.ordinat
+        return pCermin
 
-    def jarak_dua_titik_void(self, b, jarak):
-        # jarak dikirim sebagai list (array 1 elemen) agar berlaku pass-by-reference
-        jarak[0] = math.sqrt(math.pow(b.absis - self.absis, 2) + math.pow(b.ordinat - self.ordinat, 2))
+    # Method Mencari Jarak antar 2 titik (void) - list 1 index digunakan sebagai referensi
+    def jarakDuaTitikVoid(self, b, jarak):
+        jarak[0] = math.sqrt((b.absis - self.absis)**2 + (b.ordinat - self.ordinat)**2)
 
-    def jarak_dua_titik_fungsi(self, p):
-        return math.sqrt(math.pow(p.absis - self.absis, 2) + math.pow(p.ordinat - self.ordinat, 2))
+    # Method Mencari Jarak antar 2 titik (Fungsi)
+    def jarakDuaTitikFungsi(self, p):
+        jarak = math.sqrt((p.absis - self.absis)**2 + (p.ordinat - self.ordinat)**2)
+        return jarak
 
-    def output_dalam(self, k2, k3, k4):
+    # Output Dalam
+    def outputDalam(self, k2, k3, k4):
         print("\n=========================================")
         print("          OUTPUT DALAM (SEMUA OBJEK)     ")
         print("=========================================")
         print(f"Objek Koordinat ke-1 : ({self.absis}, {self.ordinat})")
-        print(f"Objek Koordinat ke-2 : ({k2.get_absis()}, {k2.get_ordinat()})")
-        print(f"Objek Koordinat ke-3 : ({k3.get_absis()}, {k3.get_ordinat()})")
-        print(f"Objek Koordinat ke-4 : ({k4.get_absis()}, {k4.get_ordinat()})")
+        print(f"Objek Koordinat ke-2 : ({k2.getAbsis()}, {k2.getOrdinat()})")
+        print(f"Objek Koordinat ke-3 : ({k3.getAbsis()}, {k3.getOrdinat()})")
+        print(f"Objek Koordinat ke-4 : ({k4.getAbsis()}, {k4.getOrdinat()})")
         print("=========================================")
 
 
-def input_luar(k):
+# Input Luar Class 
+def inputLuar(k):
     a = float(input("Masukkan Nilai Absis (Input Luar): "))
     o = float(input("Masukkan Nilai Ordinat (Input Luar): "))
-    k.set_absis(a)
-    k.set_ordinat(o)
+    k.setAbsis(a)
+    k.setOrdinat(o)
 
-
-def output_luar(k1, k2, k3, k4):
+# Output Luar 
+def outputLuar(k1, k2, k3, k4):
     print("\n=========================================")
     print("               OUTPUT LUAR                ")
     print("=========================================")
-    daftar_objek = [k1, k2, k3, k4]
-    for i, obj in enumerate(daftar_objek):
-        print(f"Objek Koordinat ke-{i + 1} : ({obj.get_absis()}, {obj.get_ordinat()})")
+    
+    daftarObjek = [k1, k2, k3, k4]
+    
+    for i in range(4):
+        print(f"Objek Koordinat ke-{i + 1} : ({daftarObjek[i].getAbsis()}, {daftarObjek[i].getOrdinat()})")
+
+# validasi pilihan (angka harus di antara min dan max)
+def bacaPilihan(pesan, min_val, max_val):
+    while True:
+        try:
+            nilai = int(input(pesan))
+            if min_val <= nilai <= max_val:
+                return nilai
+            print(f"Pilihan harus antara {min_val} sampai {max_val}!")
+        except ValueError:
+            # reset error state (otomatis via exception catch)
+            # buang input invalid (otomatis loop back)
+            print("Masukkan angka yang valid!")
 
 
 def main():
-    koor1 = Koordinat()
-    koor2 = Koordinat(0, 0)
-    koor3 = Koordinat()
-    koor4 = Koordinat()
+    koor1 = Koordinat() # Input Melalui Setter
+    koor1.setAbsis(3)
+    koor1.setOrdinat(4)
+    
+    koor2 = Koordinat(5, 6) # Input melalui Constructor Parameter
+    koor3 = Koordinat() # Input Melalui method inputDalam
+    koor4 = Koordinat() # Input Melalui method inputLuar
 
-    while True:
+    menuUtama = -1
+    while menuUtama != 0:
         print("\n=========================================")
         print("     MENU APLIKASI KOORDINAT KARTESIUS     ")
         print("=========================================")
-        print("1. Input Koordinat")
+        print("1. Input Koordinat 3 dan 4")
         print("2. Pencerminan")
         print("3. Titik Tengah")
         print("4. Jarak 2 Titik")
         print("5. Tampilkan Seluruh Objek")
         print("0. Keluar")
         print("=========================================")
-        menu_utama = int(input(">> Masukkan Pilihan Menu : "))
+        
+        try:
+            menuUtama = int(input(">> Masukkan Pilihan Menu : "))
+        except ValueError:
+            print("Pilihan tidak valid! Silakan coba lagi.")
+            continue
 
-        if menu_utama == 1:
+        if menuUtama == 1:
             print("=========================================")
             print("PILIH OBJEK YANG MAU DI-INPUT")
-            print("1. Koordinat 1 (via Setter)")
-            print("2. Koordinat 2 (via Constructor Parameter)")
-            print("3. Koordinat 3 (via Input Dalam)")
-            print("4. Koordinat 4 (via Input Luar)")
+            print("1. Koordinat 3 (via Input Dalam)")
+            print("2. Koordinat 4 (via Input Luar)")
             print("=========================================")
-            pilih_objek = int(input(">> Pilih Objek (1-4): "))
+            pilihObjek = int(input(">> Pilih Objek (1-2): "))
 
-            if pilih_objek == 1:
-                x = float(input("Masukkan Absis: "))
-                y = float(input("Masukkan Ordinat: "))
-                koor1.set_absis(x)
-                koor1.set_ordinat(y)
-            elif pilih_objek == 2:
-                x = float(input("Masukkan Absis: "))
-                y = float(input("Masukkan Ordinat: "))
-                koor2 = Koordinat(x, y)
-            elif pilih_objek == 3:
+            if pilihObjek == 1:
                 print("Input untuk Koordinat 3:")
-                koor3.input_dalam()
-            elif pilih_objek == 4:
+                koor3.inputDalam()
+            elif pilihObjek == 2:
                 print("Input untuk Koordinat 4:")
-                input_luar(koor4)
+                inputLuar(koor4)
 
-        elif menu_utama == 2:
+        elif menuUtama == 2:
             print("=========================================")
             print("PENCERMINAN")
             print("1. Terhadap Sumbu X")
             print("2. Terhadap Sumbu Y")
             print("=========================================")
-            sumbu = int(input(">> Pilih Sumbu (1/2): "))
-            pilih_objek = int(input(">> Pilih Objek yang dicerminkan (1-4): "))
+            
+            # sumbu = int(input(">> Pilih Sumbu (1/2): "))
+            
+            sumbu = bacaPilihan(">> Pilih Sumbu (1/2): ", 1, 2)
+            
+            # pilihObjek = int(input(">> Pilih Objek yang dicerminkan (1-4): "))
+
+            pilihObjek = bacaPilihan(">> Pilih Objek yang dicerminkan (1-4): ", 1, 4)
 
             arr = [koor1, koor2, koor3, koor4]
-            target = arr[pilih_objek - 1]
+            target = arr[pilihObjek - 1]
 
             if sumbu == 1:
-                hasil_fungsi = target.pencerminan_x_fungsi()
-                hasil_void = Koordinat()
-                target.pencerminan_x_void(hasil_void)
+                hasilFungsi = target.pencerminanXFungsi()
+                hasilVoid = Koordinat()
+                target.pencerminanXVoid(hasilVoid)
                 
                 print("Hasil Pencerminan terhadap Sumbu X:")
-                print(f"   > Versi Fungsi : ({hasil_fungsi.get_absis()}, {hasil_fungsi.get_ordinat()})")
-                print(f"   > Versi Void   : ({hasil_void.get_absis()}, {hasil_void.get_ordinat()})")
+                print(f"   > Versi Fungsi : ({hasilFungsi.getAbsis()}, {hasilFungsi.getOrdinat()})")
+                print(f"   > Versi Void   : ({hasilVoid.getAbsis()}, {hasilVoid.getOrdinat()})")
             else:
-                hasil_fungsi = target.pencerminan_y_fungsi()
-                hasil_void = Koordinat()
-                target.pencerminan_y_void(hasil_void)
+                hasilFungsi = target.pencerminanYFungsi()
+                hasilVoid = Koordinat()
+                target.pencerminanYVoid(hasilVoid)
 
                 print("Hasil Pencerminan terhadap Sumbu Y:")
-                print(f"   > Versi Fungsi : ({hasil_fungsi.get_absis()}, {hasil_fungsi.get_ordinat()})")
-                print(f"   > Versi Void   : ({hasil_void.get_absis()}, {hasil_void.get_ordinat()})")
+                print(f"   > Versi Fungsi : ({hasilFungsi.getAbsis()}, {hasilFungsi.getOrdinat()})")
+                print(f"   > Versi Void   : ({hasilVoid.getAbsis()}, {hasilVoid.getOrdinat()})")
 
-        elif menu_utama == 3:
+        elif menuUtama == 3:
             print("=========================================")
             print("       TITIK TENGAH ANTARA 2 OBJEK       ")
             print("=========================================")
-            o1 = int(input("Pilih Objek Pertama (1-4): "))
-            o2 = int(input("Pilih Objek Kedua (1-4): "))
+            # o1 = int(input("Pilih Objek Pertama (1-4): "))
+            # o2 = int(input("Pilih Objek Kedua (1-4): "))
+
+            o1 = bacaPilihan("Pilih Objek Pertama (1-4): ", 1, 4)
+            o2 = bacaPilihan("Pilih Objek Kedua (1-4): ", 1, 4)
 
             arr = [koor1, koor2, koor3, koor4]
-            hasil_fungsi = arr[o1 - 1].titik_tengah_fungsi(arr[o2 - 1])
-            hasil_void = Koordinat()
-            hasil_void.titik_tengah_void(arr[o1 - 1], arr[o2 - 1])
+            
+            hasilFungsi = arr[o1 - 1].titikTengahFungsi(arr[o2 - 1])
+            hasilVoid = Koordinat()
+            hasilVoid.titikTengahVoid(arr[o1 - 1], arr[o2 - 1])
 
             print(f"Titik Tengah antara Objek {o1} dan {o2} :")
-            print(f"   > Versi Fungsi : ({hasil_fungsi.get_absis()}, {hasil_fungsi.get_ordinat()})")
-            print(f"   > Versi Void   : ({hasil_void.get_absis()}, {hasil_void.get_ordinat()})")
+            print(f"   > Versi Fungsi : ({hasilFungsi.getAbsis()}, {hasilFungsi.getOrdinat()})")
+            print(f"   > Versi Void   : ({hasilVoid.getAbsis()}, {hasilVoid.getOrdinat()})")
 
-        elif menu_utama == 4:
+        elif menuUtama == 4:
             print("=========================================")
             print("          JARAK ANTARA 2 TITIK           ")
             print("=========================================")
-            o1 = int(input("Pilih Objek Pertama (1-4): "))
-            o2 = int(input("Pilih Objek Kedua (1-4): "))
+            # o1 = int(input("Pilih Objek Pertama (1-4): "))
+            # o2 = int(input("Pilih Objek Kedua (1-4): "))
+
+            o1 = bacaPilihan("Pilih Objek Pertama (1-4): ", 1, 4)
+            o2 = bacaPilihan("Pilih Objek Kedua (1-4): ", 1, 4)
 
             arr = [koor1, koor2, koor3, koor4]
-            jarak_fungsi = arr[o1 - 1].jarak_dua_titik_fungsi(arr[o2 - 1])
-            jarak_void = [0.0]  # Gunakan list agar bisa pass by reference
-            arr[o1 - 1].jarak_dua_titik_void(arr[o2 - 1], jarak_void)
+
+            jarakFungsi = arr[o1 - 1].jarakDuaTitikFungsi(arr[o2 - 1])
+            jarakVoid = [0.0]
+            arr[o1 - 1].jarakDuaTitikVoid(arr[o2 - 1], jarakVoid)
 
             print(f"Jarak antara Objek {o1} dan {o2} :")
-            print(f"   - Versi Fungsi : {jarak_fungsi}")
-            print(f"   - Versi Void   : {jarak_void[0]}")
+            print(f"   - Versi Fungsi : {jarakFungsi}")
+            print(f"   - Versi Void   : {jarakVoid[0]}")
 
-        elif menu_utama == 5:
+        elif menuUtama == 5:
             print("=========================================")
             print("Pilih Menu Output")
             print("1. Output Dalam (Menampilkan semua objek via Method Class)")
             print("2. Output Luar (Menampilkan semua objek via Fungsi Luar)")
             print("=========================================")
-            pilih_out = int(input(">> Pilih Menu Output : "))
+            pilihOut = int(input(">> Pilih Menu Output : "))
             
-            if pilih_out == 1:
-                koor1.output_dalam(koor2, koor3, koor4)
-            elif pilih_out == 2:
-                output_luar(koor1, koor2, koor3, koor4)
+            if pilihOut == 1:
+                koor1.outputDalam(koor2, koor3, koor4)
+            elif pilihOut == 2:
+                outputLuar(koor1, koor2, koor3, koor4)
 
-        elif menu_utama == 0:
+        elif menuUtama == 0:
             print("\nBye-bye!.")
-            break
+        
         else:
-            print("Pilihan tidak valid! Silakan coba lagi.\n")
+            print("Pilihan tidak valid! Silakan coba lagi.")
 
 if __name__ == "__main__":
     main()

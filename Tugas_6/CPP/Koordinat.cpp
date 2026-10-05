@@ -152,9 +152,30 @@ void outputLuar(Koordinat k1, Koordinat k2, Koordinat k3, Koordinat k4) {
     }
 }
 
+//validasi pilihan (angka harus di antara min dan max)
+int bacaPilihan(std::string pesan, int min, int max) {
+    int nilai;
+    while (true) {
+        std::cout << pesan;
+        std::cin >> nilai;
+        if (std::cin.fail()) {
+            std::cin.clear();                // reset error state
+            std::cin.ignore(10000, '\n');    // buang input invalid
+            std::cout << "Masukkan angka yang valid!\n";
+        } else {
+            std::cin.ignore(10000, '\n');    // bersihkan sisa newline
+            if (nilai >= min && nilai <= max) return nilai;
+            std::cout << "Pilihan harus antara " << min << " sampai " << max << "!\n";
+        }
+    }
+}
+
 int main() {
     Koordinat koor1; // Input Melalui Setter
-    Koordinat koor2(0, 0); // Input melalui Constructor Parameter
+    koor1.setAbsis(3);
+    koor1.setOrdinat(4);
+    
+    Koordinat koor2(5, 6); // Input melalui Constructor Parameter
     Koordinat koor3; // Input Melalui method inputDalam
     Koordinat koor4; // Input Melalui method inputLuar
 
@@ -163,7 +184,7 @@ int main() {
         std::cout << "\n=========================================\n";
         std::cout << "     MENU APLIKASI KOORDINAT KARTESIUS     \n";
         std::cout << "=========================================\n";
-        std::cout << "1. Input Koordinat\n";
+        std::cout << "1. Input Koordinat 3 dan 4\n";
         std::cout << "2. Pencerminan\n";
         std::cout << "3. Titik Tengah\n";
         std::cout << "4. Jarak 2 Titik\n";
@@ -178,32 +199,19 @@ int main() {
                 int pilihObjek;
                 std::cout << "=========================================\n";
                 std::cout << "PILIH OBJEK YANG MAU DI-INPUT\n";
-                std::cout << "1. Koordinat 1 (via Setter)\n";
-                std::cout << "2. Koordinat 2 (via Constructor Parameter)\n";
-                std::cout << "3. Koordinat 3 (via Input Dalam)\n";
-                std::cout << "4. Koordinat 4 (via Input Luar)\n";
+                std::cout << "1. Koordinat 3 (via Input Dalam)\n";
+                std::cout << "2. Koordinat 4 (via Input Luar)\n";
                 std::cout << "=========================================\n";
-                std::cout << ">> Pilih Objek (1-4): ";
+                std::cout << ">> Pilih Objek (1-2): ";
                 std::cin >> pilihObjek;
 
                 if (pilihObjek == 1) {
-                    double x, y;
-                    std::cout << "Masukkan Absis: "; std::cin >> x;
-                    std::cout << "Masukkan Ordinat: "; std::cin >> y;
-                    koor1.setAbsis(x);
-                    koor1.setOrdinat(y);
-                } else if (pilihObjek == 2) {
-                    double x, y;
-                    std::cout << "Masukkan Absis: "; std::cin >> x;
-                    std::cout << "Masukkan Ordinat: "; std::cin >> y;
-                    koor2 = Koordinat(x, y);
-                } else if (pilihObjek == 3) {
                     std::cout << "Input untuk Koordinat 3:\n";
                     koor3.inputDalam();
-                } else if (pilihObjek == 4) {
+                } else if (pilihObjek == 2) {
                     std::cout << "Input untuk Koordinat 4:\n";
                     inputLuar(koor4);
-                }
+                } 
                 break;
             }
             case 2: {
@@ -213,11 +221,16 @@ int main() {
                 std::cout << "1. Terhadap Sumbu X\n";
                 std::cout << "2. Terhadap Sumbu Y\n";
                 std::cout << "=========================================\n";
-                std::cout << ">> Pilih Sumbu (1/2): ";
-                std::cin >> sumbu;
+                //std::cout << ">> Pilih Sumbu (1/2): ";
+                //std::cin >> sumbu;
 
-                std::cout << ">> Pilih Objek yang dicerminkan (1-4): ";
-                std::cin >> pilihObjek;
+                sumbu = bacaPilihan(">> Pilih Sumbu (1/2): ", 1, 2);
+                
+               
+                //std::cout << ">> Pilih Objek yang dicerminkan (1-4): ";
+                //std::cin >> pilihObjek;
+
+                pilihObjek = bacaPilihan(">> Pilih Objek yang dicerminkan (1-4): ", 1, 4);
 
                 Koordinat arr[4] = {koor1, koor2, koor3, koor4};
                 Koordinat target = arr[pilihObjek - 1];
@@ -246,8 +259,11 @@ int main() {
                 std::cout << "=========================================\n";
                 std::cout << "       TITIK TENGAH ANTARA 2 OBJEK       \n";
                 std::cout << "=========================================\n";
-                std::cout << "Pilih Objek Pertama (1-4): "; std::cin >> o1;
-                std::cout << "Pilih Objek Kedua (1-4): "; std::cin >> o2;
+                //std::cout << "Pilih Objek Pertama (1-4): "; std::cin >> o1;
+                //std::cout << "Pilih Objek Kedua (1-4): "; std::cin >> o2;
+
+                o1 = bacaPilihan("Pilih Objek Pertama (1-4): ", 1, 4);
+                o2 = bacaPilihan("Pilih Objek Kedua (1-4): ", 1, 4);
 
                 Koordinat arr[4] = {koor1, koor2, koor3, koor4};
                 
@@ -265,8 +281,11 @@ int main() {
                 std::cout << "=========================================\n";
                 std::cout << "          JARAK ANTARA 2 TITIK           \n";
                 std::cout << "=========================================\n";
-                std::cout << "Pilih Objek Pertama (1-4): "; std::cin >> o1;
-                std::cout << "Pilih Objek Kedua (1-4): "; std::cin >> o2;
+                //std::cout << "Pilih Objek Pertama (1-4): "; std::cin >> o1;
+                //std::cout << "Pilih Objek Kedua (1-4): "; std::cin >> o2;
+
+                o1 = bacaPilihan("Pilih Objek Pertama (1-4): ", 1, 4);
+                o2 = bacaPilihan("Pilih Objek Kedua (1-4): ", 1, 4);
 
                 Koordinat arr[4] = {koor1, koor2, koor3, koor4};
 
