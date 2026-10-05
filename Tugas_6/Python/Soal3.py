@@ -63,7 +63,7 @@ class Waktu:
     def total_detik(self):
         return self.__jam * 3600 + self.__menit * 60 + self.__detik
 
-    # cara 2 fungsi
+    # Selisih fungsi
     def selisih_fungsi(self, p):
         p_hasil = Waktu()
         sel = self.total_detik() - p.total_detik()
@@ -74,7 +74,7 @@ class Waktu:
         p_hasil.__detik = sel % 60
         return p_hasil
 
-    #  cara 1 void
+    #  Selisih void
     def selisih_void(self, p1, p2):
         sel = p1.total_detik() - p2.total_detik()
         if sel < 0:

@@ -41,30 +41,36 @@ class SelisihWaktu {
                 std::cout << pesan;
                 std::cin >> nilai;
                 if (std::cin.fail()) {
-                    std::cin.clear(); // mereset error state
-                    std::cin.ignore(10000, '\n'); // membuang input invalid
+                    std::cin.clear(); // reset error state
+                    std::cin.ignore(10000, '\n'); 
                     std::cout << "Masukkan angka yang valid!\n";
                 } else {
-                    std::cin.ignore(10000, '\n'); // bersihkan sisa newline
+                    std::cin.ignore(10000, '\n');
                     break;
                 }
             }
             return nilai;
         }
 
+        void setWaktu(int jam, int menit, int detik) {
+            this->jam = (jam >= 0 && jam <= 23) ? jam : 0;
+            this->menit = (menit >= 0 && menit <= 59) ? menit : 0;
+            this->detik = (detik >= 0 && detik <= 59) ? detik : 0;
+        }
+
         // Setter Jam
         void setJam(int jam) {
-            this->jam = jam;
+            this->jam = (jam >= 0 && jam <= 23) ? jam : 0;
         }
 
         // Setter Menit
         void setMenit(int menit) {
-            this->menit = menit;
+            this->menit = (menit >= 0 && menit <= 59) ? menit : 0;
         }
 
         // Setter Detik
         void setDetik(int detik) {
-            this->detik = detik;
+            this->detik = (detik >= 0 && detik <= 59) ? detik : 0;
         }
 
         // Getter Jam

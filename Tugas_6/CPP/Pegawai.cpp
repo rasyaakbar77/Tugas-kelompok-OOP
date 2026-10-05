@@ -21,7 +21,7 @@ int bacaInt(std::string pesan) {
     std::string s;
     while (true) {
         std::cout << pesan;
-        if (!std::getline(std::cin, s)) {   // input habis (Ctrl+D / Ctrl+Z)
+        if (!std::getline(std::cin, s)) {   
             std::cout << "\nInput berakhir.\n";
             std::exit(0);
         }
@@ -89,18 +89,18 @@ public:
 
     // getter
     int getJam() {
-        return jam;
+        return this->jam;
     }
     int getMenit() {
-        return menit;
+        return this->menit;
     }
     int getDetik() {
-        return detik;
+        return this->detik;
     }
 
     // proses
     int totalDetik() {
-        return jam * 3600 + menit * 60 + detik;
+        return this->jam * 3600 + this->menit * 60 + this->detik;
     }
 
     // cara 2 fungsi
@@ -175,7 +175,7 @@ public:
         statusPeringatan = "";
     }
 
-    // memanggil constructor kosong dulu (setara this() di Java)
+    // memanggil constructor kosong dulu 
     Pegawai(std::string nip, std::string nama, int gol, Waktu datang, Waktu pulang) : Pegawai() {
         this->nip = nip;
         this->nama = nama;
@@ -204,7 +204,7 @@ public:
         } while (pulang.totalDetik() <= datang.totalDetik());
     }
 
-    // setter & getter
+    // setter dan getter
     void setPegawai(std::string nip, std::string nama, int gol, Waktu datang, Waktu pulang) {
         this->nip = nip;
         this->nama = nama;
@@ -248,12 +248,12 @@ public:
 
     // proses
     void prosesGaji() {
-        // menggunakan cara 2 (fungsi) untuk menghitung lama kerja
+        // menggunakan cara fungsi untuk menghitung lama kerja
         lamaKerja = pulang.selisihFungsi(datang);
 
         Waktu batas(8, 0, 0);
         if (lamaKerja.totalDetik() >= batas.totalDetik()) {
-            // menggunakan cara 1 (void) untuk menghitung jam lembur
+            // menggunakan cara void untuk menghitung jam lembur
             jamLembur.selisihVoid(lamaKerja, batas);
             statusPeringatan = "ok";
         } else {
@@ -323,7 +323,7 @@ int main() {
                 std::cout << "Pegawai 1 berhasil diisi (setter).\n";
                 break;
             }
-            //cons parameter
+            //constructor parameter
             case 2: {
                 delete p2;
                 p2 = new Pegawai("250002", "Budi", 1, Waktu(8, 0, 0), Waktu(15, 30, 0));

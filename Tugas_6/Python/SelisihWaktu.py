@@ -12,16 +12,15 @@ Deskripsi Program : Sebuah program untuk mencari selisih antara waktu datang dan
 
 class SelisihWaktu:
     def __init__(self, jam=0, menit=0, detik=0):
-        # Di Python, atribut private biasanya diawali dengan underscore (_)
         self._jam = jam
         self._menit = menit
         self._detik = detik
 
+    # Validasi Input Interger
     @staticmethod
     def baca_int(pesan):
         while True:
             try:
-                # Menggantikan penanganan error cin / scanner
                 nilai = int(input(pesan))
                 return nilai
             except ValueError:
@@ -68,7 +67,7 @@ class SelisihWaktu:
             if 0 <= self._detik <= 59:
                 break
 
-    # Output Dalam (menggunakan f-string untuk format %02d)
+    # Output Dalam 
     def output_dalam(self):
         print(f"Waktu = {self._jam:02d}:{self._menit:02d}:{self._detik:02d}")
 
@@ -85,7 +84,7 @@ class SelisihWaktu:
 
         return hasil
 
-    # Method Proses Cara 2: "Void" (memodifikasi objek saat ini)
+    # Method Proses Cara 2: Void
     def hitung_selisih_void(self, w1, w2):
         total_detik1 = (w1._jam * 3600) + (w1._menit * 60) + w1._detik
         total_detik2 = (w2._jam * 3600) + (w2._menit * 60) + w2._detik
@@ -94,7 +93,6 @@ class SelisihWaktu:
         self._jam = selisih_total // 3600
         self._menit = (selisih_total % 3600) // 60
         self._detik = selisih_total % 60
-
 
 def main():
     # 1. Objek 1: Input Setter 
