@@ -152,7 +152,7 @@ void outputLuar(Koordinat k1, Koordinat k2, Koordinat k3, Koordinat k4) {
     }
 }
 
-//validasi pilihan (angka harus di antara min dan max)
+// Validasi pilihan 
 int bacaPilihan(std::string pesan, int min, int max) {
     int nilai;
     while (true) {
@@ -163,7 +163,7 @@ int bacaPilihan(std::string pesan, int min, int max) {
             std::cin.ignore(10000, '\n');    // buang input invalid
             std::cout << "Masukkan angka yang valid!\n";
         } else {
-            std::cin.ignore(10000, '\n');    // bersihkan sisa newline
+            std::cin.ignore(10000, '\n');    
             if (nilai >= min && nilai <= max) return nilai;
             std::cout << "Pilihan harus antara " << min << " sampai " << max << "!\n";
         }
@@ -221,14 +221,8 @@ int main() {
                 std::cout << "1. Terhadap Sumbu X\n";
                 std::cout << "2. Terhadap Sumbu Y\n";
                 std::cout << "=========================================\n";
-                //std::cout << ">> Pilih Sumbu (1/2): ";
-                //std::cin >> sumbu;
 
                 sumbu = bacaPilihan(">> Pilih Sumbu (1/2): ", 1, 2);
-                
-               
-                //std::cout << ">> Pilih Objek yang dicerminkan (1-4): ";
-                //std::cin >> pilihObjek;
 
                 pilihObjek = bacaPilihan(">> Pilih Objek yang dicerminkan (1-4): ", 1, 4);
 
@@ -259,8 +253,6 @@ int main() {
                 std::cout << "=========================================\n";
                 std::cout << "       TITIK TENGAH ANTARA 2 OBJEK       \n";
                 std::cout << "=========================================\n";
-                //std::cout << "Pilih Objek Pertama (1-4): "; std::cin >> o1;
-                //std::cout << "Pilih Objek Kedua (1-4): "; std::cin >> o2;
 
                 o1 = bacaPilihan("Pilih Objek Pertama (1-4): ", 1, 4);
                 o2 = bacaPilihan("Pilih Objek Kedua (1-4): ", 1, 4);
@@ -281,8 +273,6 @@ int main() {
                 std::cout << "=========================================\n";
                 std::cout << "          JARAK ANTARA 2 TITIK           \n";
                 std::cout << "=========================================\n";
-                //std::cout << "Pilih Objek Pertama (1-4): "; std::cin >> o1;
-                //std::cout << "Pilih Objek Kedua (1-4): "; std::cin >> o2;
 
                 o1 = bacaPilihan("Pilih Objek Pertama (1-4): ", 1, 4);
                 o2 = bacaPilihan("Pilih Objek Kedua (1-4): ", 1, 4);

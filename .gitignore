@@ -23,7 +23,7 @@ __pycache__/
 env/
 venv/
 
-# --- IDEs & EDITORS (VS Code, NetBeans, IntelliJ, dll) ---
+# --- IDEs and EDITORS (VS Code, NetBeans, IntelliJ, dll) ---
 .vscode/
 .idea/
 *.iml

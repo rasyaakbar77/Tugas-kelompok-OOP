@@ -34,6 +34,7 @@ class SelisihWaktu {
             this->detik = detik;
         }
 
+        // Validasi input interger
         static int bacaInt(std::string pesan) {
             int nilai;
             while (true) {
@@ -64,6 +65,21 @@ class SelisihWaktu {
         // Setter Detik
         void setDetik(int detik) {
             this->detik = detik;
+        }
+
+        // Getter Jam
+        int getJam() {
+            return this->jam;
+        }
+
+        // Getter Menit
+        int getMenit() {
+            return this->menit;
+        }
+
+        // Getter Detik
+        int getDetik() {
+            return this->detik;
         }
 
         // Input Dalam
@@ -175,9 +191,10 @@ int main() {
             }
             case 3: {
                 std::cout << "\n==============================================================\n";
-                std::cout << "\n HITUNG SELISIH (FUNGSI RETURN)\n";
+                std::cout << "                  HITUNG SELISIH (FUNGSI RETURN)                \n";
+                std::cout << "==============================================================\n";
                 std::cout << "Pilih objek yang akan diselisihkan:\n";
-                std::cout << "1. Waktu 1 & Waktu 2\n2. Waktu 1 & Waktu 3\n3. Waktu 2 & Waktu 3\n";
+                std::cout << "1. Waktu 1 dan Waktu 2\n2. Waktu 1 dan Waktu 3\n3. Waktu 2 dan Waktu 3\n";
                 int subPilih = SelisihWaktu::bacaInt("Pilihan (1-3): ");
                 
                 SelisihWaktu hasilSelisih;
@@ -192,30 +209,29 @@ int main() {
                     std::cout << "Selisih Waktu 2 dan Waktu 3 = ";
                 } else {
                     std::cout << "Pilihan tidak valid!\n";
-                    break;
                 }
                 hasilSelisih.OutputDalam();
-                break;
                 std::cout << "==============================================================\n";
+                break;
             }
             case 4: {
                 std::cout << "\n==============================================================\n";
                 std::cout << "                HITUNG SELISIH (METHOD VOID)                    \n";
                 std::cout << "==============================================================\n";
                 std::cout << "Pilih objek yang akan diselisihkan:\n";
-                std::cout << "1. Waktu 1 & Waktu 2\n2. Waktu 1 & Waktu 3\n3. Waktu 2 & Waktu 3\n";
+                std::cout << "1. Waktu 1 dan Waktu 2\n2. Waktu 1 dan Waktu 3\n3. Waktu 2 dan Waktu 3\n";
                 int subPilih = SelisihWaktu::bacaInt("Pilihan (1-3): ");
                 
                 SelisihWaktu hasilVoid;
                 if (subPilih == 1) {
                     hasilVoid.hitungSelisihVoid(waktu1, waktu2);
-                    std::cout << "Hasil Selisih (diobjek baru via Void) Waktu 1 & 2 = ";
+                    std::cout << "Hasil Selisih (diobjek baru via Void) Waktu 1 dan Waktu 2 = ";
                 } else if (subPilih == 2) {
                     hasilVoid.hitungSelisihVoid(waktu1, waktu3);
-                    std::cout << "Hasil Selisih (diobjek baru via Void) Waktu 1 & 3 = ";
+                    std::cout << "Hasil Selisih (diobjek baru via Void) Waktu 1 dan Waktu 3 = ";
                 } else if (subPilih == 3) {
                     hasilVoid.hitungSelisihVoid(waktu2, waktu3);
-                    std::cout << "Hasil Selisih (diobjek baru via Void) Waktu 2 & 3 = ";
+                    std::cout << "Hasil Selisih (diobjek baru via Void) Waktu 2 dan Waktu 3 = ";
                 } else {
                     std::cout << "Pilihan tidak valid!\n";
                     break;
