@@ -1,13 +1,12 @@
 /*
-Nama Program : SelisihWaktu.java
+Nama Program : Main.java
 Anggota Kelompok - NPM: 
     1. Rasya Islami Akbar - 140810250009
     2. Ghiyats Khairul Mala - 140810250102
 Kelas : A
 Tanggal Pengerjaan : 29-09-2026
 Deskripsi Program : Sebuah program untuk mencari selisih antara waktu datang dan waktu keluar dengan metode OOP, 
-                    menggunakan 3 objek dengan 3 cara input berbeda dan 2 method proses (selisih waktu) dengan 
-                    return value yang berbeda (fungsi dan void).
+                    menggunakan class SelisihWaktu dan class Menu di dalam satu file.
 */
 
 import java.util.Scanner;
@@ -35,7 +34,7 @@ class SelisihWaktu {
         this.detik = detik;
     }
 
-    // Validasi input interger
+    // Validasi input integer
     public static int bacaInt(String pesan) {
         int nilai;
         while (true) {
@@ -128,8 +127,10 @@ class SelisihWaktu {
     }
 }
 
-public class Main {
-    public static void main(String[] args) {
+class Menu {
+    private int pilihan;
+
+    public void jalankanMenu() {
         // 1. Objek 1: Input Setter 
         SelisihWaktu waktu1 = new SelisihWaktu(); 
         waktu1.setJam(2);
@@ -143,8 +144,7 @@ public class Main {
         SelisihWaktu waktu3 = new SelisihWaktu();
         System.out.println("Masukkan Waktu 3 (Input Dalam):");
         waktu3.inputDalam();
-        
-        int pilihan;
+
         do {
             System.out.println("\n===============================================================");
             System.out.println("                    MENU UTAMA SELISIH WAKTU                   ");
@@ -251,5 +251,12 @@ public class Main {
                     System.out.println("Pilihan tidak valid, silakan coba lagi.\n");
             }
         } while (pilihan != 5);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Menu menu = new Menu();
+        menu.jalankanMenu();
     }
 }

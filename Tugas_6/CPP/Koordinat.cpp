@@ -1,5 +1,5 @@
 /*
-Nama Program : Koordinat.cpp
+Nama Program : KoordinatApp.cpp
 Anggota Kelompok - NPM: 
     1. Rasya Islami Akbar - 140810250009
     2. Ghiyats Khairul Mala - 140810250102
@@ -14,6 +14,12 @@ Deskripsi Program : Sebuah program untuk melakukan operasi perhitungan koordinat
 
 #include <iostream>
 #include <cmath>
+#include <string>
+#include <limits>
+#include <iomanip>
+#include <sstream>
+
+using namespace std;
 
 class Koordinat {
 private:
@@ -42,33 +48,33 @@ public:
     void setOrdinat(double ordinat) {
         this->ordinat = ordinat;
     }
-          
+
     // Getter Absis
-    double getAbsis() {
+    double getAbsis() const {
         return absis;
     }
 
     // Getter Ordinat
-    double getOrdinat() {
+    double getOrdinat() const {
         return ordinat;
     }
 
     // Input Dalam Class
     void inputDalam() {
-        std::cout << "Masukkan Nilai Absis (input dalam): ";
-        std::cin >> absis;
-        std::cout << "Masukkan Nilai Ordinat (input dalam): ";
-        std::cin >> ordinat;
+        cout << "Masukkan Nilai Absis (input dalam): ";
+        cin >> absis;
+        cout << "Masukkan Nilai Ordinat (input dalam): ";
+        cin >> ordinat;
     }
 
     // Method Mencari titik Tengah (void) 
-    void titikTengahVoid(Koordinat a, Koordinat b) {
+    void titikTengahVoid(const Koordinat& a, const Koordinat& b) {
         this->absis = (a.absis + b.absis) / 2;
         this->ordinat = (a.ordinat + b.ordinat) / 2;
     }
 
     // Method Mencari titik Tengah (Fungsi)
-    Koordinat titikTengahFungsi(Koordinat p) {
+    Koordinat titikTengahFungsi(const Koordinat& p) const {
         Koordinat tengah;
         tengah.absis = (p.absis + this->absis) / 2;
         tengah.ordinat = (p.ordinat + this->ordinat) / 2;
@@ -76,13 +82,13 @@ public:
     }
 
     // Method Pencerminan terhadap sumbu X (void)
-    void pencerminanXVoid(Koordinat &pHasil) {
+    void pencerminanXVoid(Koordinat& pHasil) const {
         pHasil.absis = this->absis;
         pHasil.ordinat = -1 * this->ordinat;
     }
 
     // Method Pencerminan terhadap sumbu x (fungsi)
-    Koordinat pencerminanXFungsi() {
+    Koordinat pencerminanXFungsi() const {
         Koordinat pCermin;
         pCermin.absis = this->absis;
         pCermin.ordinat = -1 * this->ordinat;
@@ -90,13 +96,13 @@ public:
     }
 
     // Method Pencerminan terhadap sumbu y (void)
-    void pencerminanYVoid(Koordinat &pHasil) {
+    void pencerminanYVoid(Koordinat& pHasil) const {
         pHasil.absis = -1 * this->absis;
         pHasil.ordinat = this->ordinat;
     }
 
     // Method Pencerminan terhadap sumbu y (Fungsi)
-    Koordinat pencerminanYFungsi() {
+    Koordinat pencerminanYFungsi() const {
         Koordinat pCermin;
         pCermin.absis = -1 * this->absis;
         pCermin.ordinat = this->ordinat;
@@ -104,214 +110,230 @@ public:
     }
 
     // Method Mencari Jarak antar 2 titik (void)
-    void jarakDuaTitikVoid(Koordinat b, double &jarak) {
-        jarak = sqrt(pow(b.absis - this->absis, 2) + pow(b.ordinat - this->ordinat, 2));
+    void jarakDuaTitikVoid(const Koordinat& b, double jarak[]) const {
+        jarak[0] = sqrt(pow(b.absis - this->absis, 2) + pow(b.ordinat - this->ordinat, 2));
     }
 
     // Method Mencari Jarak antar 2 titik (Fungsi)
-    double jarakDuaTitikFungsi(Koordinat p) {
-        double jarak = sqrt(pow(p.absis - this->absis, 2) + pow(p.ordinat - this->ordinat, 2));
-        return jarak;
+    double jarakDuaTitikFungsi(const Koordinat& p) const {
+        return sqrt(pow(p.absis - this->absis, 2) + pow(p.ordinat - this->ordinat, 2));
     }
 
-    // Output Dalam
-    void outputDalam(Koordinat k2, Koordinat k3, Koordinat k4) {
-        std::cout << "\n=========================================\n";
-        std::cout << "          OUTPUT DALAM (SEMUA OBJEK)     \n";
-        std::cout << "=========================================\n";
-        std::cout << "Objek Koordinat ke-1 : (" << this->absis << ", " << this->ordinat << ")\n";
-        std::cout << "Objek Koordinat ke-2 : (" << k2.getAbsis() << ", " << k2.getOrdinat() << ")\n";
-        std::cout << "Objek Koordinat ke-3 : (" << k3.getAbsis() << ", " << k3.getOrdinat() << ")\n";
-        std::cout << "Objek Koordinat ke-4 : (" << k4.getAbsis() << ", " << k4.getOrdinat() << ")\n";
-        std::cout << "=========================================\n";
-    }
+    // Deklarasi Output Dalam (definisi di luar class setelah helper format)
+    void outputDalam(const Koordinat& k2, const Koordinat& k3, const Koordinat& k4) const;
 };
 
-// Input Luar Class 
-void inputLuar(Koordinat &k) {
+// Helper Format Angka (Setara `format` di Java)
+string format(double nilai) {
+    stringstream ss;
+    ss << setprecision(6) << nilai;
+    return ss.str();
+}
+
+// Implementasi Output Dalam setelah helper format tersedia
+void Koordinat::outputDalam(const Koordinat& k2, const Koordinat& k3, const Koordinat& k4) const {
+    cout << "\n=========================================\n";
+    cout << "          OUTPUT DALAM (SEMUA OBJEK)     \n";
+    cout << "=========================================\n";
+    cout << "Objek Koordinat ke-1 : (" << format(this->absis) << ", " << format(this->ordinat) << ")\n";
+    cout << "Objek Koordinat ke-2 : (" << format(k2.getAbsis()) << ", " << format(k2.getOrdinat()) << ")\n";
+    cout << "Objek Koordinat ke-3 : (" << format(k3.getAbsis()) << ", " << format(k3.getOrdinat()) << ")\n";
+    cout << "Objek Koordinat ke-4 : (" << format(k4.getAbsis()) << ", " << format(k4.getOrdinat()) << ")\n";
+    cout << "=========================================\n";
+}
+
+// Input Luar Class
+void inputLuar(Koordinat& k) {
     double a, o;
-    std::cout << "Masukkan Nilai Absis (Input Luar): ";
-    std::cin >> a;
-    std::cout << "Masukkan Nilai Ordinat (Input Luar): ";
-    std::cin >> o;
+    cout << "Masukkan Nilai Absis (Input Luar): ";
+    cin >> a;
+    cout << "Masukkan Nilai Ordinat (Input Luar): ";
+    cin >> o;
     k.setAbsis(a);
     k.setOrdinat(o);
 }
 
-// Output Luar 
-void outputLuar(Koordinat k1, Koordinat k2, Koordinat k3, Koordinat k4) {
-    std::cout << "\n=========================================\n";
-    std::cout << "               OUTPUT LUAR                \n";
-    std::cout << "=========================================\n";
-    
-    Koordinat daftarObjek[4] = {k1, k2, k3, k4};
-    
+// Output Luar
+void outputLuar(const Koordinat& k1, const Koordinat& k2, const Koordinat& k3, const Koordinat& k4) {
+    cout << "\n=========================================\n";
+    cout << "               OUTPUT LUAR                \n";
+    cout << "=========================================\n";
+
+    Koordinat daftarObjek[] = {k1, k2, k3, k4};
+
     for (int i = 0; i < 4; i++) {
-        std::cout << "Objek Koordinat ke-" << i + 1 << " : (" 
-                  << daftarObjek[i].getAbsis() << ", " << daftarObjek[i].getOrdinat() << ")\n";
+        cout << "Objek Koordinat ke-" << (i + 1) << " : ("
+             << format(daftarObjek[i].getAbsis()) << ", " << format(daftarObjek[i].getOrdinat()) << ")\n";
     }
 }
 
-// Validasi pilihan 
-int bacaPilihan(std::string pesan, int min, int max) {
+// Validasi Pilihan
+int bacaPilihan(const string& pesan, int min, int max) {
     int nilai;
     while (true) {
-        std::cout << pesan;
-        std::cin >> nilai;
-        if (std::cin.fail()) {
-            std::cin.clear();                // reset error state
-            std::cin.ignore(10000, '\n');    // buang input invalid
-            std::cout << "Masukkan angka yang valid!\n";
+        cout << pesan;
+        if (!(cin >> nilai)) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Masukkan angka yang valid!\n";
         } else {
-            std::cin.ignore(10000, '\n');    
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Bersihkan sisa buffer
             if (nilai >= min && nilai <= max) return nilai;
-            std::cout << "Pilihan harus antara " << min << " sampai " << max << "!\n";
+            cout << "Pilihan harus antara " << min << " sampai " << max << "!\n";
         }
     }
 }
 
-int main() {
-    Koordinat koor1; // Input Melalui Setter
-    koor1.setAbsis(3);
-    koor1.setOrdinat(4);
-    
-    Koordinat koor2(5, 6); // Input melalui Constructor Parameter
-    Koordinat koor3; // Input Melalui method inputDalam
-    Koordinat koor4; // Input Melalui method inputLuar
-
+class Menu {
+private:
     int menuUtama;
-    do {
-        std::cout << "\n=========================================\n";
-        std::cout << "     MENU APLIKASI KOORDINAT KARTESIUS     \n";
-        std::cout << "=========================================\n";
-        std::cout << "1. Input Koordinat 3 dan 4\n";
-        std::cout << "2. Pencerminan\n";
-        std::cout << "3. Titik Tengah\n";
-        std::cout << "4. Jarak 2 Titik\n";
-        std::cout << "5. Tampilkan Seluruh Objek\n";
-        std::cout << "0. Keluar\n";
-        std::cout << "=========================================\n";
-        std::cout << ">> Masukkan Pilihan Menu : ";
-        std::cin >> menuUtama;
 
-        switch (menuUtama) {
-            case 1: {
-                int pilihObjek;
-                std::cout << "=========================================\n";
-                std::cout << "PILIH OBJEK YANG MAU DI-INPUT\n";
-                std::cout << "1. Koordinat 3 (via Input Dalam)\n";
-                std::cout << "2. Koordinat 4 (via Input Luar)\n";
-                std::cout << "=========================================\n";
-                std::cout << ">> Pilih Objek (1-2): ";
-                std::cin >> pilihObjek;
+public:
+    void tampilMenu() {
+        Koordinat koor1; // Input Melalui Setter
+        koor1.setAbsis(3);
+        koor1.setOrdinat(4);
 
-                if (pilihObjek == 1) {
-                    std::cout << "Input untuk Koordinat 3:\n";
-                    koor3.inputDalam();
-                } else if (pilihObjek == 2) {
-                    std::cout << "Input untuk Koordinat 4:\n";
-                    inputLuar(koor4);
-                } 
-                break;
-            }
-            case 2: {
-                int sumbu, pilihObjek;
-                std::cout << "=========================================\n";
-                std::cout << "PENCERMINAN\n";
-                std::cout << "1. Terhadap Sumbu X\n";
-                std::cout << "2. Terhadap Sumbu Y\n";
-                std::cout << "=========================================\n";
+        Koordinat koor2(5, 6); // Input melalui Constructor Parameter
+        Koordinat koor3;       // Input Melalui method inputDalam
+        Koordinat koor4;       // Input Melalui method inputLuar
 
-                sumbu = bacaPilihan(">> Pilih Sumbu (1/2): ", 1, 2);
+        do {
+            cout << "\n=========================================\n";
+            cout << "     MENU APLIKASI KOORDINAT KARTESIUS     \n";
+            cout << "=========================================\n";
+            cout << "1. Input Koordinat 3 dan 4\n";
+            cout << "2. Pencerminan\n";
+            cout << "3. Titik Tengah\n";
+            cout << "4. Jarak 2 Titik\n";
+            cout << "5. Tampilkan Seluruh Objek\n";
+            cout << "0. Keluar\n";
+            cout << "=========================================\n";
+            cout << ">> Masukkan Pilihan Menu : ";
+            cin >> menuUtama;
 
-                pilihObjek = bacaPilihan(">> Pilih Objek yang dicerminkan (1-4): ", 1, 4);
+            switch (menuUtama) {
+                case 1: {
+                    int pilihObjek;
+                    cout << "=========================================\n";
+                    cout << "PILIH OBJEK YANG MAU DI-INPUT\n";
+                    cout << "1. Koordinat 3 (via Input Dalam)\n";
+                    cout << "2. Koordinat 4 (via Input Luar)\n";
+                    cout << "=========================================\n";
+                    cout << ">> Pilih Objek (1-2): ";
+                    cin >> pilihObjek;
 
-                Koordinat arr[4] = {koor1, koor2, koor3, koor4};
-                Koordinat target = arr[pilihObjek - 1];
+                    if (pilihObjek == 1) {
+                        cout << "Input untuk Koordinat 3:\n";
+                        koor3.inputDalam();
+                    } else if (pilihObjek == 2) {
+                        cout << "Input untuk Koordinat 4:\n";
+                        inputLuar(koor4);
+                    }
+                    break;
+                }
+                case 2: {
+                    int sumbu, pilihObjek;
+                    cout << "=========================================\n";
+                    cout << "PENCERMINAN\n";
+                    cout << "1. Terhadap Sumbu X\n";
+                    cout << "2. Terhadap Sumbu Y\n";
+                    cout << "=========================================\n";
 
-                if (sumbu == 1) {
-                    Koordinat hasilFungsi = target.pencerminanXFungsi();
+                    sumbu = bacaPilihan(">> Pilih Sumbu (1/2): ", 1, 2);
+                    pilihObjek = bacaPilihan(">> Pilih Objek yang dicerminkan (1-4): ", 1, 4);
+
+                    Koordinat arr[] = {koor1, koor2, koor3, koor4};
+                    Koordinat target = arr[pilihObjek - 1];
+
+                    if (sumbu == 1) {
+                        Koordinat hasilFungsi = target.pencerminanXFungsi();
+                        Koordinat hasilVoid;
+                        target.pencerminanXVoid(hasilVoid);
+
+                        cout << "Hasil Pencerminan terhadap Sumbu X:\n";
+                        cout << "   > Versi Fungsi : (" << format(hasilFungsi.getAbsis()) << ", " << format(hasilFungsi.getOrdinat()) << ")\n";
+                        cout << "   > Versi Void   : (" << format(hasilVoid.getAbsis()) << ", " << format(hasilVoid.getOrdinat()) << ")\n";
+                    } else {
+                        Koordinat hasilFungsi = target.pencerminanYFungsi();
+                        Koordinat hasilVoid;
+                        target.pencerminanYVoid(hasilVoid);
+
+                        cout << "Hasil Pencerminan terhadap Sumbu Y:\n";
+                        cout << "   > Versi Fungsi : (" << format(hasilFungsi.getAbsis()) << ", " << format(hasilFungsi.getOrdinat()) << ")\n";
+                        cout << "   > Versi Void   : (" << format(hasilVoid.getAbsis()) << ", " << format(hasilVoid.getOrdinat()) << ")\n";
+                    }
+                    break;
+                }
+                case 3: {
+                    int o1, o2;
+                    cout << "=========================================\n";
+                    cout << "       TITIK TENGAH ANTARA 2 OBJEK       \n";
+                    cout << "=========================================\n";
+
+                    o1 = bacaPilihan("Pilih Objek Pertama (1-4): ", 1, 4);
+                    o2 = bacaPilihan("Pilih Objek Kedua (1-4): ", 1, 4);
+
+                    Koordinat arr[] = {koor1, koor2, koor3, koor4};
+
+                    Koordinat hasilFungsi = arr[o1 - 1].titikTengahFungsi(arr[o2 - 1]);
                     Koordinat hasilVoid;
-                    target.pencerminanXVoid(hasilVoid);
-                    
-                    std::cout << "Hasil Pencerminan terhadap Sumbu X:\n";
-                    std::cout << "   > Versi Fungsi : (" << hasilFungsi.getAbsis() << ", " << hasilFungsi.getOrdinat() << ")\n";
-                    std::cout << "   > Versi Void   : (" << hasilVoid.getAbsis() << ", " << hasilVoid.getOrdinat() << ")\n";
-                } else {
-                    Koordinat hasilFungsi = target.pencerminanYFungsi();
-                    Koordinat hasilVoid;
-                    target.pencerminanYVoid(hasilVoid);
+                    hasilVoid.titikTengahVoid(arr[o1 - 1], arr[o2 - 1]);
 
-                    std::cout << "Hasil Pencerminan terhadap Sumbu Y:\n";
-                    std::cout << "   > Versi Fungsi : (" << hasilFungsi.getAbsis() << ", " << hasilFungsi.getOrdinat() << ")\n";
-                    std::cout << "   > Versi Void   : (" << hasilVoid.getAbsis() << ", " << hasilVoid.getOrdinat() << ")\n";
+                    cout << "Titik Tengah antara Objek " << o1 << " dan " << o2 << " :\n";
+                    cout << "   > Versi Fungsi : (" << format(hasilFungsi.getAbsis()) << ", " << format(hasilFungsi.getOrdinat()) << ")\n";
+                    cout << "   > Versi Void   : (" << format(hasilVoid.getAbsis()) << ", " << format(hasilVoid.getOrdinat()) << ")\n";
+                    break;
                 }
-                break;
-            }
-            case 3: {
-                int o1, o2;
-                std::cout << "=========================================\n";
-                std::cout << "       TITIK TENGAH ANTARA 2 OBJEK       \n";
-                std::cout << "=========================================\n";
+                case 4: {
+                    int o1, o2;
+                    cout << "=========================================\n";
+                    cout << "          JARAK ANTARA 2 TITIK           \n";
+                    cout << "=========================================\n";
 
-                o1 = bacaPilihan("Pilih Objek Pertama (1-4): ", 1, 4);
-                o2 = bacaPilihan("Pilih Objek Kedua (1-4): ", 1, 4);
+                    o1 = bacaPilihan("Pilih Objek Pertama (1-4): ", 1, 4);
+                    o2 = bacaPilihan("Pilih Objek Kedua (1-4): ", 1, 4);
 
-                Koordinat arr[4] = {koor1, koor2, koor3, koor4};
-                
-                Koordinat hasilFungsi = arr[o1 - 1].titikTengahFungsi(arr[o2 - 1]);
-                Koordinat hasilVoid;
-                hasilVoid.titikTengahVoid(arr[o1 - 1], arr[o2 - 1]);
+                    Koordinat arr[] = {koor1, koor2, koor3, koor4};
 
-                std::cout << "Titik Tengah antara Objek " << o1 << " dan " << o2 << " :\n";
-                std::cout << "   > Versi Fungsi : (" << hasilFungsi.getAbsis() << ", " << hasilFungsi.getOrdinat() << ")\n";
-                std::cout << "   > Versi Void   : (" << hasilVoid.getAbsis() << ", " << hasilVoid.getOrdinat() << ")\n";
-                break;
-            }
-            case 4: {
-                int o1, o2;
-                std::cout << "=========================================\n";
-                std::cout << "          JARAK ANTARA 2 TITIK           \n";
-                std::cout << "=========================================\n";
+                    double jarakFungsi = arr[o1 - 1].jarakDuaTitikFungsi(arr[o2 - 1]);
+                    double jarakVoid[1];
+                    arr[o1 - 1].jarakDuaTitikVoid(arr[o2 - 1], jarakVoid);
 
-                o1 = bacaPilihan("Pilih Objek Pertama (1-4): ", 1, 4);
-                o2 = bacaPilihan("Pilih Objek Kedua (1-4): ", 1, 4);
-
-                Koordinat arr[4] = {koor1, koor2, koor3, koor4};
-
-                double jarakFungsi = arr[o1 - 1].jarakDuaTitikFungsi(arr[o2 - 1]);
-                double jarakVoid;
-                arr[o1 - 1].jarakDuaTitikVoid(arr[o2 - 1], jarakVoid);
-
-                std::cout << "Jarak antara Objek " << o1 << " dan " << o2 << " :\n";
-                std::cout << "   - Versi Fungsi : " << jarakFungsi << "\n";
-                std::cout << "   - Versi Void   : " << jarakVoid << "\n";
-                break;
-            }
-            case 5: {
-                int pilihOut;
-                std::cout << "=========================================\n";
-                std::cout << "Pilih Menu Output\n";
-                std::cout << "1. Output Dalam (Menampilkan semua objek via Method Class)\n";
-                std::cout << "2. Output Luar (Menampilkan semua objek via Fungsi Luar)\n";
-                std::cout << "=========================================\n";
-                std::cout << ">> Pilih Menu Output : "; std::cin >> pilihOut;
-                
-                if (pilihOut == 1) {
-                    koor1.outputDalam(koor2, koor3, koor4);
+                    cout << "Jarak antara Objek " << o1 << " dan " << o2 << " :\n";
+                    cout << "   - Versi Fungsi : " << format(jarakFungsi) << "\n";
+                    cout << "   - Versi Void   : " << format(jarakVoid[0]) << "\n";
+                    break;
                 }
-                else if (pilihOut == 2) {
-                    outputLuar(koor1, koor2, koor3, koor4);
-                }
-                break;
-            }
-            case 0:
-                std::cout << "\nBye-bye!.\n";
-                break;
-            default:
-                std::cout << "Pilihan tidak valid! Silakan coba lagi.\n";
-        }
-    } while (menuUtama != 0);
+                case 5: {
+                    int pilihOut;
+                    cout << "=========================================\n";
+                    cout << "Pilih Menu Output\n";
+                    cout << "1. Output Dalam (Menampilkan semua objek via Method Class)\n";
+                    cout << "2. Output Luar (Menampilkan semua objek via Fungsi Luar)\n";
+                    cout << "=========================================\n";
+                    cout << ">> Pilih Menu Output : ";
+                    cin >> pilihOut;
 
+                    if (pilihOut == 1) {
+                        koor1.outputDalam(koor2, koor3, koor4);
+                    } else if (pilihOut == 2) {
+                        outputLuar(koor1, koor2, koor3, koor4);
+                    }
+                    break;
+                }
+                case 0:
+                    cout << "\nBye-bye!.\n";
+                    break;
+                default:
+                    cout << "Pilihan tidak valid! Silakan coba lagi.\n";
+            }
+        } while (menuUtama != 0);
+    }
+};
+
+int main() {
+    Menu menu;
+    menu.tampilMenu();
     return 0;
 }

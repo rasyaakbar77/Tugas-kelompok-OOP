@@ -102,7 +102,6 @@ class Koordinat {
     }
 
     // Method Mencari Jarak antar 2 titik (void)
-    // double[] dipakai supaya hasil bisa dikirim balik lewat parameter (setara double &jarak di C++)
     public void jarakDuaTitikVoid(Koordinat b, double[] jarak) {
         jarak[0] = Math.sqrt(Math.pow(b.absis - this.absis, 2) + Math.pow(b.ordinat - this.ordinat, 2));
     }
@@ -126,8 +125,155 @@ class Koordinat {
     }
 }
 
+class Menu {
+    private int menuUtama;
+
+    public void tampilMenu() {
+        Scanner input = KoordinatApp.input;
+
+        Koordinat koor1 = new Koordinat(); // Input Melalui Setter
+        koor1.setAbsis(3);
+        koor1.setOrdinat(4);
+        
+        Koordinat koor2 = new Koordinat(5, 6); // Input melalui Constructor Parameter
+        Koordinat koor3 = new Koordinat(); // Input Melalui method inputDalam
+        Koordinat koor4 = new Koordinat(); // Input Melalui method inputLuar
+
+        do {
+            System.out.println("\n=========================================");
+            System.out.println("     MENU APLIKASI KOORDINAT KARTESIUS     ");
+            System.out.println("=========================================");
+            System.out.println("1. Input Koordinat 3 dan 4");
+            System.out.println("2. Pencerminan");
+            System.out.println("3. Titik Tengah");
+            System.out.println("4. Jarak 2 Titik");
+            System.out.println("5. Tampilkan Seluruh Objek");
+            System.out.println("0. Keluar");
+            System.out.println("=========================================");
+            System.out.print(">> Masukkan Pilihan Menu : ");
+            menuUtama = input.nextInt();
+
+            switch (menuUtama) {
+                case 1: {
+                    int pilihObjek;
+                    System.out.println("=========================================");
+                    System.out.println("PILIH OBJEK YANG MAU DI-INPUT");
+                    System.out.println("1. Koordinat 3 (via Input Dalam)");
+                    System.out.println("2. Koordinat 4 (via Input Luar)");
+                    System.out.println("=========================================");
+                    System.out.print(">> Pilih Objek (1-2): ");
+                    pilihObjek = input.nextInt();
+
+                    if (pilihObjek == 1) {
+                        System.out.println("Input untuk Koordinat 3:");
+                        koor3.inputDalam();
+                    } else if (pilihObjek == 2) {
+                        System.out.println("Input untuk Koordinat 4:");
+                        KoordinatApp.inputLuar(koor4);
+                    } 
+                    break;
+                }
+                case 2: {
+                    int sumbu, pilihObjek;
+                    System.out.println("=========================================");
+                    System.out.println("PENCERMINAN");
+                    System.out.println("1. Terhadap Sumbu X");
+                    System.out.println("2. Terhadap Sumbu Y");
+                    System.out.println("=========================================");
+
+                    sumbu = KoordinatApp.bacaPilihan(">> Pilih Sumbu (1/2): ", 1, 2);
+                    pilihObjek = KoordinatApp.bacaPilihan(">> Pilih Objek yang dicerminkan (1-4): ", 1, 4);
+
+                    Koordinat[] arr = {koor1, koor2, koor3, koor4};
+                    Koordinat target = arr[pilihObjek - 1];
+
+                    if (sumbu == 1) {
+                        Koordinat hasilFungsi = target.pencerminanXFungsi();
+                        Koordinat hasilVoid = new Koordinat();
+                        target.pencerminanXVoid(hasilVoid);
+                        
+                        System.out.println("Hasil Pencerminan terhadap Sumbu X:");
+                        System.out.println("   > Versi Fungsi : (" + KoordinatApp.format(hasilFungsi.getAbsis()) + ", " + KoordinatApp.format(hasilFungsi.getOrdinat()) + ")");
+                        System.out.println("   > Versi Void   : (" + KoordinatApp.format(hasilVoid.getAbsis()) + ", " + KoordinatApp.format(hasilVoid.getOrdinat()) + ")");
+                    } else {
+                        Koordinat hasilFungsi = target.pencerminanYFungsi();
+                        Koordinat hasilVoid = new Koordinat();
+                        target.pencerminanYVoid(hasilVoid);
+
+                        System.out.println("Hasil Pencerminan terhadap Sumbu Y:");
+                        System.out.println("   > Versi Fungsi : (" + KoordinatApp.format(hasilFungsi.getAbsis()) + ", " + KoordinatApp.format(hasilFungsi.getOrdinat()) + ")");
+                        System.out.println("   > Versi Void   : (" + KoordinatApp.format(hasilVoid.getAbsis()) + ", " + KoordinatApp.format(hasilVoid.getOrdinat()) + ")");
+                    }
+                    break;
+                }
+                case 3: {
+                    int o1, o2;
+                    System.out.println("=========================================");
+                    System.out.println("       TITIK TENGAH ANTARA 2 OBJEK       ");
+                    System.out.println("=========================================");
+
+                    o1 = KoordinatApp.bacaPilihan("Pilih Objek Pertama (1-4): ", 1, 4);
+                    o2 = KoordinatApp.bacaPilihan("Pilih Objek Kedua (1-4): ", 1, 4);
+
+                    Koordinat[] arr = {koor1, koor2, koor3, koor4};
+                    
+                    Koordinat hasilFungsi = arr[o1 - 1].titikTengahFungsi(arr[o2 - 1]);
+                    Koordinat hasilVoid = new Koordinat();
+                    hasilVoid.titikTengahVoid(arr[o1 - 1], arr[o2 - 1]);
+
+                    System.out.println("Titik Tengah antara Objek " + o1 + " dan " + o2 + " :");
+                    System.out.println("   > Versi Fungsi : (" + KoordinatApp.format(hasilFungsi.getAbsis()) + ", " + KoordinatApp.format(hasilFungsi.getOrdinat()) + ")");
+                    System.out.println("   > Versi Void   : (" + KoordinatApp.format(hasilVoid.getAbsis()) + ", " + KoordinatApp.format(hasilVoid.getOrdinat()) + ")");
+                    break;
+                }
+                case 4: {
+                    int o1, o2;
+                    System.out.println("=========================================");
+                    System.out.println("          JARAK ANTARA 2 TITIK           ");
+                    System.out.println("=========================================");
+
+                    o1 = KoordinatApp.bacaPilihan("Pilih Objek Pertama (1-4): ", 1, 4);
+                    o2 = KoordinatApp.bacaPilihan("Pilih Objek Kedua (1-4): ", 1, 4);
+
+                    Koordinat[] arr = {koor1, koor2, koor3, koor4};
+
+                    double jarakFungsi = arr[o1 - 1].jarakDuaTitikFungsi(arr[o2 - 1]);
+                    double[] jarakVoid = new double[1];
+                    arr[o1 - 1].jarakDuaTitikVoid(arr[o2 - 1], jarakVoid);
+
+                    System.out.println("Jarak antara Objek " + o1 + " dan " + o2 + " :");
+                    System.out.println("   - Versi Fungsi : " + KoordinatApp.format(jarakFungsi));
+                    System.out.println("   - Versi Void   : " + KoordinatApp.format(jarakVoid[0]));
+                    break;
+                }
+                case 5: {
+                    int pilihOut;
+                    System.out.println("=========================================");
+                    System.out.println("Pilih Menu Output");
+                    System.out.println("1. Output Dalam (Menampilkan semua objek via Method Class)");
+                    System.out.println("2. Output Luar (Menampilkan semua objek via Fungsi Luar)");
+                    System.out.println("=========================================");
+                    System.out.print(">> Pilih Menu Output : "); pilihOut = input.nextInt();
+                    
+                    if (pilihOut == 1) {
+                        koor1.outputDalam(koor2, koor3, koor4);
+                    }
+                    else if (pilihOut == 2) {
+                        KoordinatApp.outputLuar(koor1, koor2, koor3, koor4);
+                    }
+                    break;
+                }
+                case 0:
+                    System.out.println("\nBye-bye!.");
+                    break;
+                default:
+                    System.out.println("Pilihan tidak valid! Silakan coba lagi.");
+            }
+        } while (menuUtama != 0);
+    }
+}
+
 public class KoordinatApp {
-    // Scanner dipakai bersama (setara std::cin di C++)
     static Scanner input = new Scanner(System.in).useLocale(Locale.US);
 
     // format angka seperti cout di C++ (maks 6 angka signifikan, nol di belakang dibuang)
@@ -170,13 +316,12 @@ public class KoordinatApp {
         }
     }
 
-    //validasi pilihan (angka harus di antara min dan max)
+    // validasi pilihan (angka harus di antara min dan max)
     public static int bacaPilihan(String pesan, int min, int max) {
         int nilai;
         while (true) {
             System.out.print(pesan);
             if (!input.hasNextInt()) {
-                // reset error state (tidak diperlukan di Java, Scanner tidak masuk error state)
                 input.next();                    // buang input invalid
                 input.nextLine();
                 System.out.println("Masukkan angka yang valid!");
@@ -190,156 +335,7 @@ public class KoordinatApp {
     }
 
     public static void main(String[] args) {
-        Koordinat koor1 = new Koordinat(); // Input Melalui Setter
-        koor1.setAbsis(3);
-        koor1.setOrdinat(4);
-        
-        Koordinat koor2 = new Koordinat(5, 6); // Input melalui Constructor Parameter
-        Koordinat koor3 = new Koordinat(); // Input Melalui method inputDalam
-        Koordinat koor4 = new Koordinat(); // Input Melalui method inputLuar
-
-        int menuUtama;
-        do {
-            System.out.println("\n=========================================");
-            System.out.println("     MENU APLIKASI KOORDINAT KARTESIUS     ");
-            System.out.println("=========================================");
-            System.out.println("1. Input Koordinat 3 dan 4");
-            System.out.println("2. Pencerminan");
-            System.out.println("3. Titik Tengah");
-            System.out.println("4. Jarak 2 Titik");
-            System.out.println("5. Tampilkan Seluruh Objek");
-            System.out.println("0. Keluar");
-            System.out.println("=========================================");
-            System.out.print(">> Masukkan Pilihan Menu : ");
-            menuUtama = input.nextInt();
-
-            switch (menuUtama) {
-                case 1: {
-                    int pilihObjek;
-                    System.out.println("=========================================");
-                    System.out.println("PILIH OBJEK YANG MAU DI-INPUT");
-                    System.out.println("1. Koordinat 3 (via Input Dalam)");
-                    System.out.println("2. Koordinat 4 (via Input Luar)");
-                    System.out.println("=========================================");
-                    System.out.print(">> Pilih Objek (1-2): ");
-                    pilihObjek = input.nextInt();
-
-                    if (pilihObjek == 1) {
-                        System.out.println("Input untuk Koordinat 3:");
-                        koor3.inputDalam();
-                    } else if (pilihObjek == 2) {
-                        System.out.println("Input untuk Koordinat 4:");
-                        inputLuar(koor4);
-                    } 
-                    break;
-                }
-                case 2: {
-                    int sumbu, pilihObjek;
-                    System.out.println("=========================================");
-                    System.out.println("PENCERMINAN");
-                    System.out.println("1. Terhadap Sumbu X");
-                    System.out.println("2. Terhadap Sumbu Y");
-                    System.out.println("=========================================");
-                    //System.out.print(">> Pilih Sumbu (1/2): ");
-                    //sumbu = input.nextInt();
-
-                    sumbu = bacaPilihan(">> Pilih Sumbu (1/2): ", 1, 2);
-                    
-                   
-                    //System.out.print(">> Pilih Objek yang dicerminkan (1-4): ");
-                    //pilihObjek = input.nextInt();
-
-                    pilihObjek = bacaPilihan(">> Pilih Objek yang dicerminkan (1-4): ", 1, 4);
-
-                    Koordinat[] arr = {koor1, koor2, koor3, koor4};
-                    Koordinat target = arr[pilihObjek - 1];
-
-                    if (sumbu == 1) {
-                        Koordinat hasilFungsi = target.pencerminanXFungsi();
-                        Koordinat hasilVoid = new Koordinat();
-                        target.pencerminanXVoid(hasilVoid);
-                        
-                        System.out.println("Hasil Pencerminan terhadap Sumbu X:");
-                        System.out.println("   > Versi Fungsi : (" + format(hasilFungsi.getAbsis()) + ", " + format(hasilFungsi.getOrdinat()) + ")");
-                        System.out.println("   > Versi Void   : (" + format(hasilVoid.getAbsis()) + ", " + format(hasilVoid.getOrdinat()) + ")");
-                    } else {
-                        Koordinat hasilFungsi = target.pencerminanYFungsi();
-                        Koordinat hasilVoid = new Koordinat();
-                        target.pencerminanYVoid(hasilVoid);
-
-                        System.out.println("Hasil Pencerminan terhadap Sumbu Y:");
-                        System.out.println("   > Versi Fungsi : (" + format(hasilFungsi.getAbsis()) + ", " + format(hasilFungsi.getOrdinat()) + ")");
-                        System.out.println("   > Versi Void   : (" + format(hasilVoid.getAbsis()) + ", " + format(hasilVoid.getOrdinat()) + ")");
-                    }
-                    break;
-                }
-                case 3: {
-                    int o1, o2;
-                    System.out.println("=========================================");
-                    System.out.println("       TITIK TENGAH ANTARA 2 OBJEK       ");
-                    System.out.println("=========================================");
-                    //System.out.print("Pilih Objek Pertama (1-4): "); o1 = input.nextInt();
-                    //System.out.print("Pilih Objek Kedua (1-4): "); o2 = input.nextInt();
-
-                    o1 = bacaPilihan("Pilih Objek Pertama (1-4): ", 1, 4);
-                    o2 = bacaPilihan("Pilih Objek Kedua (1-4): ", 1, 4);
-
-                    Koordinat[] arr = {koor1, koor2, koor3, koor4};
-                    
-                    Koordinat hasilFungsi = arr[o1 - 1].titikTengahFungsi(arr[o2 - 1]);
-                    Koordinat hasilVoid = new Koordinat();
-                    hasilVoid.titikTengahVoid(arr[o1 - 1], arr[o2 - 1]);
-
-                    System.out.println("Titik Tengah antara Objek " + o1 + " dan " + o2 + " :");
-                    System.out.println("   > Versi Fungsi : (" + format(hasilFungsi.getAbsis()) + ", " + format(hasilFungsi.getOrdinat()) + ")");
-                    System.out.println("   > Versi Void   : (" + format(hasilVoid.getAbsis()) + ", " + format(hasilVoid.getOrdinat()) + ")");
-                    break;
-                }
-                case 4: {
-                    int o1, o2;
-                    System.out.println("=========================================");
-                    System.out.println("          JARAK ANTARA 2 TITIK           ");
-                    System.out.println("=========================================");
-                    //System.out.print("Pilih Objek Pertama (1-4): "); o1 = input.nextInt();
-                    //System.out.print("Pilih Objek Kedua (1-4): "); o2 = input.nextInt();
-
-                    o1 = bacaPilihan("Pilih Objek Pertama (1-4): ", 1, 4);
-                    o2 = bacaPilihan("Pilih Objek Kedua (1-4): ", 1, 4);
-
-                    Koordinat[] arr = {koor1, koor2, koor3, koor4};
-
-                    double jarakFungsi = arr[o1 - 1].jarakDuaTitikFungsi(arr[o2 - 1]);
-                    double[] jarakVoid = new double[1];
-                    arr[o1 - 1].jarakDuaTitikVoid(arr[o2 - 1], jarakVoid);
-
-                    System.out.println("Jarak antara Objek " + o1 + " dan " + o2 + " :");
-                    System.out.println("   - Versi Fungsi : " + format(jarakFungsi));
-                    System.out.println("   - Versi Void   : " + format(jarakVoid[0]));
-                    break;
-                }
-                case 5: {
-                    int pilihOut;
-                    System.out.println("=========================================");
-                    System.out.println("Pilih Menu Output");
-                    System.out.println("1. Output Dalam (Menampilkan semua objek via Method Class)");
-                    System.out.println("2. Output Luar (Menampilkan semua objek via Fungsi Luar)");
-                    System.out.println("=========================================");
-                    System.out.print(">> Pilih Menu Output : "); pilihOut = input.nextInt();
-                    
-                    if (pilihOut == 1) {
-                        koor1.outputDalam(koor2, koor3, koor4);
-                    }
-                    else if (pilihOut == 2) {
-                        outputLuar(koor1, koor2, koor3, koor4);
-                    }
-                    break;
-                }
-                case 0:
-                    System.out.println("\nBye-bye!.");
-                    break;
-                default:
-                    System.out.println("Pilihan tidak valid! Silakan coba lagi.");
-            }
-        } while (menuUtama != 0);
+        Menu menu = new Menu();
+        menu.tampilMenu();
     }
 }

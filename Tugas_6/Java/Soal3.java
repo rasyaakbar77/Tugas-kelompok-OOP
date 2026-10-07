@@ -17,96 +17,106 @@ class Waktu {
     private int menit;
     private int detik;
 
+    // Constructor Default
     public Waktu() {
-        jam = 0;
-        menit = 0;
-        detik = 0;
+        this.jam = 0;
+        this.menit = 0;
+        this.detik = 0;
     }
 
-    // constructor + validasi
+    // Constructor Parameter
     public Waktu(int jam, int menit, int detik) {
-        this.jam = (jam >= 0 && jam <= 23) ? jam : 0;
-        this.menit = (menit >= 0 && menit <= 59) ? menit : 0;
-        this.detik = (detik >= 0 && detik <= 59) ? detik : 0;
+        this.jam = jam;
+        this.menit = menit;
+        this.detik = detik;
     }
 
-    // input dalam + validasi
-    public void inputWaktu() {
-        Scanner input = new Scanner(System.in);
-        do {
-            this.jam = Soal3.bacaInt(input, "   Jam   (0-23) : ");
-        } while (this.jam < 0 || this.jam > 23);
-
-        do {
-            this.menit = Soal3.bacaInt(input, "   Menit (0-59) : ");
-        } while (this.menit < 0 || this.menit > 59);
-
-        do {
-            this.detik = Soal3.bacaInt(input, "   Detik (0-59) : ");
-        } while (this.detik < 0 || this.detik > 59); 
-    }
-
-    // Setter + validasi
+    // Setter Waktu
     public void setWaktu(int jam, int menit, int detik) {
-        this.jam = (jam >= 0 && jam <= 23) ? jam : 0;
-        this.menit = (menit >= 0 && menit <= 59) ? menit : 0;
-        this.detik = (detik >= 0 && detik <= 59) ? detik : 0;
+        this.jam = jam;
+        this.menit = menit;
+        this.detik = detik;
     }
 
-    public void setJam(int jam) { 
-        this.jam = (jam >= 0 && jam <= 23) ? jam : 0; 
-    }
-    public void setMenit(int menit) { 
-        this.menit = (menit >= 0 && menit <= 59) ? menit : 0; 
-
-    }
-    public void setDetik(int detik) { 
-        this.detik = (detik >= 0 && detik <= 59) ? detik : 0; 
+    // Setter Jam
+    public void setJam(int jam) {
+        this.jam = jam;
     }
 
-    // getter
-    public int getJam() { 
-        return jam; 
-    }
-    public int getMenit() { 
-        return menit; 
-    }
-    public int getDetik() { 
-        return detik; 
+    // Setter Menit
+    public void setMenit(int menit) {
+        this.menit = menit;
     }
 
-    // proses
+    // Setter Detik
+    public void setDetik(int detik) {
+        this.detik = detik;
+    }
+
+    // Getter Jam
+    public int getJam() {
+        return this.jam;
+    }
+
+    // Getter Menit
+    public int getMenit() {
+        return this.menit;
+    }
+
+    // Getter Detik
+    public int getDetik() {
+        return this.detik;
+    }
+
+    // Input Dalam
+    public void inputDalam() {
+        do {
+            jam = Soal3.bacaInt("   Jam   (0-23) : ");
+        } while (jam < 0 || jam > 23);
+
+        do {
+            menit = Soal3.bacaInt("   Menit (0-59) : ");
+        } while (menit < 0 || menit > 59);
+
+        do {
+            detik = Soal3.bacaInt("   Detik (0-59) : ");
+        } while (detik < 0 || detik > 59);
+    }
+
+    // Output Dalam
+    public void outputDalam() {
+        System.out.println("Waktu = " + this);
+    }
+
+    // Proses
     public int totalDetik() {
-        return jam * 3600 + menit * 60 + detik;
+        return (this.jam * 3600) + (this.menit * 60) + this.detik;
     }
 
-    // cara 2 fungsi
-    public Waktu selisihFungsi(Waktu P) {
-        Waktu pHasil = new Waktu();
-        int sel = this.totalDetik() - P.totalDetik();
-        if (sel < 0) sel = 0; // Mencegah nilai minus
-            pHasil.jam = sel / 3600;
-            pHasil.menit = (sel % 3600) / 60;
-            pHasil.detik = sel % 60;
-            return pHasil;
+    // Method Proses Fungsi Return
+    public Waktu hitungSelisihFungsi(Waktu w2) {
+        int selisihTotal = Math.abs(this.totalDetik() - w2.totalDetik());
+
+        Waktu hasil = new Waktu();
+        hasil.jam = selisihTotal / 3600;
+        hasil.menit = (selisihTotal % 3600) / 60;
+        hasil.detik = selisihTotal % 60;
+
+        return hasil;
     }
 
-    //  cara 1 void
-    public void selisihVoid(Waktu P1, Waktu P2) {
-        int sel = P1.totalDetik() - P2.totalDetik();
-        if (sel < 0) sel = 0;
-            this.jam = sel / 3600;
-            this.menit = (sel % 3600) / 60;
-        this.detik = sel % 60;
-}
+    // Method Proses Void
+    public void hitungSelisihVoid(Waktu w1, Waktu w2) {
+        int selisihTotal = Math.abs(w1.totalDetik() - w2.totalDetik());
 
-    // output
+        this.jam = selisihTotal / 3600;
+        this.menit = (selisihTotal % 3600) / 60;
+        this.detik = selisihTotal % 60;
+    }
+
+    // Format Jam:Menit:Detik 
     public String toString() {
         return String.format("%02d:%02d:%02d", jam, menit, detik);
-    }
-
-    public void printWaktu() {
-        System.out.println(" Waktu = " + toString());
     }
 }
 
@@ -148,20 +158,19 @@ class Pegawai {
 
     // input dalam
     public void inputPegawai() {
-        Scanner input = new Scanner(System.in);
         System.out.print("Masukkan NIP  : ");
-        nip = input.nextLine();
+        nip = Soal3.input.nextLine();
         System.out.print("Masukkan Nama : ");
-        nama = input.nextLine();
+        nama = Soal3.input.nextLine();
         do {
-            gol = Soal3.bacaInt(input, "Masukkan Gol (1-4) : ");
+            gol = Soal3.bacaInt("Masukkan Gol (1-4) : ");
         } while (gol < 1 || gol > 4);
 
         do {
             System.out.println("Waktu Datang :");
-            datang.inputWaktu();
+            datang.inputDalam();
             System.out.println("Waktu Pulang :");
-            pulang.inputWaktu();
+            pulang.inputDalam();
             if (pulang.totalDetik() <= datang.totalDetik())
                 System.out.println("Waktu pulang harus setelah waktu datang, ulangi!");
         } while (pulang.totalDetik() <= datang.totalDetik());
@@ -211,13 +220,13 @@ class Pegawai {
 
     // proses
     public void prosesGaji() {
-        // menggunakan cara 2 (fungsi) untuk menghitung lama kerja
-        lamaKerja = pulang.selisihFungsi(datang);
+        // menggunakan fungsi untuk menghitung lama kerja
+        lamaKerja = pulang.hitungSelisihFungsi(datang);
 
         Waktu batas = new Waktu(8, 0, 0);
         if (lamaKerja.totalDetik() >= batas.totalDetik()) {
-            // menggunakan cara 1 (void) untuk menghitung jam lembur
-            jamLembur.selisihVoid(lamaKerja, batas);
+            // menggunakan void untuk menghitung jam lembur
+            jamLembur.hitungSelisihVoid(lamaKerja, batas);
             statusPeringatan = "ok";
         } else {
             jamLembur = new Waktu();
@@ -250,25 +259,14 @@ class Pegawai {
     }
 }
 
-public class Soal3 {
-    //validasi
-    public static int bacaInt(Scanner input, String pesan) {
-        while (true) {
-            System.out.print(pesan);
-            try {
-                return Integer.parseInt(input.nextLine().trim());
-            } catch (NumberFormatException e) {
-                System.out.println("Masukkan angka yang valid!");
-            }
-        }
-    }
+class Menu {
+    private int pilih;
 
-    public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
-        int pilih;
-
+    public void tampilMenu() {
+        Scanner input = Soal3.input;
         Pegawai p1 = null, p2 = null, p3 = null, p4 = null;
 
+        // Menu 
         do {
             System.out.println();
             System.out.println("MENU GAJI HARIAN PT INFORMATIKA");
@@ -278,7 +276,7 @@ public class Soal3 {
             System.out.println(" 4. Pegawai 4 : input luar class (Main)");
             System.out.println(" 5. Tampilkan daftar gaji harian");
             System.out.println(" 0. Keluar");
-            pilih = bacaInt(input, "Pilih menu: ");
+            pilih = Soal3.bacaInt("Pilih menu: ");
 
             switch (pilih) {
                 //via setter
@@ -294,13 +292,15 @@ public class Soal3 {
                     p1.prosesGaji();
                     System.out.println("Pegawai 1 berhasil diisi (setter).");
                     break;
-                //cons parameter
+
+                //constructor parameter
                 case 2:
                     p2 = new Pegawai("250002", "Budi", 1, new Waktu(8, 0, 0), new Waktu(15, 30, 0));
                     p2.prosesGaji();
                     System.out.println("Pegawai 2 berhasil diisi (constructor).");
                     break;
 
+                // input dalam class
                 case 3:
                     System.out.println("\nPegawai 3");
                     p3 = new Pegawai();
@@ -309,16 +309,17 @@ public class Soal3 {
                     System.out.println("Pegawai 3 berhasil diisi (Scanner dalam class).");
                     break;
 
+                // input luar class
                 case 4:
                     System.out.println("\nPegawai 4");
                     System.out.print("Masukkan NIP  : ");
                     String nip = input.nextLine();
                     System.out.print("Masukkan Nama : ");
                     String nama = input.nextLine();
-                    
+
                     int gol;
                     do {
-                        gol = Soal3.bacaInt(input, "Masukkan Gol (1-4) : ");   
+                        gol = Soal3.bacaInt("Masukkan Gol (1-4) : ");
                     } while (gol < 1 || gol > 4);
 
                     Waktu datang4 = new Waktu();
@@ -328,15 +329,15 @@ public class Soal3 {
                     do {
                         System.out.println("Waktu Datang :");
                         int j, m, d;
-                        do { j = bacaInt(input, "   Jam   (0-23) : "); } while (j < 0 || j > 23);
-                        do { m = bacaInt(input, "   Menit (0-59) : "); } while (m < 0 || m > 59);
-                        do { d = bacaInt(input, "   Detik (0-59) : "); } while (d < 0 || d > 59);
+                        do { j = Soal3.bacaInt("   Jam   (0-23) : "); } while (j < 0 || j > 23);
+                        do { m = Soal3.bacaInt("   Menit (0-59) : "); } while (m < 0 || m > 59);
+                        do { d = Soal3.bacaInt("   Detik (0-59) : "); } while (d < 0 || d > 59);
                         datang4.setWaktu(j, m, d);
 
                         System.out.println("Waktu Pulang :");
-                        do { j = bacaInt(input, "   Jam   (0-23) : "); } while (j < 0 || j > 23);
-                        do { m = bacaInt(input, "   Menit (0-59) : "); } while (m < 0 || m > 59);
-                        do { d = bacaInt(input, "   Detik (0-59) : "); } while (d < 0 || d > 59);
+                        do { j = Soal3.bacaInt("   Jam   (0-23) : "); } while (j < 0 || j > 23);
+                        do { m = Soal3.bacaInt("   Menit (0-59) : "); } while (m < 0 || m > 59);
+                        do { d = Soal3.bacaInt("   Detik (0-59) : "); } while (d < 0 || d > 59);
                         pulang4.setWaktu(j, m, d);
 
                         if (pulang4.totalDetik() <= datang4.totalDetik()) {
@@ -382,6 +383,27 @@ public class Soal3 {
                     System.out.println("Menu tidak tersedia!");
             }
         } while (pilih != 0);
-        input.close();
+    }
+}
+
+public class Soal3 {
+    // Statis Scanner
+    static Scanner input = new Scanner(System.in);
+
+    //validasi
+    public static int bacaInt(String pesan) {
+        while (true) {
+            System.out.print(pesan);
+            try {
+                return Integer.parseInt(input.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Masukkan angka yang valid!");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Menu menu = new Menu();
+        menu.tampilMenu();
     }
 }
