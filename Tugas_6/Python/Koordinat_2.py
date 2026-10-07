@@ -1,5 +1,5 @@
 '''
-Nama Program : Koordinat.py
+Nama Program : Koordinat_2.py
 Anggota Kelompok - NPM: 
     1. Rasya Islami Akbar - 140810250009
     2. Ghiyats Khairul Mala - 140810250102

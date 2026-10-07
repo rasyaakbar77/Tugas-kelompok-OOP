@@ -45,14 +45,29 @@ public:
     Waktu() : jam(0), menit(0), detik(0) {}
     Waktu(int jam, int menit, int detik) : jam(jam), menit(menit), detik(detik) {}
 
-    void setWaktu(int j, int m, int d) { jam = j; menit = m; detik = d; }
-    void setJam(int j) { jam = j; }
-    void setMenit(int m) { menit = m; }
-    void setDetik(int d) { detik = d; }
-
-    int getJam() const { return jam; }
-    int getMenit() const { return menit; }
-    int getDetik() const { return detik; }
+    void setWaktu(int j, int m, int d) { 
+        jam = j; 
+        menit = m; 
+        detik = d; 
+    }
+    void setJam(int j) { 
+        jam = j; 
+    }
+    void setMenit(int m) { 
+        menit = m; 
+    }
+    void setDetik(int d) { 
+        detik = d; 
+    }
+    int getJam() const { 
+        return jam; 
+    }
+    int getMenit() const { 
+        return menit; 
+    }
+    int getDetik() const { 
+        return detik; 
+    }
 
     void inputDalam() {
         do { jam = bacaInt("   Jam   (0-23) : "); } while (jam < 0 || jam > 23);
@@ -150,17 +165,36 @@ public:
         } while (pulang.totalDetik() <= datang.totalDetik());
     }
 
-    void setNip(const string& n) { nip = n; }
-    void setNama(const string& n) { nama = n; }
-    void setGol(int g) { gol = g; }
-    void setDatang(const Waktu& d) { datang = d; }
-    void setPulang(const Waktu& p) { pulang = p; }
-
-    string getNip() const { return nip; }
-    string getNama() const { return nama; }
-    int getGol() const { return gol; }
-    int getTotal() const { return total; }
-    string getStatusPeringatan() const { return statusPeringatan; }
+    void setNip(const string& n) { 
+        nip = n; 
+    }
+    void setNama(const string& n) {
+        nama = n; 
+    }
+    void setGol(int g) {
+        gol = g; 
+    }
+    void setDatang(const Waktu& d) { 
+        datang = d; 
+    }
+    void setPulang(const Waktu& p) { 
+        pulang = p; 
+    }
+    string getNip() const { 
+        return nip; 
+    }
+    string getNama() const { 
+        return nama; 
+    }
+    int getGol() const { 
+        return gol; 
+    }
+    int getTotal() const { 
+        return total; 
+    }
+    string getStatusPeringatan() const { 
+        return statusPeringatan; 
+    }
 
     void prosesGaji() {
         lamaKerja = pulang.hitungSelisihFungsi(datang);

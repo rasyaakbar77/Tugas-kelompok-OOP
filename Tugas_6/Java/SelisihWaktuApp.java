@@ -1,5 +1,5 @@
 /*
-Nama Program : Main.java
+Nama Program : SelisihWaktuApp.java
 Anggota Kelompok - NPM: 
     1. Rasya Islami Akbar - 140810250009
     2. Ghiyats Khairul Mala - 140810250102
@@ -254,7 +254,7 @@ class Menu {
     }
 }
 
-public class Main {
+public class SelisihWaktuApp {
     public static void main(String[] args) {
         Menu menu = new Menu();
         menu.jalankanMenu();

@@ -55,14 +55,26 @@ public:
     }
 
     // Setter
-    void setJam(int jam) { this->jam = jam; }
-    void setMenit(int menit) { this->menit = menit; }
-    void setDetik(int detik) { this->detik = detik; }
+    void setJam(int jam) { 
+        this->jam = jam; 
+    }
+    void setMenit(int menit) { 
+        this->menit = menit; 
+    }
+    void setDetik(int detik) { 
+        this->detik = detik; 
+    }
 
     // Getter
-    int getJam() const { return this->jam; }
-    int getMenit() const { return this->menit; }
-    int getDetik() const { return this->detik; }
+    int getJam() const { 
+        return this->jam; 
+    }
+    int getMenit() const { 
+        return this->menit; 
+    }
+    int getDetik() const { 
+        return this->detik; 
+    }
 
     // Input Dalam
     void inputDalam() {

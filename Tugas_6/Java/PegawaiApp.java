@@ -1,5 +1,5 @@
 /*
-Nama Program : Soal3.java
+Nama Program : PegawaiApp.java
 Anggota Kelompok - NPM: 
     1. Rasya Islami Akbar - 140810250009
     2. Ghiyats Khairul Mala - 140810250102
@@ -386,7 +386,7 @@ class Menu {
     }
 }
 
-public class Soal3 {
+public class PegawaiApp {
     // Statis Scanner
     static Scanner input = new Scanner(System.in);
 
