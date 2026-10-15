@@ -1,3 +1,14 @@
+/*
+Nama Program : 2dArray.java
+Anggota Kelompok - NPM: 
+    1. Rasya Islami Akbar - 140810250009
+    2. Ghiyats Khairul Mala - 140810250102
+Kelas : A
+Tanggal Pengerjaan : 09-10-2026
+Deskripsi Program : Sebuah program untuk menghitung penjumlahan dan perkalian matriks 2 dimensi
+                    dengan proses secara void dan fungsi.
+*/
+
 import java.util.Scanner;
 
 class Matriks2d {
@@ -233,9 +244,14 @@ class menu {
                     System.out.print("Pilih Matriks kedua : ");
                     o2 = sc.nextInt();
 
-                    // Di Java kita menggunakan referensi objek secara langsung tanpa pointer &
                     Matriks2d m1 = (o1 == 1) ? matriks1 : (o1 == 2 ? matriks2 : matriks3);
                     Matriks2d m2 = (o2 == 1) ? matriks1 : (o2 == 2 ? matriks2 : matriks3);
+
+                    // Validasi ordo terlebih dahulu agar pesan error hanya muncul sekali dan tidak mencetak matriks kosong
+                    if (m1.getBaris() != m2.getBaris() || m1.getKolom() != m2.getKolom()) {
+                        System.out.println("Tidak dapat melakukan penjumlahan karena ordo matriks berbeda.");
+                        break;
+                    }
 
                     Matriks2d hasilPenjumlahanVoid = new Matriks2d();
                     Matriks2d hasilPenjumlahanFungsi = new Matriks2d();
@@ -263,6 +279,12 @@ class menu {
 
                     Matriks2d m1 = (o1 == 1) ? matriks1 : (o1 == 2 ? matriks2 : matriks3);
                     Matriks2d m2 = (o2 == 1) ? matriks1 : (o2 == 2 ? matriks2 : matriks3);
+
+                    // Validasi ordo perkalian terlebih dahulu
+                    if (m1.getKolom() != m2.getBaris()) {
+                        System.out.println("Tidak dapat melakukan perkalian karena kolom matriks pertama tidak sama dengan baris matriks kedua.");
+                        break;
+                    }
 
                     Matriks2d hasilPerkalianVoid = new Matriks2d();
                     Matriks2d hasilPerkalianFungsi = new Matriks2d();
