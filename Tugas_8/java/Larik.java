@@ -188,8 +188,8 @@ class MenuLarik {
         System.out.println("--- Larik " + nama + " ---");
         System.out.println("1. Tampilkan larik");
         System.out.println("2. Hitung jumlah, rata-rata, max, min");
-        System.out.println("3. Urutkan naik (ascending)");
-        System.out.println("4. Urutkan turun (descending)");
+        System.out.println("3. Sortng Ascending");
+        System.out.println("4. Sorting Descending");
         System.out.println("0. Kembali");
     }
 

@@ -1,3 +1,13 @@
+/*
+Nama Program : 2dArray.java
+Anggota Kelompok - NPM: 
+    1. Rasya Islami Akbar - 140810250009
+    2. Ghiyats Khairul Mala - 140810250102
+Kelas : A
+Tanggal Pengerjaan : 09-10-2026
+Deskripsi Program : Sebuah program untuk menghitung penjumlahan dan perkalian matriks 2 dimensi
+                    dengan proses secara void dan fungsi.
+*/
 import java.util.Scanner;
 
 class Matriks2d {
@@ -25,15 +35,17 @@ class Matriks2d {
         }
     }
 
+    // Setter Baris
     public void setBaris(int baris) {
         this.baris = baris;
     }
 
+    // Setter Kolom
     public void setKolom(int kolom) {
         this.kolom = kolom;
     }
 
-    // Konversi initializer_list C++ di Java menggunakan array 2D literal
+    // Setter Nilai
     public void setNilai(int[][] nilaiBaru) {
         int i = 0;
         for (int[] barisNilai : nilaiBaru) {
