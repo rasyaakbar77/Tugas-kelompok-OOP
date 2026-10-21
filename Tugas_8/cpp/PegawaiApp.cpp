@@ -5,9 +5,10 @@ Anggota Kelompok - NPM:
     2. Ghiyats Khairul Mala - 140810250102
 Kelas : A
 Tanggal Pengerjaan : 15-10-2026
-Deskripsi Program : Sebuah program untukmenghitung gaji karyawan dengan input NIP, nama, gol, waktu datang, waktu pulang.
+Deskripsi Program : Sebuah program untuk menghitung gaji karyawan dengan input NIP, nama, gol, waktu datang, waktu pulang.
                     Dengan perhitungan Gaji Lembur = >= 8 jam (minimal kelebihan 1 jam / pembulatan ke bawah) dan
-                    untuk pegawai yg kurang dari 8 jam diberi status peringatan. Ddengan aturan Gaji = gapok + lembur secara OOP.
+                    untuk pegawai yg kurang dari 8 jam diberi status peringatan. Dengan aturan Gaji = gapok + lembur secara OOP.
+                    Struktur disesuaikan dengan pola 3 komponen utama (Data, Menu, Main) seperti Larik.cpp.
 */
 
 #include <iostream>
@@ -494,10 +495,22 @@ public:
     }
 };
 
+class Main {
+private:
+    ArrayPegawai larik;
+    Menu menuUtama;
+
+public:
+    Main() : larik(10), menuUtama(&larik) {}
+
+    void jalankanAplikasi() {
+        menuUtama.jalankan();
+    }
+};
+
 int main() {
-    const int MAKS = 10;
-    ArrayPegawai larik(MAKS);
-    Menu menu(&larik);
-    menu.jalankan();
+    Main programUtama;
+    programUtama.jalankanAplikasi();
+
     return 0;
 }
