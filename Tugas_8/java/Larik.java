@@ -15,252 +15,311 @@ Deskripsi Program : Sebuah program untuk megimplementasikan array 1 dimensi deng
 import java.util.Scanner;
 
 class MyLarik {
-    // atribut
-    private int ukuran;   // ukuran array 
-    private int[] elemen = new int[10];  // elemen array
+    private int ukuran;
+    private int[] arr = new int[100];
 
-    // constructor
     public MyLarik() {
-        ukuran = 10;
-        elemen = new int[ukuran];
+        ukuran = 0;
+        for (int i = 0; i < 100; i++) {
+            arr[i] = 0;
+        }
     }
-
-    public MyLarik(int ukuran) {
-        this.ukuran = ukuran;
-        elemen = new int[ukuran];
-    }
-
-    // constructor parameter
-    public MyLarik(int[] data) {
-        this.ukuran = data.length;
-        elemen = new int[ukuran];
+    
+    public MyLarik(int sizeArr, int[] array) {
+        ukuran = (sizeArr > 100) ? 100 : sizeArr;
         for (int i = 0; i < ukuran; i++) {
-            elemen[i] = data[i];
+            arr[i] = array[i];
         }
     }
 
-    // Setter dan getter
-    public void setUkuran(int ukuran) {
-        this.ukuran = ukuran;
-        elemen = new int[ukuran];
+    public void setUkuran(int sizeArr) {
+        if (sizeArr > 100 || sizeArr < 0) {
+            System.out.println("Ukuran Array Tidak Valid!.\n");
+        } else {
+            ukuran = sizeArr;
+        }
     }
 
-    public void setNilai(int indeks, int isi) {
-        elemen[indeks] = isi;
+    public boolean setNilai(int indeks, int nilai) {
+        if (indeks >= 0 && indeks < 100) {
+            arr[indeks] = nilai;
+            return true;
+        }
+        return false;
     }
 
     public int getUkuran() {
         return ukuran;
     }
 
-    // Input Dalam
+    public int getNilai(int indeks) {
+        if (indeks >= 0 && indeks < 100) {
+            return arr[indeks];
+        } else {
+            System.out.println("Indeks " + indeks + " tidak valid/kosong!\n");
+            return -1;
+        }
+    }
+
+    public double averageValue() {
+        if (ukuran == 0) return 0;
+        double sum = 0;
+        for (int i = 0; i < ukuran; i++) {
+            sum = sum + arr[i];
+        }
+        return sum / ukuran;
+    }
+
+    public int maxValue() {
+        if (ukuran == 0) return 0;
+        int max = arr[0];
+        for (int i = 0; i < ukuran; i++) {
+            if (max < arr[i]) {
+                max = arr[i];
+            }
+        }
+        return max;
+    }
+
+    public int minValue() {
+        if (ukuran == 0) return 0;
+        int min = arr[0];
+        for (int i = 0; i < ukuran; i++) {
+            if (min > arr[i]) {
+                min = arr[i];
+            }
+        }
+        return min;
+    }
+
+    public void ascSort() {
+        for (int i = 0; i < ukuran - 1; i++) {
+            for (int j = 0; j < ukuran - i - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    public void descSort() {
+        for (int i = 0; i < ukuran - 1; i++) {
+            for (int j = 0; j < ukuran - i - 1; j++) {
+                if (arr[j] < arr[j + 1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
+        }
+    }
+
     public void inputDalam() {
-        Scanner sc = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Masukkan ukuran array : ");
+        ukuran = scanner.nextInt();
+        if (ukuran > 100) ukuran = 100;
+        if (ukuran < 0) ukuran = 0;
         for (int i = 0; i < ukuran; i++) {
             System.out.print("Masukkan nilai ke-" + (i + 1) + " = ");
-            elemen[i] = sc.nextInt();
+            arr[i] = scanner.nextInt();
         }
     }
 
-    // Method Helper untuk mencari Jumlah
-    public int cariJumlah() {
-        int jumlah = 0;
+    public void cetakArray() {
+        System.out.println("Print Array:");
+        if (ukuran == 0) {
+            System.out.println("(Array masih kosong)");
+            return;
+        }
         for (int i = 0; i < ukuran; i++) {
-            jumlah = jumlah + elemen[i];
-        }
-        return (jumlah);
-    }
-
-    // Method mencari rata rata
-    public float cariRata() {
-        return ((float) cariJumlah() / ukuran);
-    }
-
-    // Method mencari nilai tertinggi
-    public int nilaiMax() {
-        int tertinggi = elemen[0];
-        for (int i = 1; i < ukuran; i++) {
-            if (elemen[i] > tertinggi) {
-                tertinggi = elemen[i];
-            }
-        }
-        return (tertinggi);
-    }
-
-    // Methode mencari nilai terendah
-    public int nilaiMin() {
-        int terendah = elemen[0];
-        for (int i = 1; i < ukuran; i++) {
-            if (elemen[i] < terendah) {
-                terendah = elemen[i];
-            }
-        }
-        return (terendah);
-    }
-
-    // Method Sorting Ascending menggunakan Bubble Sort
-    public void bubbleAsc() {
-        for (int i = 0; i < ukuran - 1; i++) {
-            for (int j = 0; j < ukuran - 1 - i; j++) {
-                if (elemen[j] > elemen[j + 1]) {
-                    int temp = elemen[j];
-                    elemen[j] = elemen[j + 1];
-                    elemen[j + 1] = temp;
-                }
-            }
+            System.out.println("Nilai ke-" + (i + 1) + " = " + arr[i]);
         }
     }
 
-    // Method Sorting Descending menggunakan Bubble Sort 
-    public void bubbleDesc() {
-        for (int i = 0; i < ukuran - 1; i++) {
-            for (int j = 0; j < ukuran - 1 - i; j++) {
-                if (elemen[j] < elemen[j + 1]) {
-                    int temp = elemen[j];
-                    elemen[j] = elemen[j + 1];
-                    elemen[j + 1] = temp;
-                }
-            }
-        }
-    }
-
-    // Output
-    public void cetakLarik() {
-        System.out.println("Pencetakan Larik");
-        for (int i = 0; i < ukuran; i++) {
-            System.out.println("Nilai ke-" + (i + 1) + " = " + elemen[i]);
-        }
-    }
-
-    public void cetakProses() {
-        System.out.println("Jumlah          = " + cariJumlah());
-        System.out.println("Rata-rata       = " + cariRata());
-        System.out.println("Nilai Tertinggi = " + nilaiMax());
-        System.out.println("Nilai Terendah  = " + nilaiMin());
+    public void cetakProses() { 
+        System.out.println("\nArray :");
+        cetakArray();
+        System.out.println("Rata-rata         = " + averageValue());
+        System.out.println("Nilai Tertinggi = " + maxValue());
+        System.out.println("Nilai Terendah  = " + minValue());
     }
 }
 
-class MenuLarik {
-    private MyLarik[] array = new MyLarik[4]; // 4 objek: A, B, C, D
+class Menu {
+    private MyLarik obj1 = new MyLarik();
+    private MyLarik obj2 = new MyLarik();
+    private MyLarik obj3 = new MyLarik();
+    private MyLarik obj4 = new MyLarik();
 
-    public void deklarasiObjek() {
-        // Objek A : input lewat constructor parameter
-        array[0] = new MyLarik(new int[]{40, 55, 63, 17, 22, 68, 89, 97, 89});
-
-        // Objek B : input lewat Setter
-        array[1] = new MyLarik();
-        array[1].setUkuran(5);
-        array[1].setNilai(0, 12);
-        array[1].setNilai(1, 7);
-        array[1].setNilai(2, 30);
-        array[1].setNilai(3, 4);
-        array[1].setNilai(4, 19);
-
-        // Objek C : input melalui fungsi dalam class
-        System.out.println("=== Input Larik C (input dalam) ===");
-        int nC = inputInt("Masukkan ukuran Larik C : ");
-        array[2] = new MyLarik(nC);
-        array[2].inputDalam();
-
-        // Objek D : input melalui fungsi luar class
-        System.out.println("=== Input Larik D (input luar) ===");
-        int nD = inputInt("Masukkan ukuran Larik D : ");
-        array[3] = new MyLarik(nD);
-        for (int i = 0; i < nD; i++) {
-            int isi = inputInt("Masukkan nilai ke-" + (i + 1) + " = ");
-            array[3].setNilai(i, isi);
-        }
-    }
-
-    public void tampilMenuUtama() {
-        System.out.println();
-        System.out.println("===== MENU UTAMA =====");
-        System.out.println("1. Larik A (input constructor)");
-        System.out.println("2. Larik B (input setter)");
-        System.out.println("3. Larik C (input dalam)");
-        System.out.println("4. Larik D (input luar)");
-        System.out.println("5. Tampilkan semua larik");
-        System.out.println("0. Keluar");
-    }
-
-    public void tampilMenuProses(char nama) {
-        System.out.println();
-        System.out.println("--- Larik " + nama + " ---");
-        System.out.println("1. Tampilkan larik");
-        System.out.println("2. Hitung jumlah, rata-rata, max, min");
-        System.out.println("3. Sortng Ascending");
-        System.out.println("4. Sorting Descending");
-        System.out.println("0. Kembali");
-    }
-
-    public void menuProses(int indeks) {
-        char nama = (char) ('A' + indeks);
-        MyLarik obj = array[indeks];
-        int pilihan;
+    public void tampilkanMenu() {
+        Scanner scanner = new Scanner(System.in);
+        char pilihan;
         do {
-            tampilMenuProses(nama);
-            pilihan = inputInt("Pilih menu : ");
-            System.out.println();
+            System.out.println("\n====================================");
+            System.out.println("        MENU APLIKASI MYLARIK       ");
+            System.out.println("====================================");
+            System.out.println("1. Input Data Array");
+            System.out.println("2. Tampilkan Array");
+            System.out.println("3. Lihat Analisis ");
+            System.out.println("4. Sorting Array");
+            System.out.println("0. Keluar");
+            System.out.println("------------------------------------");
+            System.out.print("Pilih menu: ");
+            String inputStr = scanner.next();
+            pilihan = inputStr.charAt(0);
+
             switch (pilihan) {
-                case 1:
-                    obj.cetakLarik();
+                case '1': {
+                    System.out.println("\n====================================");
+                    System.out.println("          PILIH OBJEK INPUT         ");
+                    System.out.println("====================================");
+                    System.out.println("1. Objek 1 (Via Setter)");
+                    System.out.println("2. Objek 2 (Via Cons Parameter)");
+                    System.out.println("3. Objek 3 (Via Input Dalam Class)");
+                    System.out.println("4. Objek 4 (Via Input Luar Class)");
+                    System.out.println("0. Kembali");
+                    System.out.println("------------------------------------\n");
+                    System.out.print("Pilih menu: ");
+                    int pilihMenu1 = scanner.nextInt();
+
+                    if (pilihMenu1 == 1) {
+                        obj1.setUkuran(3);
+                        obj1.setNilai(0, 10);
+                        obj1.setNilai(1, 20);
+                        obj1.setNilai(2, 30);
+                        System.out.println("\n[Sukses] Data Objek 1 berhasil diisi via Setter!\n");
+                    } 
+                    else if (pilihMenu1 == 2) {
+                        int[] dataAwal = {55, 75, 90, 40};
+                        obj2 = new MyLarik(4, dataAwal);
+                        System.out.println("\n[Sukses] Data Objek 2 berhasil diisi via Constructor Parameter!\n");
+                    } 
+                    else if (pilihMenu1 == 3) {
+                        System.out.println("\n--- Input untuk Objek 3 ---\n");
+                        obj3.inputDalam();
+                        System.out.println("\n[Sukses] Data Objek 3 berhasil disimpan!\n");
+                    } 
+                    else if (pilihMenu1 == 4) {
+                        int nLuar;
+                        int[] arrLuar = new int[100];
+                        System.out.println("\n--- Input Luar Class untuk Objek 4 ---\n");
+                        System.out.print("Masukkan ukuran array: ");
+                        nLuar = scanner.nextInt();
+                        for (int i = 0; i < nLuar; i++) {
+                            System.out.print("Masukkan nilai ke-" + (i + 1) + " = ");
+                            arrLuar[i] = scanner.nextInt();
+                        }
+                        obj4 = new MyLarik(nLuar, arrLuar);
+                        System.out.println("\n[Sukses] Data Objek 4 berhasil disimpan!\n");
+                    }
                     break;
-                case 2:
-                    obj.cetakProses();
+                }
+                case '2': {
+                    System.out.println("\n====================================");
+                    System.out.println("         PILIH OBJEK OUTPUT         ");
+                    System.out.println("====================================");
+                    System.out.println("1. Objek 1 ");
+                    System.out.println("2. Objek 2 ");
+                    System.out.println("3. Objek 3 ");
+                    System.out.println("4. Objek 4 ");
+                    System.out.println("0. Kembali");
+                    System.out.println("------------------------------------");
+                    System.out.print("Pilih menu: ");
+                    int pilihMenu2 = scanner.nextInt();
+
+                    if (pilihMenu2 == 1) obj1.cetakArray();
+                    else if (pilihMenu2 == 2) obj2.cetakArray();
+                    else if (pilihMenu2 == 3) obj3.cetakArray();
+                    else if (pilihMenu2 == 4) obj4.cetakArray();
                     break;
-                case 3:
-                    obj.bubbleAsc();
-                    System.out.println("Larik " + nama + " diurutkan naik.");
-                    obj.cetakLarik();
+                }
+                case '3': {
+                    System.out.println("\n====================================");
+                    System.out.println("         PILIH OBJEK ANALISIS       ");
+                    System.out.println("====================================");
+                    System.out.println("1. Objek 1 "); 
+                    System.out.println("2. Objek 2 ");
+                    System.out.println("3. Objek 3 ");
+                    System.out.println("4. Objek 4 ");
+                    System.out.println("0. Kembali");
+                    System.out.println("------------------------------------");
+                    System.out.print("Pilih menu: ");
+                    int pilihMenu3 = scanner.nextInt();
+
+                    if (pilihMenu3 == 1) obj1.cetakProses();
+                    else if (pilihMenu3 == 2) obj2.cetakProses();
+                    else if (pilihMenu3 == 3) obj3.cetakProses();
+                    else if (pilihMenu3 == 4) obj4.cetakProses();
                     break;
-                case 4:
-                    obj.bubbleDesc();
-                    System.out.println("Larik " + nama + " diurutkan turun.");
-                    obj.cetakLarik();
+                }
+                case '4': {
+                    System.out.println("\n====================================");
+                    System.out.println("          PILIH OBJEK SORT          ");
+                    System.out.println("====================================");
+                    System.out.println("1. Objek 1 ");
+                    System.out.println("2. Objek 2 ");
+                    System.out.println("3. Objek 3 ");
+                    System.out.println("4. Objek 4 ");
+                    System.out.println("0. Kembali");
+                    System.out.println("------------------------------------");
+                    System.out.print("Pilih menu: ");
+                    int pilihMenu4 = scanner.nextInt();
+
+                    if (pilihMenu4 >= 1 && pilihMenu4 <= 4) {
+                        System.out.println("Pilih Jenis Sorting:\n");
+                        System.out.println("1. Ascending (Kecil ke Besar)\n");
+                        System.out.println("2. Descending (Besar ke Kecil)\n");
+                        System.out.print("Pilihan: ");
+                        int jenisSort = scanner.nextInt();
+
+                        if (pilihMenu4 == 1) {
+                            if (jenisSort == 1) obj1.ascSort();
+                            else obj1.descSort();
+                            System.out.println("\nHasil setelah sorting:\n");
+                            obj1.cetakArray();
+                        } else if (pilihMenu4 == 2) {
+                            if (jenisSort == 1) obj2.ascSort();
+                            else obj2.descSort();
+                            System.out.println("\nHasil setelah sorting:\n");
+                            obj2.cetakArray();
+                        } else if (pilihMenu4 == 3) {
+                            if (jenisSort == 1) obj3.ascSort();
+                            else obj3.descSort();
+                            System.out.println("\nHasil setelah sorting:\n");
+                            obj3.cetakArray();
+                        } else if (pilihMenu4 == 4) {
+                            if (jenisSort == 1) obj4.ascSort();
+                            else obj4.descSort();
+                            System.out.println("\nHasil setelah sorting:\n");
+                            obj4.cetakArray();
+                        }
+                    }
                     break;
-                case 0:
+                }
+                case '0':
+                    System.out.println("\nTerima kasih telah menggunakan program ini!\n");
                     break;
                 default:
-                    System.out.println("Menu tidak valid.");
+                    System.out.println("\nPilihan tidak valid! Silakan masukkan angka yang benar.\n");
             }
-        } while (pilihan != 0);
-    }
-
-    public void jalankan() {
-        deklarasiObjek();
-        int pilihan;
-        do {
-            tampilMenuUtama();
-            pilihan = inputInt("Pilih menu : ");
-            if (pilihan >= 1 && pilihan <= 4) {
-                menuProses(pilihan - 1);
-            } else if (pilihan == 5) {
-                for (int i = 0; i < array.length; i++) {
-                    System.out.println();
-                    System.out.println("Larik " + (char) ('A' + i));
-                    array[i].cetakLarik();
-                }
-            } else if (pilihan == 0) {
-                System.out.println("Program selesai.");
-            } else {
-                System.out.println("Input Menu tidak valid.");
-            }
-        } while (pilihan != 0);
-    }
-
-    // validasi Input Integer
-    static int inputInt(String pesan) {
-        Scanner input = new Scanner(System.in);
-        System.out.print(pesan);
-        int hasilInput = input.nextInt();
-        return (hasilInput);
+        } while (pilihan != '0');
     }
 }
 
-// Class Main
+class MainApp {
+    private Menu menuUtama = new Menu(); 
+
+    public void jalankanAplikasi() {
+        menuUtama.tampilkanMenu();
+    }
+}
+
 public class Larik {
     public static void main(String[] args) {
-        MenuLarik menu = new MenuLarik();
-        menu.jalankan();
+        MainApp programUtama = new MainApp();
+        programUtama.jalankanAplikasi();
     }
 }

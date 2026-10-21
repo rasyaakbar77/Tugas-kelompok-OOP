@@ -1,5 +1,5 @@
 /*
-Nama Program : 2dArray.cpp
+Nama Program : Array2d.cpp
 Anggota Kelompok - NPM: 
     1. Rasya Islami Akbar - 140810250009
     2. Ghiyats Khairul Mala - 140810250102
