@@ -1,3 +1,15 @@
+/*
+Nama Program : Pegawai.java
+Anggota Kelompok - NPM: 
+    1. Rasya Islami Akbar - 140810250009
+    2. Ghiyats Khairul Mala - 140810250102
+Kelas : A
+Tanggal Pengerjaan : 28-10-2026
+Deskripsi Program : Sebuah program untuk menghitung gaji karyawan dengan input NIP, nama, gol, waktu datang, waktu pulang.
+                    Menggunakan konsep inheritance dengan membuat superclass Person yang akan di inherit oleh subclass Pegawai,
+                    dengan total 5 class secara OOP.
+*/
+
 import java.util.Scanner;
 
 class Util {
@@ -269,7 +281,7 @@ class Pegawai extends Person {
 
     public void printPegawai(int no) {
         printPerson(no);
-        System.out.printf("%-12s%5s  %-10s  %-10s  %-12s  %-12s  %-15s  %-15s  %-15s  %-12s%n",
+        System.out.printf("%-12s%5d%10s%10s%12s%12s%15s%15s%15s  %-12s%n",
                 nip, gol,
                 datang.toString(), pulang.toString(),
                 lamaKerja.toString(), jamLembur.toString(),
@@ -321,10 +333,14 @@ class ArrayPegawai {
 
     public void outputData() {
         System.out.println("\n\t\t\t\t\tDaftar Gaji Harian PT Informatika");
-        System.out.println("=".repeat(161));
-        System.out.printf("%-3s%-13s%-17s1%-12s%5s  %-10s  %-10s  %-12s  %-12s  %-15s  %-15s  %-15s  %-12s%n",
-                "No", "Nama", "Alamat", "NIP", "Gol", "Datang", "Pulang", "Lama", "Jam Lembur", "Gaji Harian", "Lembur", "Total", "Status");
-        System.out.println("=".repeat(161));
+        System.out.println("=".repeat(150));
+        
+        System.out.printf("%-3s%-13s%-17s%-12s%5s%10s%10s%12s%12s%15s%15s%15s  %-12s%n",
+                "No", "Nama", "Alamat", "NIP", "Gol", 
+                "Datang", "Pulang", "Lama", "Jam Lembur", 
+                "Gaji Harian", "Lembur", "Total", "Status");
+        
+        System.out.println("=".repeat(150));
 
         double totalSemua = 0;
         int maxGaji = (jumlah > 0) ? arr[0].getTotal() : 0;
@@ -337,7 +353,7 @@ class ArrayPegawai {
             if (t > maxGaji) maxGaji = t;
             if (t < minGaji) minGaji = t;
         }
-        System.out.println("=".repeat(1613));
+        System.out.println("=".repeat(150));
 
         double rataRata = (jumlah > 0) ? (totalSemua / jumlah) : 0;
 
