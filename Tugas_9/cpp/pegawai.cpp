@@ -1,6 +1,15 @@
 /*
-
+Nama Program : Pegawai.cpp
+Anggota Kelompok - NPM: 
+    1. Rasya Islami Akbar - 140810250009
+    2. Ghiyats Khairul Mala - 140810250102
+Kelas : A
+Tanggal Pengerjaan : 28-10-2026
+Deskripsi Program : Sebuah program untuk menghitung gaji karyawan dengan input NIP, nama, gol, waktu datang, waktu pulang.
+                    Menggunakan konsep inheritance dengan membuat superclass Person yang akan di inherit oleh subclass Pegawai,
+                    dengan total 5 class secara OOP.
 */
+
 
 #include <iostream>
 #include <string>
@@ -9,14 +18,10 @@
 #include <sstream>
 #include <limits>
 
-class Waktu {
-private:
-    int jam;
-    int menit;
-    int detik;
-
-    // Helper untuk validasi integer
-    int bacaInt(const std::string& pesan) {
+class Util {
+public:
+    // Validasi integer
+    static int bacaInt(const std::string& pesan) {
         int val;
         while (true) {
             std::cout << pesan;
@@ -30,7 +35,23 @@ private:
             }
         }
     }
+ 
+    // Format uang rupiah
+    static std::string rupiah(int nilai) {
+        std::string s = std::to_string(nilai);
+        int n = s.length();
+        for (int i = n - 3; i > 0; i -= 3) {
+            s.insert(i, ".");
+        }
+        return s;
+    }
+};
 
+class Waktu {
+private:
+    int jam;
+    int menit;
+    int detik;
 public:
     Waktu() : jam(0), menit(0), detik(0) {}
 
@@ -66,15 +87,15 @@ public:
 
     void inputDalam() {
         do { 
-            jam = bacaInt("   Jam   (0-23) : "); 
+            jam = Util::bacaInt("   Jam   (0-23) : "); 
         } while (jam < 0 || jam > 23);
 
         do { 
-            menit = bacaInt("   Menit (0-59) : "); 
+            menit = Util::bacaInt("   Menit (0-59) : "); 
         } while (menit < 0 || menit > 59);
 
         do { 
-            detik = bacaInt("   Detik (0-59) : "); 
+            detik = Util::bacaInt("   Detik (0-59) : "); 
         } while (detik < 0 || detik > 59);
     }
 
@@ -168,33 +189,6 @@ private:
     int lembur;
     int total;
     std::string statusPeringatan;
-
-    // Helper untuk validasi integer
-    int bacaInt(const std::string& pesan) {
-        int val;
-        while (true) {
-            std::cout << pesan;
-            if (std::cin >> val) {
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                return val;
-            } else {
-                std::cout << "Masukkan angka yang valid!\n";
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            }
-        }
-    }
-
-    //format penulisan uang rupiah
-    std::string rupiah(int nilai) const {
-        std::string s = std::to_string(nilai);
-        int n = s.length();
-        for (int i = n - 3; i > 0; i -= 3) {
-            s.insert(i, ".");
-        }
-        return s;
-    }
-
 public:
     Pegawai() : Person(), gol(1), nip(""), gajiHarian(0), lembur(0), total(0), statusPeringatan("") {}
 
@@ -213,7 +207,7 @@ public:
         Person::inputDalam();
 
         do {
-            gol = bacaInt("Masukkan Gol (1-4) : ");
+            gol = Util::bacaInt("Masukkan Gol (1-4) : ");
         } while (gol < 1 || gol > 4);
 
         do {
@@ -288,9 +282,9 @@ public:
                   << std::setw(10) << pulang.toString()
                   << std::setw(12) << lamaKerja.toString()
                   << std::setw(12) << jamLembur.toString()
-                  << std::setw(15) << rupiah(gajiHarian)
-                  << std::setw(15) << rupiah(lembur)
-                  << std::setw(15) << rupiah(total)
+                  << std::setw(15) << Util::rupiah(gajiHarian)
+                  << std::setw(15) << Util::rupiah(lembur)
+                  << std::setw(15) << Util::rupiah(total)
                   << std::left  << "  " << std::setw(12) << statusPeringatan 
                   << "\n";
     }
@@ -299,9 +293,162 @@ public:
 
 class ArrayPegawai {
 private:
-    
-}
+    static const int max = 100;
+    Pegawai arr[max];
+    int jumlah;
 
+public:
+    ArrayPegawai() : jumlah(0) {}
+
+    ArrayPegawai(Pegawai dataPegawai[], int jml) {
+        jumlah = (jml > max) ? max : jml;
+        for (int i = 0; i < jumlah; i++) {
+            arr[i] = dataPegawai[i];
+        }
+    }
+
+    void setJumlah(int jml) {
+        if (jml > max || jml < 0) {
+            std::cout<<"Jumlah Array Tidak Valid.\n";
+        }
+        jumlah = (jml > max) ? max : (jml < 0 ? 0 : jml);
+    }
+
+    int getJumlah() const {
+        return jumlah;
+    }
+
+    void inputDalam() {
+        do {
+            jumlah = Util::bacaInt("Masukkan jumlah pegawai (1-100): ");
+        } while (jumlah < 1 || jumlah > max);
+
+        for (int i = 0; i < jumlah; i++) {
+            std::cout << "\nData Pegawai ke-" << (i + 1) << "\n";
+            arr[i].inputPegawai();
+        }
+    }
+
+    void prosesData() {
+        for (int i = 0; i < jumlah; i++) {
+            arr[i].prosesGaji();
+        }
+    }
+
+    void setPegawaiAt(int index, const Pegawai& p) {
+        if (index >= 0 && index < max) {
+            arr[index] = p;
+        }
+    }
+
+    Pegawai getPegawaiAt(int index) const {
+        if (index >= 0 && index < max) {
+            return arr[index];
+        }
+        return Pegawai(); 
+    }
+
+    void outputData() const {
+        std::cout << "\n\t\t\t\t\tDaftar Gaji Harian PT Informatika\n";
+        std::cout << std::string(140, '=') << "\n";
+        std::cout << std::left  << std::setw(3)  << "No"
+                  << std::left  << std::setw(13) << "Nama"
+                  << std::left  << std::setw(17) << "Alamat"
+                  << std::left  << std::setw(12) << "NIP"
+                  << std::right << std::setw(5)  << "Gol"
+                  << std::setw(10) << "Datang"
+                  << std::setw(10) << "Pulang"
+                  << std::setw(12) << "Lama"
+                  << std::setw(12) << "Jam Lembur"
+                  << std::setw(15) << "Gaji Harian"
+                  << std::setw(15) << "Lembur"
+                  << std::setw(15) << "Total"
+                  << "  Status" << "\n";
+        std::cout << std::string(140, '=') << "\n";
+
+        double totalSemua = 0;
+        int maxGaji = (jumlah > 0) ? arr[0].getTotal() : 0;
+        int minGaji = (jumlah > 0) ? arr[0].getTotal() : 0;
+
+        for (int i = 0; i < jumlah; i++) {
+            arr[i].printPegawai(i + 1);
+            int t = arr[i].getTotal();
+            totalSemua += t;
+            if (t > maxGaji) maxGaji = t;
+            if (t < minGaji) minGaji = t;
+        }
+        std::cout << std::string(140, '=') << "\n";
+
+        double rataRata = (jumlah > 0) ? (totalSemua / jumlah) : 0;
+
+        std::cout << "Rata-rata Gaji : " << (jumlah > 0 ? Util::rupiah(static_cast<int>(rataRata)) : "---") << "\n";
+        std::cout << "Gaji Tertinggi : " << (jumlah > 0 ? Util::rupiah(maxGaji) : "---") << "\n";
+        std::cout << "Gaji Terendah  : " << (jumlah > 0 ? Util::rupiah(minGaji) : "---") << "\n";
+    }
+};
+
+class Menu {
+private:
+    ArrayPegawai dataPegawai;
+
+    int bacaInt(const std::string& pesan) {
+        int val;
+        while (true) {
+            std::cout << pesan;
+            if (std::cin >> val) {
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                return val;
+            } else {
+                std::cout << "Masukkan angka yang valid!\n";
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            }
+        }
+    }
+
+public:
+    Menu() {}
+
+    // Method Input/Output Menu
+    void tampilkanMenu() const {
+        std::cout << "\n========================================\n";
+        std::cout << "         MENU GAJI PT INFORMATIKA         \n";
+        std::cout << "========================================\n";
+        std::cout << "1. Input Data Pegawai\n";
+        std::cout << "2. Tampilkan Daftar Gaji\n";
+        std::cout << "3. Keluar\n";
+        std::cout << "----------------------------------------\n";
+    }
+
+    // Method Proses Utama Menu
+    void jalankan() {
+        int pilihan;
+        do {
+            tampilkanMenu();
+            pilihan = bacaInt("Pilih menu (1-3): ");
+            switch (pilihan) {
+                case 1:
+                    dataPegawai.inputDalam();
+                    break;
+                case 2:
+                    dataPegawai.prosesData();
+                    dataPegawai.outputData();
+                    break;
+                case 3:
+                    std::cout << "Keluar dari program!\n";
+                    break;
+                default:
+                    std::cout << "Input tidak valid, silahkan coba lagi!\n";
+            }
+        } while (pilihan != 3);
+    }
+};
+
+int main() {
+    Menu pegawaiApp;
+    pegawaiApp.jalankan();
+    return 0;
+}
 // class Pegawai {
 // private:    
 //     std::string nip;
@@ -445,6 +592,4 @@ private:
 //                << std::left << std::setw(10) << rupiah(total)
 //              << statusPeringatan << "\n";
 //     }
-// };
-
-
+// 
