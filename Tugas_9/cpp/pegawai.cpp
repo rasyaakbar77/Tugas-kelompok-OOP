@@ -1,0 +1,450 @@
+/*
+
+*/
+
+#include <iostream>
+#include <string>
+#include <cmath>
+#include <iomanip>
+#include <sstream>
+#include <limits>
+
+class Waktu {
+private:
+    int jam;
+    int menit;
+    int detik;
+
+    // Helper untuk validasi integer
+    int bacaInt(const std::string& pesan) {
+        int val;
+        while (true) {
+            std::cout << pesan;
+            if (std::cin >> val) {
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                return val;
+            } else {
+                std::cout << "Masukkan angka yang valid!\n";
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            }
+        }
+    }
+
+public:
+    Waktu() : jam(0), menit(0), detik(0) {}
+
+    Waktu(int jam, int menit, int detik) {
+        this->jam = jam;
+        this->menit = menit;
+        this->detik = detik;
+    }
+
+    void setWaktu(int j, int m, int d) { 
+        jam = j; 
+        menit = m; 
+        detik = d; 
+    }
+    void setJam(int j) { 
+        jam = j; 
+    }
+    void setMenit(int m) { 
+        menit = m; 
+    }
+    void setDetik(int d) { 
+        detik = d; 
+    }
+    int getJam() { 
+        return jam; 
+    }
+    int getMenit() { 
+        return menit; 
+    }
+    int getDetik() { 
+        return detik; 
+    }
+
+    void inputDalam() {
+        do { 
+            jam = bacaInt("   Jam   (0-23) : "); 
+        } while (jam < 0 || jam > 23);
+
+        do { 
+            menit = bacaInt("   Menit (0-59) : "); 
+        } while (menit < 0 || menit > 59);
+
+        do { 
+            detik = bacaInt("   Detik (0-59) : "); 
+        } while (detik < 0 || detik > 59);
+    }
+
+    int totalDetik() const {
+        return (jam * 3600) + (menit * 60) + detik;
+    }
+
+    Waktu hitungSelisihFungsi(const Waktu& w2) const {
+        int selisihTotal = abs(this->totalDetik() - w2.totalDetik());
+        Waktu hasil;
+        hasil.jam = selisihTotal / 3600;
+        hasil.menit = (selisihTotal % 3600) / 60;
+        hasil.detik = selisihTotal % 60;
+        return hasil;
+    }
+
+    void hitungSelisihVoid(const Waktu& w1, const Waktu& w2) {
+        int selisihTotal = abs(w1.totalDetik() - w2.totalDetik());
+        this->jam = selisihTotal / 3600;
+        this->menit = (selisihTotal % 3600) / 60;
+        this->detik = selisihTotal % 60;
+    }
+
+    std::string toString() const {
+        std::stringstream ss;
+        ss << std::setfill('0') << std::setw(2) << jam << ":"
+           << std::setfill('0') << std::setw(2) << menit << ":"
+           << std::setfill('0') << std::setw(2) << detik;
+        return ss.str();
+    }
+
+    void outputDalam() {
+        std::cout << "Waktu = " << toString() << "\n";
+    }
+};
+
+// Superclass Person
+class Person {
+private:
+    std::string nama;
+    std::string alamat;
+public:
+    Person() : nama(""), alamat("") {}
+
+    Person(std::string nama, std::string alamat) {
+        this->nama = nama;
+        this->alamat = alamat;
+    }
+    
+    void inputDalam() {
+        std::cout << "Nama   : ";
+        std::getline(std::cin, nama);
+        std::cout << "Alamat : ";
+        std::getline(std::cin, alamat);
+    }
+
+    void setNama(std::string name) {
+        nama = name;
+    }
+
+    void setAlamat(std::string address) {
+        alamat = address;
+    }
+
+    std::string getNama() {
+        return this->nama;
+    }
+
+    std::string getAlamat() {
+        return this->alamat;
+    }
+
+    void printPerson(int no) const {
+        std::cout << std::left << std::setw(3)  << no
+               << std::left << std::setw(13) << nama
+               << std::left << std::setw(17) << alamat;
+
+    }
+};
+
+//Subclass Pegawai
+class Pegawai : public Person {
+private:
+    int gol;
+    std::string nip;
+    Waktu datang;
+    Waktu pulang;
+    Waktu lamaKerja;
+    Waktu jamLembur;
+    int gajiHarian;
+    int lembur;
+    int total;
+    std::string statusPeringatan;
+
+    // Helper untuk validasi integer
+    int bacaInt(const std::string& pesan) {
+        int val;
+        while (true) {
+            std::cout << pesan;
+            if (std::cin >> val) {
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                return val;
+            } else {
+                std::cout << "Masukkan angka yang valid!\n";
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            }
+        }
+    }
+
+    //format penulisan uang rupiah
+    std::string rupiah(int nilai) const {
+        std::string s = std::to_string(nilai);
+        int n = s.length();
+        for (int i = n - 3; i > 0; i -= 3) {
+            s.insert(i, ".");
+        }
+        return s;
+    }
+
+public:
+    Pegawai() : Person(), gol(1), nip(""), gajiHarian(0), lembur(0), total(0), statusPeringatan("") {}
+
+    Pegawai(std::string nip, std::string nama, std::string alamat, int umur, int gol) : Person(nama, alamat) {
+        this->nip = nip;
+        this->gol = gol;
+        this->gajiHarian = 0;
+        this->lembur = 0;
+        this->total = 0;
+        statusPeringatan = "";
+    }
+
+    void inputPegawai() {
+        std::cout<< "NIP     : ";
+        std::getline(std::cin, nip);
+        Person::inputDalam();
+
+        do {
+            gol = bacaInt("Masukkan Gol (1-4) : ");
+        } while (gol < 1 || gol > 4);
+
+        do {
+            std::cout << "Waktu Datang :\n";
+            datang.inputDalam();
+            std::cout << "Waktu Pulang :\n";
+            pulang.inputDalam();
+            if (pulang.totalDetik() <= datang.totalDetik())
+                std::cout << "Waktu pulang harus setelah waktu datang, ulangi!\n";
+        } while (pulang.totalDetik() <= datang.totalDetik());
+    }
+
+    void setNip(const std::string& n) { 
+        nip = n; 
+    }
+
+    void setGol(int g) {
+        gol = g; 
+    }
+
+    void setDatang(const Waktu& d) { 
+        datang = d; 
+    }
+
+    void setPulang(const Waktu& p) { 
+        pulang = p; 
+    }
+
+    std::string getNip() const { 
+        return nip; 
+    }
+
+    int getGol() const { 
+        return gol; 
+    }
+    int getTotal() const { 
+        return total; 
+    }
+    std::string getStatusPeringatan() const { 
+        return statusPeringatan; 
+    }
+
+    void prosesGaji() {
+        lamaKerja = pulang.hitungSelisihFungsi(datang);
+
+        Waktu batas(8, 0, 0);
+        if (lamaKerja.totalDetik() >= batas.totalDetik()) {
+            jamLembur.hitungSelisihVoid(lamaKerja, batas);
+            statusPeringatan = "ok";
+        } else {
+            jamLembur = Waktu();
+            statusPeringatan = "Peringatan";
+        }
+
+        int tarif = 0;
+        switch (gol) {
+            case 1: gajiHarian = 150000; tarif = 50000;  break;
+            case 2: gajiHarian = 200000; tarif = 75000;  break;
+            case 3: gajiHarian = 400000; tarif = 150000; break;
+            case 4: gajiHarian = 500000; tarif = 200000; break;
+        }
+
+        lembur = jamLembur.getJam() * tarif;
+        total = gajiHarian + lembur;
+    }
+
+    void printPegawai(int no) const {
+        printPerson(no); 
+        std::cout << std::left << std::setw(12) << nip
+                  << std::right << std::setw(5)  << gol
+                  << std::setw(10) << datang.toString()
+                  << std::setw(10) << pulang.toString()
+                  << std::setw(12) << lamaKerja.toString()
+                  << std::setw(12) << jamLembur.toString()
+                  << std::setw(15) << rupiah(gajiHarian)
+                  << std::setw(15) << rupiah(lembur)
+                  << std::setw(15) << rupiah(total)
+                  << std::left  << "  " << std::setw(12) << statusPeringatan 
+                  << "\n";
+    }
+        
+};
+
+class ArrayPegawai {
+private:
+    
+}
+
+// class Pegawai {
+// private:    
+//     std::string nip;
+//     std::string nama;
+//     int gol;
+//     Waktu datang;
+//     Waktu pulang;
+//     Waktu lamaKerja;
+//     Waktu jamLembur;
+//     int gajiHarian;
+//     int lembur;
+//     int total;
+//     std::string statusPeringatan;
+
+//     //format penulisan uang rupiah
+//     std::string rupiah(int nilai) const {
+//         std::string s = std::to_string(nilai);
+//         int n = s.length();
+//         for (int i = n - 3; i > 0; i -= 3) {
+//             s.insert(i, ".");
+//         }
+//         return s;
+//     }
+
+//     //helper validasi integer
+//     int bacaInt(const std::string& pesan) {
+//         int val;
+//         while (true) {
+//             std::cout << pesan;
+//             if (std::cin >> val) {
+//                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+//                 return val;
+//             } else {
+//                 std::cout << "Masukkan angka yang valid!\n";
+//                 std::cin.clear();
+//                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+//             }
+//         }
+//     }
+
+// public:
+//     Pegawai() : nip(""), nama(""), gol(0), gajiHarian(0), lembur(0), total(0), statusPeringatan("") {}
+
+//     Pegawai(std::string nip, std::string nama, int gol, Waktu datang, Waktu pulang) {
+//         this->nip = nip;
+//         this->nama = nama;
+//         this->gol = gol;
+//         this->datang = datang;
+//         this->pulang = pulang;
+//         this->gajiHarian = 0;
+//         this->lembur = 0;
+//         this->total = 0;
+//         this->statusPeringatan = "";
+//     }
+
+//     void inputPegawai() {
+//         std::cout << "Masukkan NIP  : ";
+//         std::getline(std::cin, nip);
+//         std::cout << "Masukkan Nama : ";
+//         std::getline(std::cin, nama);
+//         do {
+//             gol = bacaInt("Masukkan Gol (1-4) : ");
+//         } while (gol < 1 || gol > 4);
+
+//         do {
+//             std::cout << "Waktu Datang :\n";
+//             datang.inputDalam();
+//             std::cout << "Waktu Pulang :\n";
+//             pulang.inputDalam();
+//             if (pulang.totalDetik() <= datang.totalDetik())
+//                 std::cout << "Waktu pulang harus setelah waktu datang, ulangi!\n";
+//         } while (pulang.totalDetik() <= datang.totalDetik());
+//     }
+
+//     void setNip(const std::string& n) { 
+//         nip = n; 
+//     }
+//     void setNama(const std::string& n) {
+//         nama = n; 
+//     }
+//     void setGol(int g) {
+//         gol = g; 
+//     }
+//     void setDatang(const Waktu& d) { 
+//         datang = d; 
+//     }
+//     void setPulang(const Waktu& p) { 
+//         pulang = p; 
+//     }
+//     std::string getNip() const { 
+//         return nip; 
+//     }
+//     std::string getNama() const { 
+//         return nama; 
+//     }
+//     int getGol() const { 
+//         return gol; 
+//     }
+//     int getTotal() const { 
+//         return total; 
+//     }
+//     std::string getStatusPeringatan() const { 
+//         return statusPeringatan; 
+//     }
+
+//     void prosesGaji() {
+//         lamaKerja = pulang.hitungSelisihFungsi(datang);
+
+//         Waktu batas(8, 0, 0);
+//         if (lamaKerja.totalDetik() >= batas.totalDetik()) {
+//             jamLembur.hitungSelisihVoid(lamaKerja, batas);
+//             statusPeringatan = "ok";
+//         } else {
+//             jamLembur = Waktu();
+//             statusPeringatan = "Peringatan";
+//         }
+
+//         int tarif = 0;
+//         switch (gol) {
+//             case 1: gajiHarian = 150000; tarif = 50000;  break;
+//             case 2: gajiHarian = 200000; tarif = 75000;  break;
+//             case 3: gajiHarian = 400000; tarif = 150000; break;
+//             case 4: gajiHarian = 500000; tarif = 200000; break;
+//         }
+
+//         lembur = jamLembur.getJam() * tarif;
+//         total = gajiHarian + lembur;
+//     }
+
+//     void printPegawai(int no) const {
+//         std::cout << std::left << std::setw(3)  << no
+//                << std::left << std::setw(7)  << nip
+//                << std::left << std::setw(13) << nama
+//                << std::left << std::setw(5)  << gol
+//                << std::left << std::setw(10) << datang.toString()
+//                << std::left << std::setw(10) << pulang.toString()
+//                << std::left << std::setw(10) << lamaKerja.toString()
+//                << std::left << std::setw(12) << jamLembur.toString()
+//                << std::left << std::setw(13) << rupiah(gajiHarian)
+//                << std::left << std::setw(10) << rupiah(lembur)
+//                << std::left << std::setw(10) << rupiah(total)
+//              << statusPeringatan << "\n";
+//     }
+// };
+
+
