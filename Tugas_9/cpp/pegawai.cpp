@@ -350,7 +350,7 @@ public:
 
     void outputData() const {
         std::cout << "\n\t\t\t\t\tDaftar Gaji Harian PT Informatika\n";
-        std::cout << std::string(140, '=') << "\n";
+        std::cout << std::string(150, '=') << "\n";
         std::cout << std::left  << std::setw(3)  << "No"
                   << std::left  << std::setw(13) << "Nama"
                   << std::left  << std::setw(17) << "Alamat"
@@ -364,7 +364,7 @@ public:
                   << std::setw(15) << "Lembur"
                   << std::setw(15) << "Total"
                   << "  Status" << "\n";
-        std::cout << std::string(140, '=') << "\n";
+        std::cout << std::string(150, '=') << "\n";
 
         double totalSemua = 0;
         int maxGaji = (jumlah > 0) ? arr[0].getTotal() : 0;
@@ -377,7 +377,7 @@ public:
             if (t > maxGaji) maxGaji = t;
             if (t < minGaji) minGaji = t;
         }
-        std::cout << std::string(140, '=') << "\n";
+        std::cout << std::string(150, '=') << "\n";
 
         double rataRata = (jumlah > 0) ? (totalSemua / jumlah) : 0;
 

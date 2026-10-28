@@ -2,21 +2,21 @@ import java.util.Scanner;
 
 class Util {
     private Util() {
-        
+
     }
 
-public static int bacaInt(Scanner sc, String pesan) {
-    while (true) {
-        System.out.print(pesan);
-        if (sc.hasNextInt()) {
-            int val = sc.nextInt();
+    public static int bacaInt(Scanner sc, String pesan) {
+        while (true) {
+            System.out.print(pesan);
+            if (sc.hasNextInt()) {
+                int val = sc.nextInt();
+                sc.nextLine(); 
+                return val;
+            }
+            System.out.println("Masukkan angka yang valid!");
             sc.nextLine(); 
-            return val;
         }
-        System.out.println("Masukkan angka yang valid!");
-        sc.nextLine(); 
     }
-}
 
     public static String rupiah(int nilai) {
         StringBuilder sb = new StringBuilder(String.valueOf(nilai));
@@ -74,18 +74,17 @@ class Waktu {
         return detik;
     }
 
-    public void inputDalam() {
-        Scanner sc = new Scanner(System.in);
+    public void inputDalam(Scanner sc) {
         do {
-            jam = bacaInt(sc, "  Jam (0-23): ");
+            jam = Util.bacaInt(sc, "  Jam   (0-23) : ");
         } while (jam < 0 || jam > 23);
 
         do {
-            menit = bacaInt(sc, "  Menit (0-59): ");
+            menit = Util.bacaInt(sc, "  Menit (0-59): ");
         } while (menit < 0 || menit > 59);
 
         do {
-            detik = bacaInt(sc, "  Detik (0-59): ");
+            detik = Util.bacaInt(sc, "  Detik (0-59): ");
         } while (detik < 0 || detik > 59);
     }
 
@@ -134,9 +133,9 @@ class Person {
     }
 
     public void inputDalam(Scanner sc) {
-        System.out.print("  Nama: ");
+        System.out.print("Nama: ");
         this.nama = sc.nextLine();
-        System.out.print("  Alamat: ");
+        System.out.print("Alamat: ");
         this.alamat = sc.nextLine();
     }
 
@@ -199,7 +198,7 @@ class Pegawai extends Person {
         super.inputDalam(scanner);
 
         do {
-            gol = bacaInt(scanner, "Masukkan Gol (1-4) : ");
+            gol = Util.bacaInt(scanner, "Masukkan Gol (1-4) : ");
         } while (gol < 1 || gol > 4);
 
         do {
@@ -270,7 +269,7 @@ class Pegawai extends Person {
 
     public void printPegawai(int no) {
         printPerson(no);
-        System.out.printf("%-12s%5d%10s%10s%12s%12s%15s%15s%15s  %-12s%n",
+        System.out.printf("%-12s%5s  %-10s  %-10s  %-12s  %-12s  %-15s  %-15s  %-15s  %-12s%n",
                 nip, gol,
                 datang.toString(), pulang.toString(),
                 lamaKerja.toString(), jamLembur.toString(),
@@ -279,3 +278,120 @@ class Pegawai extends Person {
     }
 }
 
+class ArrayPegawai {
+    private static final int max = 100;
+    private Pegawai [] arr;
+    private int jumlah;
+
+     public ArrayPegawai() {
+        arr = new Pegawai[max];
+        for (int i = 0; i < max; i++) {
+            arr[i] = new Pegawai();
+        }
+        jumlah = 0;
+    }
+
+    public void setJumlah(int jml) {
+        if (jml > max || jml < 0) {
+            System.out.println("Jumlah Array Tidak Valid.\n");
+        }
+        jumlah = (jml > max) ? max : (jml < 0 ? 0 : jml);
+    }
+
+    public int getJumlah() { 
+        return jumlah;
+    }
+
+    public void inputDalam(Scanner sc) {
+        do {
+            jumlah = Util.bacaInt(sc, "Masukkan jumlah pegawai (1-100): ");
+        } while (jumlah < 1 || jumlah > max);
+
+        for (int i = 0; i < jumlah; i++) {
+            System.out.println("\nData Pegawai ke-" + (i + 1));
+            arr[i].inputPegawai(sc);
+        }
+    }
+
+    public void prosesData() {
+        for (int i = 0; i < jumlah; i++) {
+            arr[i].prosesGaji();
+        }
+    }
+
+    public void outputData() {
+        System.out.println("\n\t\t\t\t\tDaftar Gaji Harian PT Informatika");
+        System.out.println("=".repeat(161));
+        System.out.printf("%-3s%-13s%-17s1%-12s%5s  %-10s  %-10s  %-12s  %-12s  %-15s  %-15s  %-15s  %-12s%n",
+                "No", "Nama", "Alamat", "NIP", "Gol", "Datang", "Pulang", "Lama", "Jam Lembur", "Gaji Harian", "Lembur", "Total", "Status");
+        System.out.println("=".repeat(161));
+
+        double totalSemua = 0;
+        int maxGaji = (jumlah > 0) ? arr[0].getTotal() : 0;
+        int minGaji = (jumlah > 0) ? arr[0].getTotal() : 0;
+
+        for (int i = 0; i < jumlah; i++) {
+            arr[i].printPegawai(i + 1);
+            int t = arr[i].getTotal();
+            totalSemua += t;
+            if (t > maxGaji) maxGaji = t;
+            if (t < minGaji) minGaji = t;
+        }
+        System.out.println("=".repeat(1613));
+
+        double rataRata = (jumlah > 0) ? (totalSemua / jumlah) : 0;
+
+        System.out.println("Rata-rata Gaji : " + (jumlah > 0 ? Util.rupiah((int) rataRata) : "---"));
+        System.out.println("Gaji Tertinggi : " + (jumlah > 0 ? Util.rupiah(maxGaji) : "---"));
+        System.out.println("Gaji Terendah  : " + (jumlah > 0 ? Util.rupiah(minGaji) : "---"));
+    }
+}
+
+class Menu {
+    private ArrayPegawai dataPegawai;
+    private Scanner sc;
+
+    public Menu() {
+        dataPegawai = new ArrayPegawai();
+        sc = new Scanner(System.in);
+    }
+
+    public void tampilkanMenu() {
+        System.out.println("\n========================================");
+        System.out.println("         MENU GAJI PT INFORMATIKA         ");
+        System.out.println("========================================");
+        System.out.println("1. Input Data Pegawai");
+        System.out.println("2. Tampilkan Daftar Gaji");
+        System.out.println("3. Keluar");
+        System.out.println("----------------------------------------");
+    }
+
+    public void jalankan() {
+        int pilihan;
+        do {
+            tampilkanMenu();
+            pilihan = Util.bacaInt(sc, "Pilih menu (1-3): ");
+            switch (pilihan) {
+                case 1:
+                    dataPegawai.inputDalam(sc);
+                    break;
+                case 2:
+                    dataPegawai.prosesData();
+                    dataPegawai.outputData();
+                    break;
+                case 3:
+                    System.out.println("Keluar dari program!");
+                    break;
+                default:
+                    System.out.println("Input tidak valid, silahkan coba lagi!");
+            }
+        } while (pilihan != 3);
+    }
+}
+
+public class PegawaiApp {
+    public static void main(String[] args) {
+        Menu pegawaiApp = new Menu();
+        pegawaiApp.jalankan();
+    }
+}
