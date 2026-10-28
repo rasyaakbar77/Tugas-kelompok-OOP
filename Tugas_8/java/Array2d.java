@@ -36,17 +36,14 @@ class Matriks2d {
         }
     }
 
-    // Setter Baris
     public void setBaris(int baris) {
         this.baris = baris;
     }
 
-    // Setter Kolom
     public void setKolom(int kolom) {
         this.kolom = kolom;
     }
 
-    // Setter Nilai
     public void setNilai(int[][] nilaiBaru) {
         int i = 0;
         for (int[] barisNilai : nilaiBaru) {
@@ -77,7 +74,6 @@ class Matriks2d {
         return nilai[i][j];
     }
 
-    // input dalam
     public void inputMatriks() {
         Scanner sc = new Scanner(System.in);
         do {
@@ -105,7 +101,6 @@ class Matriks2d {
         }
     }
 
-    // Method penjumlahan matriks (void)
     public void penjumlahanMatriksVoid(Matriks2d a, Matriks2d b) {
         if (a.baris != b.baris || a.kolom != b.kolom) {
             System.out.println("Tidak dapat melakukan penjumlahan karena ordo matriks berbeda.");
@@ -120,7 +115,6 @@ class Matriks2d {
         }
     }
 
-    // Method penjumlahan matriks (fungsi)
     public Matriks2d penjumlahanMatriksFungsi(Matriks2d a, Matriks2d b) {
         if (a.baris != b.baris || a.kolom != b.kolom) {
             System.out.println("Tidak dapat melakukan penjumlahan karena ordo matriks berbeda.");
@@ -136,7 +130,6 @@ class Matriks2d {
         return hasil;
     }
 
-    // Method perkalian matriks (void) 
     public void perkalianMatriksVoid(Matriks2d a, Matriks2d b) {
         if (a.kolom != b.baris) {
             System.out.println("Tidak dapat melakukan perkalian karena kolom matriks pertama tidak sama dengan baris matriks kedua.");
@@ -154,7 +147,6 @@ class Matriks2d {
         }
     }
 
-    // Method perkalian matriks (fungsi)
     public Matriks2d perkalianMatriksFungsi(Matriks2d a, Matriks2d b) {
         if (a.kolom != b.baris) {
             System.out.println("Tidak dapat melakukan perkalian karena kolom matriks pertama tidak sama dengan baris matriks kedua.");
@@ -173,7 +165,6 @@ class Matriks2d {
         return hasil;
     }
 
-    // output
     public void outputMatriks() {
         System.out.println("Matriks (" + baris + "x" + kolom + "):");
         for (int i = 0; i < baris; i++) {
@@ -185,25 +176,25 @@ class Matriks2d {
     }
 }
 
-class menu {
+class Menu {
     private int pilihan;
 
-    public menu() {
+    public Menu() {
         pilihan = 0;
     }
 
     public void tampilanMenu() {
         Scanner sc = new Scanner(System.in);
 
-        Matriks2d matriks1 = new Matriks2d(); // setter
+        Matriks2d matriks1 = new Matriks2d();
         matriks1.setBaris(3);
         matriks1.setKolom(3);
         matriks1.setNilai(new int[][]{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}});
 
-        Matriks2d matriks2 = new Matriks2d(3, 3); // constructor parameter
+        Matriks2d matriks2 = new Matriks2d(3, 3);
         matriks2.setNilai(new int[][]{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}); 
 
-        Matriks2d matriks3 = new Matriks2d(); // input dalam
+        Matriks2d matriks3 = new Matriks2d();
 
         do {
             System.out.println("=========================================");
@@ -249,7 +240,6 @@ class menu {
                     Matriks2d m1 = (o1 == 1) ? matriks1 : (o1 == 2 ? matriks2 : matriks3);
                     Matriks2d m2 = (o2 == 1) ? matriks1 : (o2 == 2 ? matriks2 : matriks3);
 
-                    // Validasi ordo terlebih dahulu agar pesan error hanya muncul sekali dan tidak mencetak matriks kosong
                     if (m1.getBaris() != m2.getBaris() || m1.getKolom() != m2.getKolom()) {
                         System.out.println("Tidak dapat melakukan penjumlahan karena ordo matriks berbeda.");
                         break;
@@ -282,7 +272,6 @@ class menu {
                     Matriks2d m1 = (o1 == 1) ? matriks1 : (o1 == 2 ? matriks2 : matriks3);
                     Matriks2d m2 = (o2 == 1) ? matriks1 : (o2 == 2 ? matriks2 : matriks3);
 
-                    // Validasi ordo perkalian terlebih dahulu
                     if (m1.getKolom() != m2.getBaris()) {
                         System.out.println("Tidak dapat melakukan perkalian karena kolom matriks pertama tidak sama dengan baris matriks kedua.");
                         break;
@@ -314,9 +303,9 @@ class menu {
     }
 }
 
-class Array2d{
+class Array2d {
     public static void main(String[] args) {
-        menu m = new menu();
+        Menu m = new Menu();
         m.tampilanMenu();
     }
 }

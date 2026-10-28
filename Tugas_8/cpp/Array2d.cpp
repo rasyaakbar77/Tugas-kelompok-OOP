@@ -179,11 +179,11 @@ class Matriks2d {
         }
 };
 
-class menu {
+class Menu {
     private :
         int pilihan;
     public :
-        menu() {
+        Menu() {
             pilihan = 0;
         }
 
@@ -244,7 +244,6 @@ class menu {
                         Matriks2d m1 = (o1 == 1) ? matriks1 : (o1 == 2 ? matriks2 : matriks3);
                         Matriks2d m2 = (o2 == 1) ? matriks1 : (o2 == 2 ? matriks2 : matriks3);
 
-                        // Validasi ordo terlebih dahulu agar pesan error hanya sekali dan tidak mencetak matriks kosong
                         if (m1.getBaris() != m2.getBaris() || m1.getKolom() != m2.getKolom()) {
                             std::cout << "Tidak dapat melakukan penjumlahan karena ordo matriks berbeda.\n";
                             break;
@@ -300,8 +299,18 @@ class menu {
         }
 };  
 
+class Main {
+    private:
+        Menu menuUtama;
+
+    public:
+        void jalankanAplikasi() {
+            menuUtama.tampilanMenu();
+        }
+};
+
 int main() {
-    menu m;
-    m.tampilanMenu();
+    Main programUtama;
+    programUtama.jalankanAplikasi();
     return 0;
 }
