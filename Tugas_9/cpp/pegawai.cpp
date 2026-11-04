@@ -391,21 +391,6 @@ class Menu {
 private:
     ArrayPegawai dataPegawai;
 
-    int bacaInt(const std::string& pesan) {
-        int val;
-        while (true) {
-            std::cout << pesan;
-            if (std::cin >> val) {
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                return val;
-            } else {
-                std::cout << "Masukkan angka yang valid!\n";
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            }
-        }
-    }
-
 public:
     Menu() {}
 
@@ -425,7 +410,7 @@ public:
         int pilihan;
         do {
             tampilkanMenu();
-            pilihan = bacaInt("Pilih menu (1-3): ");
+            pilihan = Util::bacaInt("Pilih menu (1-3): ");
             switch (pilihan) {
                 case 1:
                     dataPegawai.inputDalam();
