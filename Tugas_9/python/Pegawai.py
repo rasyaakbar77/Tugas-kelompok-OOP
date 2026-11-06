@@ -124,13 +124,8 @@ class Person:
     def getAlamat(self):
         return self.__alamat
 
-    def printPerson(self, no):
-        print(f"{no:<3d}{self.__nama:<13}{self.__alamat:<17}", end="")
-
-
 class Pegawai(Person):
-    # umur tidak dipakai (sama seperti pada versi Java)
-    def __init__(self, nip="", nama="", alamat="", umur=0, gol=1):
+    def __init__(self, nip="", nama="", alamat="", gol=1):
         super().__init__(nama, alamat)
         self.__gol = gol
         self.__nip = nip
@@ -138,9 +133,6 @@ class Pegawai(Person):
         self.__pulang = Waktu()
         self.__lamaKerja = Waktu()
         self.__jamLembur = Waktu()
-        self.__gajiHarian = 0
-        self.__lembur = 0
-        self.__total = 0
         self.__statusPeringatan = ""
 
     def inputPegawai(self):
@@ -180,11 +172,40 @@ class Pegawai(Person):
     def getGol(self):
         return self.__gol
 
-    def getTotal(self):
-        return self.__total
-
     def getStatusPeringatan(self):
         return self.__statusPeringatan
+    
+    def getGajiHarian(self):
+        match self.__gol:
+            case 1:
+                return 150000
+            case 2:
+                return 200000
+            case 3:
+                return 400000
+            case 4:
+                return 500000
+            case _:
+                return 0
+            
+    def getTarifLembur(self):
+        match self.__gol:
+            case 1:
+                return 50000
+            case 2:
+                return 75000
+            case 3:
+                return 150000
+            case 4:
+                return 200000
+            case _:
+                return 0
+            
+    def getLembur(self):
+        return self.__jamLembur.getJam() * self.getTarifLembur()
+    
+    def getTotal(self):
+        return self.getGajiHarian() + self.getLembur()
 
     def prosesGaji(self):
         self.__lamaKerja = self.__pulang.hitungSelisih(self.__datang)
@@ -197,35 +218,29 @@ class Pegawai(Person):
             self.__jamLembur = Waktu()
             self.__statusPeringatan = "Peringatan"
 
-        tarif = 0
-        if self.__gol == 1:
-            self.__gajiHarian = 150000
-            tarif = 50000
-        elif self.__gol == 2:
-            self.__gajiHarian = 200000
-            tarif = 75000
-        elif self.__gol == 3:
-            self.__gajiHarian = 400000
-            tarif = 150000
-        elif self.__gol == 4:
-            self.__gajiHarian = 500000
-            tarif = 200000
-
-        self.__lembur = self.__jamLembur.getJam() * tarif
-        self.__total = self.__gajiHarian + self.__lembur
-
-    def printPegawai(self, no):
-        self.printPerson(no)
-        print(f"{self.__nip:<12}{self.__gol:>5}  "
-              f"{self.__datang.toString():<10}  {self.__pulang.toString():<10}  "
-              f"{self.__lamaKerja.toString():<12}  {self.__jamLembur.toString():<12}  "
-              f"{Util.rupiah(self.__gajiHarian):<15}  {Util.rupiah(self.__lembur):<15}  "
-              f"{Util.rupiah(self.__total):<15}  "
-              f"{self.__statusPeringatan:<12}")
-
+    def getBaris(self, no):
+        return [
+            str(no),
+            self.getNama(),
+            self.getAlamat(),
+            self.__nip,
+            str(self.__gol),
+            self.__datang.toString(),
+            self.__pulang.toString(),
+            self.__lamaKerja.toString(),
+            self.__jamLembur.toString(),
+            Util.rupiah(self.getGajiHarian()),
+            Util.rupiah(self.getLembur()),
+            Util.rupiah(self.getTotal()),
+            self.__statusPeringatan
+        ]
 
 class ArrayPegawai:
     max = 100
+    HEADER = ["No", "Nama", "Alamat", "NIP", "Gol", "Datang", "Pulang",
+              "Lama", "Jam Lembur", "Gaji Harian", "Lembur", "Total", "Status"]
+    LEBAR = [3, 10, 14, 8, 3, 8, 8, 8, 10, 11, 11, 11, 10]
+    RATA   = ["^", "<", "<", "<", "^", "^", "^", "^", "^", ">", ">", ">", "^"]
 
     def __init__(self):
         self.__arr = [Pegawai() for _ in range(ArrayPegawai.max)]
@@ -253,34 +268,39 @@ class ArrayPegawai:
         for i in range(self.__jumlah):
             self.__arr[i].prosesGaji()
 
+    def __garis(self):
+        return "+-" + "-+-".join("-" * w for w in ArrayPegawai.LEBAR) + "-+"
+
+    def __baris(self, cells):
+        isi = [f"{c:{a}{w}}" for c, a, w in zip(cells, ArrayPegawai.RATA, ArrayPegawai.LEBAR)]
+        return "| " + " | ".join(isi) + " |"
+
     def outputData(self):
-        print("\n\t\t\t\t\tDaftar Gaji Harian PT Informatika")
-        print("=" * 161)
-        print(f"{'No':<3}{'Nama':<13}{'Alamat':<17}1{'NIP':<12}{'Gol':>5}  "
-              f"{'Datang':<10}  {'Pulang':<10}  {'Lama':<12}  {'Jam Lembur':<12}  "
-              f"{'Gaji Harian':<15}  {'Lembur':<15}  {'Total':<15}  {'Status':<12}")
-        print("=" * 161)
+        garis = self.__garis()
+        print("\n" + "Daftar Gaji Harian PT Informatika".center(len(garis)))
+        print(garis)
+        print(self.__baris(ArrayPegawai.HEADER))
+        print(garis)
 
         totalSemua = 0
         maxGaji = self.__arr[0].getTotal() if self.__jumlah > 0 else 0
         minGaji = self.__arr[0].getTotal() if self.__jumlah > 0 else 0
 
         for i in range(self.__jumlah):
-            self.__arr[i].printPegawai(i + 1)
+            print(self.__baris(self.__arr[i].getBaris(i + 1)))
             t = self.__arr[i].getTotal()
             totalSemua += t
             if t > maxGaji:
                 maxGaji = t
             if t < minGaji:
                 minGaji = t
-        print("=" * 1613)
+        print(garis)
 
         rataRata = (totalSemua / self.__jumlah) if self.__jumlah > 0 else 0
 
         print("Rata-rata Gaji : " + (Util.rupiah(int(rataRata)) if self.__jumlah > 0 else "---"))
         print("Gaji Tertinggi : " + (Util.rupiah(maxGaji) if self.__jumlah > 0 else "---"))
         print("Gaji Terendah  : " + (Util.rupiah(minGaji) if self.__jumlah > 0 else "---"))
-
 
 class Menu:
     def __init__(self):
