@@ -105,27 +105,27 @@ class Waktu:
 
 class Person:
     def __init__(self, nama="", alamat=""):
-        self.__nama = nama
-        self.__alamat = alamat
+        self._nama = nama
+        self._alamat = alamat
 
     def inputDalam(self):
-        self.__nama = input("Nama: ")
-        self.__alamat = input("Alamat: ")
+        self._nama = input("Nama: ")
+        self._alamat = input("Alamat: ")
 
     def setNama(self, nama):
-        self.__nama = nama
+        self._nama = nama
 
     def setAlamat(self, alamat):
-        self.__alamat = alamat
+        self._alamat = alamat
 
     def getNama(self):
-        return self.__nama
+        return self._nama
 
     def getAlamat(self):
-        return self.__alamat
+        return self._alamat
 
     def printPerson(self, no):
-        print(f"{no:<3d}{self.__nama:<13}{self.__alamat:<17}", end="")
+        print(f"{no:<3d}{self._nama:<13}{self._alamat:<17}", end="")
 
 
 class Pegawai(Person):
@@ -138,7 +138,6 @@ class Pegawai(Person):
         self.__pulang = Waktu()
         self.__lamaKerja = Waktu()
         self.__jamLembur = Waktu()
-        self.__gajiHarian = 0
         self.__lembur = 0
         self.__total = 0
         self.__statusPeringatan = ""
@@ -187,6 +186,7 @@ class Pegawai(Person):
         return self.__statusPeringatan
 
     def prosesGaji(self):
+        gajiHarian = 0
         self.__lamaKerja = self.__pulang.hitungSelisih(self.__datang)
 
         batas = Waktu(8, 0, 0)
@@ -199,27 +199,27 @@ class Pegawai(Person):
 
         tarif = 0
         if self.__gol == 1:
-            self.__gajiHarian = 150000
+            gajiHarian = 150000
             tarif = 50000
         elif self.__gol == 2:
-            self.__gajiHarian = 200000
+            gajiHarian = 200000
             tarif = 75000
         elif self.__gol == 3:
-            self.__gajiHarian = 400000
+            gajiHarian = 400000
             tarif = 150000
         elif self.__gol == 4:
-            self.__gajiHarian = 500000
+            gajiHarian = 500000
             tarif = 200000
 
         self.__lembur = self.__jamLembur.getJam() * tarif
-        self.__total = self.__gajiHarian + self.__lembur
+        self.__total = gajiHarian + self.__lembur
 
     def printPegawai(self, no):
         self.printPerson(no)
         print(f"{self.__nip:<12}{self.__gol:>5}  "
               f"{self.__datang.toString():<10}  {self.__pulang.toString():<10}  "
               f"{self.__lamaKerja.toString():<12}  {self.__jamLembur.toString():<12}  "
-              f"{Util.rupiah(self.__gajiHarian):<15}  {Util.rupiah(self.__lembur):<15}  "
+              f"{Util.rupiah(gajiHarian):<15}  {Util.rupiah(self.__lembur):<15}  "
               f"{Util.rupiah(self.__total):<15}  "
               f"{self.__statusPeringatan:<12}")
 

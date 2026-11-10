@@ -131,8 +131,8 @@ class Waktu {
 }
 
 class Person {
-    private String nama;
-    private String alamat;
+    protected String nama;
+    protected String alamat;
 
     public Person() {
         this.nama = "";
@@ -179,7 +179,6 @@ class Pegawai extends Person {
     private Waktu pulang = new Waktu();
     private Waktu lamaKerja = new Waktu();
     private Waktu jamLembur = new Waktu();
-    private int gajiHarian;
     private int lembur;
     private int total;
     private String statusPeringatan;
@@ -188,7 +187,6 @@ class Pegawai extends Person {
         super();
         this.gol = 1;
         this.nip = "";
-        this.gajiHarian = 0;
         this.lembur = 0;
         this.total = 0;
         this.statusPeringatan = "";
@@ -198,7 +196,6 @@ class Pegawai extends Person {
         super(nama, alamat);
         this.nip = nip;
         this.gol = gol;
-        this.gajiHarian = 0;
         this.lembur = 0;
         this.total = 0;
         this.statusPeringatan = "";
@@ -256,6 +253,7 @@ class Pegawai extends Person {
     }
 
     public void prosesGaji() {
+        int gajiHarian = 0;
         lamaKerja = pulang.hitungSelisih(datang);
 
         Waktu batas = new Waktu(8, 0, 0);
@@ -285,7 +283,7 @@ class Pegawai extends Person {
                 nip, gol,
                 datang.toString(), pulang.toString(),
                 lamaKerja.toString(), jamLembur.toString(),
-                Util.rupiah(gajiHarian), Util.rupiah(lembur), Util.rupiah(total),
+                Util.rupiah(total - lembur), Util.rupiah(lembur), Util.rupiah(total),
                 statusPeringatan);
     }
 }

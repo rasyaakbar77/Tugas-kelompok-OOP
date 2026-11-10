@@ -13,7 +13,6 @@ Deskripsi Program : Sebuah program untuk menghitung gaji karyawan dengan input N
 
 #include <iostream>
 #include <string>
-#include <cmath>
 #include <iomanip>
 #include <sstream>
 #include <limits>
@@ -134,7 +133,7 @@ public:
 
 // Superclass Person
 class Person {
-private:
+protected:
     std::string nama;
     std::string alamat;
 public:
@@ -185,17 +184,15 @@ private:
     Waktu pulang;
     Waktu lamaKerja;
     Waktu jamLembur;
-    int gajiHarian;
     int lembur;
     int total;
     std::string statusPeringatan;
 public:
-    Pegawai() : Person(), gol(1), nip(""), gajiHarian(0), lembur(0), total(0), statusPeringatan("") {}
+    Pegawai() : Person(), gol(1), nip(""), lembur(0), total(0), statusPeringatan("") {}
 
     Pegawai(std::string nip, std::string nama, std::string alamat, int umur, int gol) : Person(nama, alamat) {
         this->nip = nip;
         this->gol = gol;
-        this->gajiHarian = 0;
         this->lembur = 0;
         this->total = 0;
         statusPeringatan = "";
@@ -251,6 +248,7 @@ public:
     }
 
     void prosesGaji() {
+        int gajiHarian = 0;
         lamaKerja = pulang.hitungSelisihFungsi(datang);
 
         Waktu batas(8, 0, 0);
@@ -282,7 +280,7 @@ public:
                   << std::setw(10) << pulang.toString()
                   << std::setw(12) << lamaKerja.toString()
                   << std::setw(12) << jamLembur.toString()
-                  << std::setw(15) << Util::rupiah(gajiHarian)
+                  << std::setw(15) << Util::rupiah(total - lembur)
                   << std::setw(15) << Util::rupiah(lembur)
                   << std::setw(15) << Util::rupiah(total)
                   << std::left  << "  " << std::setw(12) << statusPeringatan 
