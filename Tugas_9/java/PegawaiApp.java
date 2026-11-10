@@ -37,6 +37,15 @@ class Util {
         }
         return sb.toString();
     }
+
+    public static String pad(String s, int w, char rata) {
+        if (s.length() > w) s = s.substring(0, w);
+        int sisa = w - s.length();
+        if (rata == '<') return s + " ".repeat(sisa);
+        if (rata == '>') return " ".repeat(sisa) + s;
+        int kiri = sisa / 2;
+        return " ".repeat(kiri) + s + " ".repeat(sisa - kiri);
+    }
 }
 
 class Waktu {
@@ -166,10 +175,6 @@ class Person {
     public String getAlamat() {
         return this.alamat;
     }
-
-    public void printPerson(int no) {
-        System.out.printf("%-3d%-13s%-17s", no, nama, alamat);
-    }
 }
 
 class Pegawai extends Person {
@@ -179,16 +184,12 @@ class Pegawai extends Person {
     private Waktu pulang = new Waktu();
     private Waktu lamaKerja = new Waktu();
     private Waktu jamLembur = new Waktu();
-    private int lembur;
-    private int total;
     private String statusPeringatan;
 
     public Pegawai() {
         super();
         this.gol = 1;
         this.nip = "";
-        this.lembur = 0;
-        this.total = 0;
         this.statusPeringatan = "";
     }
 
@@ -196,8 +197,6 @@ class Pegawai extends Person {
         super(nama, alamat);
         this.nip = nip;
         this.gol = gol;
-        this.lembur = 0;
-        this.total = 0;
         this.statusPeringatan = "";
     }
 
@@ -244,12 +243,36 @@ class Pegawai extends Person {
         return gol;
     }
 
-    public int getTotal() {
-        return total;
-    }
-
     public String getStatusPeringatan() {
         return statusPeringatan;
+    }
+
+    public int getGajiHarian() {
+        switch (gol) {
+            case 1: return 150000;
+            case 2: return 200000;
+            case 3: return 400000;
+            case 4: return 500000;
+            default: return 0;
+        }
+    }
+
+    public int getTarifLembur() {
+        switch (gol) {
+            case 1: return 50000;
+            case 2: return 75000;
+            case 3: return 150000;
+            case 4: return 200000;
+            default: return 0;
+        }
+    }
+
+    public int getLembur() {
+        return jamLembur.getJam() * getTarifLembur();
+    }
+
+    public int getTotal() {
+        return getGajiHarian() + getLembur();
     }
 
     public void prosesGaji() {
@@ -264,32 +287,25 @@ class Pegawai extends Person {
             jamLembur = new Waktu();
             statusPeringatan = "Peringatan";
         }
-
-        int tarif = 0;
-        switch (gol) {
-            case 1: gajiHarian = 150000; tarif = 50000;  break;
-            case 2: gajiHarian = 200000; tarif = 75000;  break;
-            case 3: gajiHarian = 400000; tarif = 150000; break;
-            case 4: gajiHarian = 500000; tarif = 200000; break;
-        }
-
-        lembur = jamLembur.getJam() * tarif;
-        total = gajiHarian + lembur;
     }
 
-    public void printPegawai(int no) {
-        printPerson(no);
-        System.out.printf("%-12s%5d%10s%10s%12s%12s%15s%15s%15s  %-12s%n",
-                nip, gol,
-                datang.toString(), pulang.toString(),
-                lamaKerja.toString(), jamLembur.toString(),
-                Util.rupiah(total - lembur), Util.rupiah(lembur), Util.rupiah(total),
-                statusPeringatan);
+    public String[] getBaris(int no) {
+        return new String[] {
+            String.valueOf(no), nama, alamat, nip, String.valueOf(gol),
+            datang.toString(), pulang.toString(),
+            lamaKerja.toString(), jamLembur.toString(),
+            Util.rupiah(getGajiHarian()), Util.rupiah(getLembur()), Util.rupiah(getTotal()),
+            statusPeringatan
+        };
     }
 }
 
 class ArrayPegawai {
     private static final int max = 100;
+    private static final String[] HEADER = {"No", "Nama", "Alamat", "NIP", "Gol", "Datang", "Pulang", "Lama", "Jam Lembur", "Gaji Harian", "Lembur", "Total", "Status"};
+    private static final int[] LEBAR = {3, 10, 14, 8, 3, 8, 8, 8, 10, 11, 11, 11, 10};
+    private static final char[] RATA = {'^', '<', '<', '<', '^', '^', '^', '^', '^', '>', '>', '>', '^'};
+
     private Pegawai [] arr;
     private int jumlah;
 
@@ -329,29 +345,39 @@ class ArrayPegawai {
         }
     }
 
+    private String garis() {
+        StringBuilder sb = new StringBuilder("+");
+        for (int w : LEBAR) sb.append("-".repeat(w + 2)).append("+");
+        return sb.toString();
+    }
+
+    private String baris(String[] cells) {
+        StringBuilder sb = new StringBuilder("|");
+        for (int i = 0; i < cells.length; i++) {
+            sb.append(" ").append(Util.pad(cells[i], LEBAR[i], RATA[i])).append(" |");
+        }
+        return sb.toString();
+    }
+
     public void outputData() {
-        System.out.println("\n\t\t\t\t\tDaftar Gaji Harian PT Informatika");
-        System.out.println("=".repeat(150));
-        
-        System.out.printf("%-3s%-13s%-17s%-12s%5s%10s%10s%12s%12s%15s%15s%15s  %-12s%n",
-                "No", "Nama", "Alamat", "NIP", "Gol", 
-                "Datang", "Pulang", "Lama", "Jam Lembur", 
-                "Gaji Harian", "Lembur", "Total", "Status");
-        
-        System.out.println("=".repeat(150));
+        String garis = garis();
+        System.out.println("\n" + Util.pad("Daftar Gaji Harian PT Informatika", garis.length(), '^'));
+        System.out.println(garis);
+        System.out.println(baris(HEADER));
+        System.out.println(garis);
 
         double totalSemua = 0;
         int maxGaji = (jumlah > 0) ? arr[0].getTotal() : 0;
         int minGaji = (jumlah > 0) ? arr[0].getTotal() : 0;
 
         for (int i = 0; i < jumlah; i++) {
-            arr[i].printPegawai(i + 1);
+            System.out.println(baris(arr[i].getBaris(i + 1)));
             int t = arr[i].getTotal();
             totalSemua += t;
             if (t > maxGaji) maxGaji = t;
             if (t < minGaji) minGaji = t;
         }
-        System.out.println("=".repeat(150));
+        System.out.println(garis);
 
         double rataRata = (jumlah > 0) ? (totalSemua / jumlah) : 0;
 

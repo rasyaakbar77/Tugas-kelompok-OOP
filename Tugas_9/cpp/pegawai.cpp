@@ -12,6 +12,7 @@ Deskripsi Program : Sebuah program untuk menghitung gaji karyawan dengan input N
 
 
 #include <iostream>
+#include <vector>
 #include <string>
 #include <iomanip>
 #include <sstream>
@@ -19,7 +20,6 @@ Deskripsi Program : Sebuah program untuk menghitung gaji karyawan dengan input N
 
 class Util {
 public:
-    // Validasi integer
     static int bacaInt(const std::string& pesan) {
         int val;
         while (true) {
@@ -35,7 +35,6 @@ public:
         }
     }
  
-    // Format uang rupiah
     static std::string rupiah(int nilai) {
         std::string s = std::to_string(nilai);
         int n = s.length();
@@ -44,10 +43,19 @@ public:
         }
         return s;
     }
+
+    static std::string pad(const std::string& s, int w, char rata) {
+        std::string t = s.substr(0, w);
+        int sisa = w - static_cast<int>(t.length());
+        if (rata == '<') return t + std::string(sisa, ' ');
+        if (rata == '>') return std::string(sisa, ' ') + t;
+        int kiri = sisa / 2;
+        return std::string(kiri, ' ') + t + std::string(sisa - kiri, ' ');
+    }
 };
 
 class Waktu {
-private:
+public:
     int jam;
     int menit;
     int detik;
@@ -68,19 +76,24 @@ public:
     void setJam(int j) { 
         jam = j; 
     }
+
     void setMenit(int m) { 
         menit = m; 
     }
+
     void setDetik(int d) { 
         detik = d; 
     }
-    int getJam() { 
+
+    int getJam() const { 
         return jam; 
     }
-    int getMenit() { 
+
+    int getMenit() const { 
         return menit; 
     }
-    int getDetik() { 
+
+    int getDetik() const { 
         return detik; 
     }
 
@@ -131,7 +144,6 @@ public:
     }
 };
 
-// Superclass Person
 class Person {
 protected:
     std::string nama;
@@ -166,16 +178,48 @@ public:
     std::string getAlamat() {
         return this->alamat;
     }
-
-    void printPerson(int no) const {
-        std::cout << std::left << std::setw(3)  << no
-               << std::left << std::setw(13) << nama
-               << std::left << std::setw(17) << alamat;
-
-    }
 };
 
-//Subclass Pegawai
+//Superclass kendaraan
+class Kendaraan {
+    protected:
+        std::string merk;
+        std::string plat;
+        std::string warna;
+    public:
+        Kendaraan() : merk{""}, plat(""), warna("") {}
+
+        Kendaraan(std::string merk, std::string plat, std::string warna) {
+            this->merk = merk;
+            this->plat = plat;
+            this->warna = warna;
+        }
+
+        void setMerk(std::string m) {
+            merk = m;
+        }
+
+        void setPlat(std::string p) {
+            plat = p;
+        }
+
+        void setWarna(std::string w) {
+            warna = w;
+        }
+
+        std::string getMerk() {
+            return merk;
+        }
+
+        std::string getPlat() {
+            return plat;
+        }
+
+        std::string getWarna() {
+            return warna;
+        }
+};
+
 class Pegawai : public Person {
 private:
     int gol;
@@ -184,17 +228,13 @@ private:
     Waktu pulang;
     Waktu lamaKerja;
     Waktu jamLembur;
-    int lembur;
-    int total;
     std::string statusPeringatan;
 public:
-    Pegawai() : Person(), gol(1), nip(""), lembur(0), total(0), statusPeringatan("") {}
+    Pegawai() : Person(), gol(1), nip(""), statusPeringatan("") {}
 
     Pegawai(std::string nip, std::string nama, std::string alamat, int umur, int gol) : Person(nama, alamat) {
         this->nip = nip;
         this->gol = gol;
-        this->lembur = 0;
-        this->total = 0;
         statusPeringatan = "";
     }
 
@@ -240,11 +280,37 @@ public:
     int getGol() const { 
         return gol; 
     }
-    int getTotal() const { 
-        return total; 
-    }
+
     std::string getStatusPeringatan() const { 
         return statusPeringatan; 
+    }
+
+    int getGajiHarian() const {
+        switch(gol) {
+            case 1: return 150000;
+            case 2: return 200000;
+            case 3: return 400000;
+            case 4: return 500000;
+            default: return 0;
+        }
+    }
+
+    int getTarifLembur() const {
+        switch(gol) {
+            case 1: return 50000;
+            case 2: return 75000;
+            case 3: return 150000;
+            case 4: return 200000;
+            default: return 0;
+        }
+    }
+
+    int getLembur() const {
+        return jamLembur.getJam() * getTarifLembur();
+    }
+
+    int getTotal() const {
+        return getGajiHarian() + getLembur();
     }
 
     void prosesGaji() {
@@ -260,34 +326,25 @@ public:
             statusPeringatan = "Peringatan";
         }
 
-        int tarif = 0;
-        switch (gol) {
-            case 1: gajiHarian = 150000; tarif = 50000;  break;
-            case 2: gajiHarian = 200000; tarif = 75000;  break;
-            case 3: gajiHarian = 400000; tarif = 150000; break;
-            case 4: gajiHarian = 500000; tarif = 200000; break;
-        }
-
-        lembur = jamLembur.getJam() * tarif;
-        total = gajiHarian + lembur;
     }
 
-    void printPegawai(int no) const {
-        printPerson(no); 
-        std::cout << std::left << std::setw(12) << nip
-                  << std::right << std::setw(5)  << gol
-                  << std::setw(10) << datang.toString()
-                  << std::setw(10) << pulang.toString()
-                  << std::setw(12) << lamaKerja.toString()
-                  << std::setw(12) << jamLembur.toString()
-                  << std::setw(15) << Util::rupiah(total - lembur)
-                  << std::setw(15) << Util::rupiah(lembur)
-                  << std::setw(15) << Util::rupiah(total)
-                  << std::left  << "  " << std::setw(12) << statusPeringatan 
-                  << "\n";
-    }
-        
+    std::vector<std::string> getBaris(int no) const {
+        return {
+            std::to_string(no), nama, alamat, nip, std::to_string(gol),
+            datang.toString(), pulang.toString(),
+            lamaKerja.toString(), jamLembur.toString(),
+            Util::rupiah(getGajiHarian()), Util::rupiah(getLembur()), Util::rupiah(getTotal()),
+            statusPeringatan
+        };
+    }     
 };
+
+
+const int KOLOM = 13;
+const std::string HEADER[KOLOM] = {"No", "Nama", "Alamat", "NIP", "Gol", "Datang", "Pulang",
+                                   "Lama", "Jam Lembur", "Gaji Harian", "Lembur", "Total", "Status"};
+const int  LEBAR[KOLOM] = {3, 10, 14, 8, 3, 8, 8, 8, 10, 11, 11, 11, 10};
+const char RATA[KOLOM]  = {'^', '<', '<', '<', '^', '^', '^', '^', '^', '>', '>', '>', '^'};
 
 class ArrayPegawai {
 private:
@@ -346,36 +403,41 @@ public:
         return Pegawai(); 
     }
 
+private:
+    std::string garis() const {
+        std::string g = "+";
+        for (int i = 0; i < KOLOM; i++) g += std::string(LEBAR[i] + 2, '-') + "+";
+        return g;
+    }
+
+    std::string baris(const std::vector<std::string>& cells) const {
+        std::string b = "|";
+        for (int i = 0; i < KOLOM; i++) {
+            b += " " + Util::pad(cells[i], LEBAR[i], RATA[i]) + " |";
+        }
+        return b;
+    }
+
+public:
     void outputData() const {
-        std::cout << "\n\t\t\t\t\tDaftar Gaji Harian PT Informatika\n";
-        std::cout << std::string(150, '=') << "\n";
-        std::cout << std::left  << std::setw(3)  << "No"
-                  << std::left  << std::setw(13) << "Nama"
-                  << std::left  << std::setw(17) << "Alamat"
-                  << std::left  << std::setw(12) << "NIP"
-                  << std::right << std::setw(5)  << "Gol"
-                  << std::setw(10) << "Datang"
-                  << std::setw(10) << "Pulang"
-                  << std::setw(12) << "Lama"
-                  << std::setw(12) << "Jam Lembur"
-                  << std::setw(15) << "Gaji Harian"
-                  << std::setw(15) << "Lembur"
-                  << std::setw(15) << "Total"
-                  << "  Status" << "\n";
-        std::cout << std::string(150, '=') << "\n";
+        std::string g = garis();
+        std::cout << "\n" << Util::pad("Daftar Gaji Harian PT Informatika", g.length(), '^') << "\n";
+        std::cout << g << "\n";
+        std::cout << baris(std::vector<std::string>(HEADER, HEADER + KOLOM)) << "\n";
+        std::cout << g << "\n";
 
         double totalSemua = 0;
         int maxGaji = (jumlah > 0) ? arr[0].getTotal() : 0;
         int minGaji = (jumlah > 0) ? arr[0].getTotal() : 0;
 
         for (int i = 0; i < jumlah; i++) {
-            arr[i].printPegawai(i + 1);
+            std::cout << baris(arr[i].getBaris(i + 1)) << "\n";
             int t = arr[i].getTotal();
             totalSemua += t;
             if (t > maxGaji) maxGaji = t;
             if (t < minGaji) minGaji = t;
         }
-        std::cout << std::string(150, '=') << "\n";
+        std::cout << g << "\n";
 
         double rataRata = (jumlah > 0) ? (totalSemua / jumlah) : 0;
 
@@ -391,8 +453,7 @@ private:
 
 public:
     Menu() {}
-
-    // Method Input/Output Menu
+    
     void tampilkanMenu() const {
         std::cout << "\n========================================\n";
         std::cout << "         MENU GAJI PT INFORMATIKA         \n";
@@ -403,7 +464,6 @@ public:
         std::cout << "----------------------------------------\n";
     }
 
-    // Method Proses Utama Menu
     void jalankan() {
         int pilihan;
         do {
