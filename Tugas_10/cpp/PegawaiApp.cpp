@@ -1,5 +1,5 @@
 /*
-Nama Program : Pegawai.cpp
+Nama Program : PegawaiApp.cpp
 Anggota Kelompok - NPM:
     1. Rasya Islami Akbar - 140810250009
     2. Ghiyats Khairul Mala - 140810250102
@@ -34,6 +34,8 @@ SPESIFIKASI DAN ATURAN PARKIR
 #include <limits>
 #include <cstdlib>
 #include <cctype>
+
+class Kendaraan; 
 
 class Util {
 public:
@@ -84,7 +86,6 @@ public:
         return s;
     }
 
-    // rata: '<' kiri, '>' kanan, '^' tengah. Teks yang kepanjangan dipotong.
     static std::string pad(const std::string& s, int w, char rata) {
         std::string t = s.substr(0, w);
         int sisa = w - static_cast<int>(t.length());
@@ -108,6 +109,13 @@ public:
             b += " " + pad(cells[i], lebar[i], rata[i]) + " |";
         }
         return b;
+    }
+
+    static int cariAktifArray(Kendaraan* arr[], int jumlah, const std::string& plat) {
+        for (int i = 0; i < jumlah; i++) {
+
+        }
+        return -1;
     }
 };
 
@@ -479,11 +487,11 @@ protected:
     std::string merk;
     std::string plat;
     std::string warna;
-    std::string nipPemilik;     // kosong = umum
+    std::string nipPemilik;    
     std::string namaPemilik;
     Waktu masuk;
     Waktu keluar;
-    int hariInap;               // tambahan hari saat keluar
+    int hariInap;              
     bool sudahKeluar;
 
     long durasiDetik() const {
@@ -688,27 +696,12 @@ const std::vector<std::string> HEADER_PARKIR = {"No", "Plat", "Jenis", "Merk", "
 const std::vector<int> LEBAR_PARKIR = {3, 10, 6, 10, 12, 8, 13, 9, 8, 10, 9, 7};
 const std::string RATA_PARKIR = "^<<<<^^^^>>^";
 
-// Array of Kendaraan* : isinya campur Mobil/Truk/Motor (polimorfisme)
+// Array of Kendaraan
 class Parkir {
 private:
     static const int max = 100;
     Kendaraan* arr[max];
     int jumlah;
-
-    int cariAktif(const std::string& plat) const {
-        for (int i = 0; i < jumlah; i++) {
-            if (!arr[i]->getSudahKeluar() && arr[i]->getPlat() == plat) return i;
-        }
-        return -1;
-    }
-
-    int hitungAktif() const {
-        int n = 0;
-        for (int i = 0; i < jumlah; i++) {
-            if (!arr[i]->getSudahKeluar()) n++;
-        }
-        return n;
-    }
 
 public:
     Parkir() : jumlah(0) {
@@ -724,6 +717,22 @@ public:
 
     int getJumlah() const {
         return jumlah;
+    }
+
+    // Helper internal untuk memanggil fungsi kalkulasi 
+    int cariAktif(const std::string& plat) const {
+        for (int i = 0; i < jumlah; i++) {
+            if (!arr[i]->getSudahKeluar() && arr[i]->getPlat() == plat) return i;
+        }
+        return -1;
+    }
+
+    int hitungAktif() const {
+        int n = 0;
+        for (int i = 0; i < jumlah; i++) {
+            if (!arr[i]->getSudahKeluar()) n++;
+        }
+        return n;
     }
 
     // Menambah di belakang, data lama tidak ditimpa.
@@ -803,7 +812,7 @@ public:
             if (!ok) std::cout << "Waktu keluar harus setelah waktu masuk, ulangi!\n";
         } while (!ok);
 
-        // hitungBiaya() dipanggil lewat pointer Kendaraan: versi Mobil/Truk/Motor yang jalan
+        // hitungBiaya() dipanggil lewat pointer Kendaraan menggunakan syntax virtual: versi Mobil/Truk/Motor yang jalan
         std::cout << "\n========== STRUK PARKIR ==========\n";
         std::cout << "Plat    : " << k->getPlat() << "\n";
         std::cout << "Jenis   : " << k->getJenis() << " (" << k->getMerk() << ", " << k->getWarna() << ")\n";
