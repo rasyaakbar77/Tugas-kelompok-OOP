@@ -579,7 +579,7 @@ public:
         return static_cast<int>(j < 1 ? 1 : j);
     }
 
-    int hariTerbayar() const {
+    int hariTerbayar() const { 
         long h = (durasiDetik() + 86399) / 86400;
         return static_cast<int>(h < 1 ? 1 : h);
     }
@@ -727,6 +727,7 @@ public:
         return -1;
     }
 
+    // 
     int hitungAktif() const {
         int n = 0;
         for (int i = 0; i < jumlah; i++) {
