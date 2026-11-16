@@ -38,14 +38,6 @@ class Util {
         return sb.toString();
     }
 
-    public static String pad(String s, int w, char rata) {
-        if (s.length() > w) s = s.substring(0, w);
-        int sisa = w - s.length();
-        if (rata == '<') return s + " ".repeat(sisa);
-        if (rata == '>') return " ".repeat(sisa) + s;
-        int kiri = sisa / 2;
-        return " ".repeat(kiri) + s + " ".repeat(sisa - kiri);
-    }
 }
 
 class Waktu {
@@ -101,11 +93,11 @@ class Waktu {
         } while (jam < 0 || jam > 23);
 
         do {
-            menit = Util.bacaInt(sc, "  Menit (0-59): ");
+            menit = Util.bacaInt(sc, "  Menit (0-59) : ");
         } while (menit < 0 || menit > 59);
 
         do {
-            detik = Util.bacaInt(sc, "  Detik (0-59): ");
+            detik = Util.bacaInt(sc, "  Detik (0-59) : ");
         } while (detik < 0 || detik > 59);
     }
 
@@ -154,9 +146,9 @@ class Person {
     }
 
     public void inputDalam(Scanner sc) {
-        System.out.print("Nama: ");
+        System.out.print("Nama   : ");
         this.nama = sc.nextLine();
-        System.out.print("Alamat: ");
+        System.out.print("Alamat : ");
         this.alamat = sc.nextLine();
     }
 
@@ -174,6 +166,10 @@ class Person {
 
     public String getAlamat() {
         return this.alamat;
+    }
+
+    public void printPerson(int no) {
+        System.out.printf("%-3d%-13s%-17s", no, nama, alamat);
     }
 }
 
@@ -228,11 +224,11 @@ class Pegawai extends Person {
     }
 
     public void setDatang(Waktu d) {
-        datang = d;
+        datang = new Waktu(d.getJam(), d.getMenit(), d.getDetik());
     }
 
     public void setPulang(Waktu p) {
-        pulang = p;
+        pulang = new Waktu(p.getJam(), p.getMenit(), p.getDetik());
     }
 
     public String getNip() {
@@ -268,7 +264,7 @@ class Pegawai extends Person {
     }
 
     public int getLembur() {
-        return jamLembur.getJam() * getTarifLembur();
+        return getTarifLembur() * (jamLembur.totalDetik() / 3600);
     }
 
     public int getTotal() {
@@ -289,23 +285,25 @@ class Pegawai extends Person {
         }
     }
 
-    public String[] getBaris(int no) {
-        return new String[] {
-            String.valueOf(no), nama, alamat, nip, String.valueOf(gol),
-            datang.toString(), pulang.toString(),
-            lamaKerja.toString(), jamLembur.toString(),
-            Util.rupiah(getGajiHarian()), Util.rupiah(getLembur()), Util.rupiah(getTotal()),
+    public void printPegawai(int no) {
+        printPerson(no);
+        System.out.printf("%-12s%5s%10s%10s%12s%12s%15s%15s%15s  %-12s%n",
+            nip, 
+            gol, 
+            datang.toString(), 
+            pulang.toString(), 
+            lamaKerja.toString(), 
+            jamLembur.toString(), 
+            Util.rupiah(getGajiHarian()), 
+            Util.rupiah(getLembur()), 
+            Util.rupiah(getTotal()), 
             statusPeringatan
-        };
+        );
     }
 }
 
 class ArrayPegawai {
     private static final int max = 100;
-    private static final String[] HEADER = {"No", "Nama", "Alamat", "NIP", "Gol", "Datang", "Pulang", "Lama", "Jam Lembur", "Gaji Harian", "Lembur", "Total", "Status"};
-    private static final int[] LEBAR = {3, 10, 14, 8, 3, 8, 8, 8, 10, 11, 11, 11, 10};
-    private static final char[] RATA = {'^', '<', '<', '<', '^', '^', '^', '^', '^', '>', '>', '>', '^'};
-
     private Pegawai [] arr;
     private int jumlah;
 
@@ -329,14 +327,26 @@ class ArrayPegawai {
     }
 
     public void inputDalam(Scanner sc) {
-        do {
-            jumlah = Util.bacaInt(sc, "Masukkan jumlah pegawai (1-100): ");
-        } while (jumlah < 1 || jumlah > max);
-
-        for (int i = 0; i < jumlah; i++) {
-            System.out.println("\nData Pegawai ke-" + (i + 1));
-            arr[i].inputPegawai(sc);
+        if (jumlah >= max) {
+            System.out.println("\nKapasitas data pegawai sudah penuh (maksimal 100)!");
+            return;
         }
+
+        int sisaKapasitas = max - jumlah;
+        int tambahan;
+        do {
+            tambahan = Util.bacaInt(sc, "Masukkan jumlah pegawai yang ingin ditambahkan (1-" + sisaKapasitas + "): ");
+            if (tambahan < 1 || tambahan > sisaKapasitas) {
+                System.out.println("Jumlah tidak valid!");
+            }
+        } while (tambahan < 1 || tambahan > sisaKapasitas);
+
+        for (int i = 0; i < tambahan; i++) {
+            System.out.println("\nData Pegawai ke-" + (jumlah + 1));
+            arr[jumlah].inputPegawai(sc);
+            jumlah++;
+        }
+        System.out.println("\nBerhasil menambahkan " + tambahan + " data pegawai baru!");
     }
 
     public void prosesData() {
@@ -345,39 +355,41 @@ class ArrayPegawai {
         }
     }
 
-    private String garis() {
-        StringBuilder sb = new StringBuilder("+");
-        for (int w : LEBAR) sb.append("-".repeat(w + 2)).append("+");
-        return sb.toString();
+    public void setPegawaiAt(int index, Pegawai p) {
+        if (index >= 0 && index < max) {
+            arr[index] = p;
+        }
     }
 
-    private String baris(String[] cells) {
-        StringBuilder sb = new StringBuilder("|");
-        for (int i = 0; i < cells.length; i++) {
-            sb.append(" ").append(Util.pad(cells[i], LEBAR[i], RATA[i])).append(" |");
+    public Pegawai getPegawaiAt(int index) {
+        if (index >= 0 && index < max) {
+            return arr[index];
         }
-        return sb.toString();
+        return new Pegawai();
     }
 
     public void outputData() {
-        String garis = garis();
-        System.out.println("\n" + Util.pad("Daftar Gaji Harian PT Informatika", garis.length(), '^'));
-        System.out.println(garis);
-        System.out.println(baris(HEADER));
-        System.out.println(garis);
+        System.out.println("\n\t\t\t\t\tDaftar Gaji Harian PT Informatika");
+        System.out.println("=".repeat(150));
+        System.out.printf("%-3s%-13s%-17s%-12s%5s%10s%10s%12s%12s%15s%15s%15s  Status%n", 
+            "No", "Nama", "Alamat", "NIP", "Gol", "Datang", "Pulang", 
+            "Lama", "Jam Lembur", "Gaji Harian", "Lembur", "Total"
+        );
+        System.out.println("=".repeat(150));
 
         double totalSemua = 0;
         int maxGaji = (jumlah > 0) ? arr[0].getTotal() : 0;
         int minGaji = (jumlah > 0) ? arr[0].getTotal() : 0;
 
         for (int i = 0; i < jumlah; i++) {
-            System.out.println(baris(arr[i].getBaris(i + 1)));
+            arr[i].printPegawai(i + 1);
             int t = arr[i].getTotal();
             totalSemua += t;
             if (t > maxGaji) maxGaji = t;
             if (t < minGaji) minGaji = t;
         }
-        System.out.println(garis);
+
+        System.out.println("=".repeat(150));
 
         double rataRata = (jumlah > 0) ? (totalSemua / jumlah) : 0;
 
@@ -386,6 +398,7 @@ class ArrayPegawai {
         System.out.println("Gaji Terendah  : " + (jumlah > 0 ? Util.rupiah(minGaji) : "---"));
     }
 }
+
 
 class Menu {
     private ArrayPegawai dataPegawai;
@@ -435,3 +448,53 @@ public class PegawaiApp {
         pegawaiApp.jalankan();
     }
 }
+
+/*
+private void inputLuar() {
+    Pegawai p1 = new Pegawai();
+    Pegawai p2 = new Pegawai();
+    Pegawai p3 = new Pegawai();
+    Waktu w = new Waktu();
+
+    p1.setNip("250102");
+    p1.setNama("Ghiyats");
+    p1.setAlamat("Jalan Sayang");
+    p1.setGol(4);
+    w.setWaktu(8, 0, 0);
+    p1.setDatang(w);
+    w.setWaktu(20, 0, 0);
+    p1.setPulang(w);
+
+    p2.setNip("250103");
+    p2.setNama("Rasya");
+    p2.setAlamat("Jalan Sayang");
+    p2.setGol(3);
+    w.setWaktu(8, 0, 0);
+    p2.setDatang(w);
+    w.setWaktu(12, 0, 0);
+    p2.setPulang(w);
+
+    p3.setNip("250104");
+    p3.setNama("Icad");
+    p3.setAlamat("Jalan Merdeka");
+    p3.setGol(1);
+    w.setWaktu(8, 0, 0);
+    p3.setDatang(w);
+    w.setWaktu(10, 0, 0);
+    p3.setPulang(w);
+
+    dataPegawai.setPegawaiAt(0, p1);
+    dataPegawai.setPegawaiAt(1, p2);
+    dataPegawai.setPegawaiAt(2, p3);
+    dataPegawai.setJumlah(3);
+
+    System.out.println("\nBerhasil menambahkan 3 data pegawai!");
+}
+
+
+
+
+
+
+
+*/
