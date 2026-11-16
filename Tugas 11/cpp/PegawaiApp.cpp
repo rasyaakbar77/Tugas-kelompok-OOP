@@ -1,44 +1,35 @@
 /*
-Nama Program : PegawaiApp.cpp
-Anggota Kelompok - NPM:
+Nama Program : Pegawai.cpp
+Anggota Kelompok - NPM: 
     1. Rasya Islami Akbar - 140810250009
     2. Ghiyats Khairul Mala - 140810250102
 Kelas : A
-Tanggal Pengerjaan : 28-10-2026 (Tugas 11 ditambahkan: 10-11-2026)
+Tanggal Pengerjaan : 28-10-2026
 Deskripsi Program : Sebuah program untuk menghitung gaji karyawan dengan input NIP, nama, gol, waktu datang, waktu pulang.
-                    Menggunakan konsep inheritance dengan membuat superclass Person yang akan di inherit oleh subclass Pegawai.
-                    Tugas 11: ditambah program parkir kendaraan dengan superclass Kendaraan yang di-inherit oleh
-                    Mobil, Truk, dan Motor (inheritance dan polimorfisme). Data parkir disimpan dalam array.
+                    Menggunakan konsep inheritance dengan membuat superclass Person yang akan di inherit oleh subclass Pegawai,
+                    dengan total 5 class secara OOP.
 
-SPESIFIKASI DAN ATURAN PARKIR
-1. Jenis kendaraan : Mobil, Truk, Motor. Tiap jenis meng-override hitungBiaya() (polimorfisme).
-2. Tarif umum (person atau tanpa identitas, per jam) : Mobil 3.000, Truk 5.000, Motor 2.000.
-3. Tarif pegawai (per hari, <= 24 jam) : Mobil 6.000, Motor 3.000. Truk milik pegawai tetap tarif umum.
-4. Pegawai dikenali dari NIP yang sudah terdaftar di data pegawai. NIP kosong atau tidak ditemukan = umum.
-5. Tarif per jam : durasi dibulatkan ke atas per jam, minimal 1 jam.
-6. Tarif per hari : tiap 24 jam dihitung 1 hari (dibulatkan ke atas), minimal 1 hari.
-7. Plat nomor tidak boleh sama dengan kendaraan yang masih terparkir.
-8. NIP pegawai harus unik.
-9. Waktu keluar harus setelah waktu masuk. Lama menginap (0 - 30 hari) diisi saat keluar.
-10. Data yang sudah diinput tidak ditimpa. Input pegawai selalu menambah data di belakang data lama.
-11. Kapasitas : 100 pegawai dan 100 catatan parkir. Jika penuh, input ditolak.
-12. Biaya baru dihitung dan dikunci saat kendaraan keluar. Pendapatan hanya dari kendaraan yang sudah keluar.
+ATURAN PARKIR
+1. Jenis kendaraan : Mobil, Truk, Motor. 
+2. Tarif umum : Mobil 3.000, Truk 5.000, Motor 2.000. diberlakukan per jam
+3. Tarif pegawai : Mobil 6.000, Motor 3.000 perhari. Truk milik pegawai menggunakan tarif umum. 
+4. Tarif per jam : durasi dibulatkan ke atas per jam, minimal 1 jam.
+5. Tarif per hari : tiap 24 jam dihitung 1 hari (dibulatkan ke atas), minimal 1 hari.
+6. Plat nomor tidak boleh sama dengan kendaraan yang masih terparkir.
+7. Waktu keluar harus setelah waktu masuk. Lama menginap (0 - 30 hari) diisi saat keluar.
+8. Data yang sudah diinput tidak ditimpa. Input pegawai selalu menambah data di belakang data lama.
+9. Biaya baru dihitung dan dikunci saat kendaraan keluar.
 */
 
-
 #include <iostream>
-#include <vector>
 #include <string>
 #include <iomanip>
 #include <sstream>
 #include <limits>
-#include <cstdlib>
-#include <cctype>
-
-class Kendaraan; 
 
 class Util {
 public:
+    // Validasi integer
     static int bacaInt(const std::string& pesan) {
         int val;
         while (true) {
@@ -53,30 +44,8 @@ public:
             }
         }
     }
-
-    static std::string bacaString(const std::string& pesan, bool wajib = true) {
-        std::string s;
-        while (true) {
-            std::cout << pesan;
-            std::getline(std::cin, s);
-            size_t awal = s.find_first_not_of(" \t");
-            if (awal == std::string::npos) {
-                s = "";
-            } else {
-                s = s.substr(awal, s.find_last_not_of(" \t") - awal + 1);
-            }
-            if (!wajib || !s.empty()) return s;
-            std::cout << "Tidak boleh kosong!\n";
-        }
-    }
-
-    static std::string kapital(std::string s) {
-        for (size_t i = 0; i < s.length(); i++) {
-            s[i] = static_cast<char>(std::toupper(static_cast<unsigned char>(s[i])));
-        }
-        return s;
-    }
-
+ 
+    // Format uang rupiah
     static std::string rupiah(int nilai) {
         std::string s = std::to_string(nilai);
         int n = s.length();
@@ -85,42 +54,10 @@ public:
         }
         return s;
     }
-
-    static std::string pad(const std::string& s, int w, char rata) {
-        std::string t = s.substr(0, w);
-        int sisa = w - static_cast<int>(t.length());
-        if (rata == '<') return t + std::string(sisa, ' ');
-        if (rata == '>') return std::string(sisa, ' ') + t;
-        int kiri = sisa / 2;
-        return std::string(kiri, ' ') + t + std::string(sisa - kiri, ' ');
-    }
-
-    static std::string garis(const std::vector<int>& lebar) {
-        std::string g = "+";
-        for (size_t i = 0; i < lebar.size(); i++) {
-            g += std::string(lebar[i] + 2, '-') + "+";
-        }
-        return g;
-    }
-
-    static std::string baris(const std::vector<std::string>& cells, const std::vector<int>& lebar, const std::string& rata) {
-        std::string b = "|";
-        for (size_t i = 0; i < lebar.size(); i++) {
-            b += " " + pad(cells[i], lebar[i], rata[i]) + " |";
-        }
-        return b;
-    }
-
-    static int cariAktifArray(Kendaraan* arr[], int jumlah, const std::string& plat) {
-        for (int i = 0; i < jumlah; i++) {
-
-        }
-        return -1;
-    }
 };
 
 class Waktu {
-public:
+private:
     int jam;
     int menit;
     int detik;
@@ -133,47 +70,41 @@ public:
         this->detik = detik;
     }
 
-    void setWaktu(int j, int m, int d) {
-        jam = j;
-        menit = m;
-        detik = d;
+    void setWaktu(int j, int m, int d) { 
+        jam = j; 
+        menit = m; 
+        detik = d; 
     }
-
-    void setJam(int j) {
-        jam = j;
+    void setJam(int j) { 
+        jam = j; 
     }
-
-    void setMenit(int m) {
-        menit = m;
+    void setMenit(int m) { 
+        menit = m; 
     }
-
-    void setDetik(int d) {
-        detik = d;
+    void setDetik(int d) { 
+        detik = d; 
     }
-
-    int getJam() const {
-        return jam;
+    int getJam() { 
+        return jam; 
     }
-
-    int getMenit() const {
-        return menit;
+    int getMenit() { 
+        return menit; 
     }
-
-    int getDetik() const {
-        return detik;
+    int getDetik() { 
+        return detik; 
     }
 
     void inputDalam() {
-        do {
-            jam = Util::bacaInt("   Jam   (0-23) : ");
+        do { 
+            jam = Util::bacaInt("   Jam   (0-23) : "); 
         } while (jam < 0 || jam > 23);
 
-        do {
-            menit = Util::bacaInt("   Menit (0-59) : ");
+        do { 
+            menit = Util::bacaInt("   Menit (0-59) : "); 
         } while (menit < 0 || menit > 59);
 
-        do {
-            detik = Util::bacaInt("   Detik (0-59) : ");
+        do { 
+            detik = Util::bacaInt("   Detik (0-59) : "); 
         } while (detik < 0 || detik > 59);
     }
 
@@ -182,7 +113,7 @@ public:
     }
 
     Waktu hitungSelisihFungsi(const Waktu& w2) const {
-        int selisihTotal = std::abs(this->totalDetik() - w2.totalDetik());
+        int selisihTotal = abs(this->totalDetik() - w2.totalDetik());
         Waktu hasil;
         hasil.jam = selisihTotal / 3600;
         hasil.menit = (selisihTotal % 3600) / 60;
@@ -191,7 +122,7 @@ public:
     }
 
     void hitungSelisihVoid(const Waktu& w1, const Waktu& w2) {
-        int selisihTotal = std::abs(w1.totalDetik() - w2.totalDetik());
+        int selisihTotal = abs(w1.totalDetik() - w2.totalDetik());
         this->jam = selisihTotal / 3600;
         this->menit = (selisihTotal % 3600) / 60;
         this->detik = selisihTotal % 60;
@@ -205,23 +136,24 @@ public:
         return ss.str();
     }
 
-    void outputDalam() const {
+    void outputDalam() {
         std::cout << "Waktu = " << toString() << "\n";
     }
 };
 
+// Superclass Person
 class Person {
-protected:
+private:
     std::string nama;
     std::string alamat;
 public:
     Person() : nama(""), alamat("") {}
 
-    Person(const std::string& nama, const std::string& alamat) {
+    Person(std::string nama, std::string alamat) {
         this->nama = nama;
         this->alamat = alamat;
     }
-
+    
     void inputDalam() {
         std::cout << "Nama   : ";
         std::getline(std::cin, nama);
@@ -229,23 +161,31 @@ public:
         std::getline(std::cin, alamat);
     }
 
-    void setNama(const std::string& name) {
+    void setNama(std::string name) {
         nama = name;
     }
 
-    void setAlamat(const std::string& address) {
+    void setAlamat(std::string address) {
         alamat = address;
     }
 
-    std::string getNama() const {
+    std::string getNama() {
         return this->nama;
     }
 
-    std::string getAlamat() const {
+    std::string getAlamat() {
         return this->alamat;
+    }
+
+    void printPerson(int no) const {
+        std::cout << std::left << std::setw(3)  << no
+               << std::left << std::setw(13) << nama
+               << std::left << std::setw(17) << alamat;
+
     }
 };
 
+//Subclass Pegawai
 class Pegawai : public Person {
 private:
     int gol;
@@ -258,7 +198,7 @@ private:
 public:
     Pegawai() : Person(), gol(1), nip(""), statusPeringatan("") {}
 
-    Pegawai(const std::string& nip, const std::string& nama, const std::string& alamat, int gol) : Person(nama, alamat) {
+    Pegawai(std::string nip, std::string nama, std::string alamat, int umur, int gol) : Person(nama, alamat) {
         this->nip = nip;
         this->gol = gol;
         statusPeringatan = "";
@@ -283,32 +223,32 @@ public:
         } while (pulang.totalDetik() <= datang.totalDetik());
     }
 
-    void setNip(const std::string& n) {
-        nip = n;
+    void setNip(const std::string& n) { 
+        nip = n; 
     }
 
     void setGol(int g) {
-        gol = g;
+        gol = g; 
     }
 
-    void setDatang(const Waktu& d) {
-        datang = d;
+    void setDatang(const Waktu& d) { 
+        datang = d; 
     }
 
-    void setPulang(const Waktu& p) {
-        pulang = p;
+    void setPulang(const Waktu& p) { 
+        pulang = p; 
     }
 
-    std::string getNip() const {
-        return nip;
+    std::string getNip() const { 
+        return nip; 
     }
 
-    int getGol() const {
-        return gol;
+    int getGol() const { 
+        return gol; 
     }
 
-    std::string getStatusPeringatan() const {
-        return statusPeringatan;
+    std::string getStatusPeringatan() const { 
+        return statusPeringatan; 
     }
 
     int getGajiHarian() const {
@@ -332,7 +272,7 @@ public:
     }
 
     int getLembur() const {
-        return jamLembur.getJam() * getTarifLembur();
+        return getTarifLembur() * jamLembur.totalDetik() / 3600;
     }
 
     int getTotal() const {
@@ -340,6 +280,7 @@ public:
     }
 
     void prosesGaji() {
+        int gajiHarian = 0;
         lamaKerja = pulang.hitungSelisihFungsi(datang);
 
         Waktu batas(8, 0, 0);
@@ -352,22 +293,22 @@ public:
         }
     }
 
-    std::vector<std::string> getBaris(int no) const {
-        return {
-            std::to_string(no), nama, alamat, nip, std::to_string(gol),
-            datang.toString(), pulang.toString(),
-            lamaKerja.toString(), jamLembur.toString(),
-            Util::rupiah(getGajiHarian()), Util::rupiah(getLembur()), Util::rupiah(getTotal()),
-            statusPeringatan
-        };
+    void printPegawai(int no) const {
+        printPerson(no); 
+        std::cout << std::left << std::setw(12) << nip
+                  << std::right << std::setw(5)  << gol
+                  << std::setw(10) << datang.toString()
+                  << std::setw(10) << pulang.toString()
+                  << std::setw(12) << lamaKerja.toString()
+                  << std::setw(12) << jamLembur.toString()
+                  << std::setw(15) << Util::rupiah(getGajiHarian())
+                  << std::setw(15) << Util::rupiah(getLembur())
+                  << std::setw(15) << Util::rupiah(getTotal())
+                  << std::left  << "  " << std::setw(12) << statusPeringatan 
+                  << "\n";
     }
+        
 };
-
-
-const std::vector<std::string> HEADER_GAJI = {"No", "Nama", "Alamat", "NIP", "Gol", "Datang", "Pulang",
-                                              "Lama", "Jam Lembur", "Gaji Harian", "Lembur", "Total", "Status"};
-const std::vector<int> LEBAR_GAJI = {3, 10, 14, 8, 3, 8, 8, 8, 10, 11, 11, 11, 10};
-const std::string RATA_GAJI = "^<<<^^^^^>>>^";
 
 class ArrayPegawai {
 private:
@@ -375,17 +316,10 @@ private:
     Pegawai arr[max];
     int jumlah;
 
-    int cariNip(const std::string& nip, int batas) const {
-        for (int i = 0; i < batas; i++) {
-            if (arr[i].getNip() == nip) return i;
-        }
-        return -1;
-    }
-
 public:
     ArrayPegawai() : jumlah(0) {}
 
-    ArrayPegawai(const Pegawai dataPegawai[], int jml) {
+    ArrayPegawai(Pegawai dataPegawai[], int jml) {
         jumlah = (jml > max) ? max : jml;
         for (int i = 0; i < jumlah; i++) {
             arr[i] = dataPegawai[i];
@@ -403,35 +337,28 @@ public:
         return jumlah;
     }
 
-    // Cari index pegawai berdasarkan NIP, -1 kalau tidak ada.
-    int cariNip(const std::string& nip) const {
-        return cariNip(nip, jumlah);
-    }
-
-    // Data baru ditambahkan di belakang data lama, data lama tidak ditimpa.
     void inputDalam() {
-        int sisa = max - jumlah;
-        if (sisa <= 0) {
-            std::cout << "Data pegawai penuh (maksimal " << max << ")!\n";
+        if (jumlah >= max) {
+            std::cout << "\nKapasitas data pegawai sudah penuh (maksimal 100)!\n";
             return;
         }
 
-        int tambah;
+        int tambahan;
+        int sisaKapasitas = max - jumlah;
         do {
-            tambah = Util::bacaInt("Masukkan jumlah pegawai yang ditambahkan (1-" + std::to_string(sisa) + "): ");
-        } while (tambah < 1 || tambah > sisa);
+            std::string pesan = "Masukkan jumlah pegawai yang ingin ditambahkan (1-" + std::to_string(sisaKapasitas) + "): ";
+            tambahan = Util::bacaInt(pesan);
+            if (tambahan < 1 || tambahan > sisaKapasitas) {
+                std::cout << "Jumlah tidak valid!\n";
+            }
+        } while (tambahan < 1 || tambahan > sisaKapasitas);
 
-        for (int i = 0; i < tambah; i++) {
-            int idx = jumlah;
-            std::cout << "\nData Pegawai ke-" << (idx + 1) << "\n";
-            bool kembar;
-            do {
-                arr[idx].inputPegawai();
-                kembar = (cariNip(arr[idx].getNip(), idx) != -1);
-                if (kembar) std::cout << "NIP sudah dipakai pegawai lain, ulangi!\n";
-            } while (kembar);
-            jumlah++;
+        for (int i = 0; i < tambahan; i++) {
+            std::cout << "\nData Pegawai ke-" << (jumlah + 1) << "\n";
+            arr[jumlah].inputPegawai();
+            jumlah++; 
         }
+        std::cout << "\nBerhasil menambahkan " << tambahan << " data pegawai baru!\n";
     }
 
     void prosesData() {
@@ -450,28 +377,39 @@ public:
         if (index >= 0 && index < max) {
             return arr[index];
         }
-        return Pegawai();
+        return Pegawai(); 
     }
 
     void outputData() const {
-        std::string g = Util::garis(LEBAR_GAJI);
-        std::cout << "\n" << Util::pad("Daftar Gaji Harian PT Informatika", static_cast<int>(g.length()), '^') << "\n";
-        std::cout << g << "\n";
-        std::cout << Util::baris(HEADER_GAJI, LEBAR_GAJI, RATA_GAJI) << "\n";
-        std::cout << g << "\n";
+        std::cout << "\n\t\t\t\t\tDaftar Gaji Harian PT Informatika\n";
+        std::cout << std::string(150, '=') << "\n";
+        std::cout << std::left  << std::setw(3)  << "No"
+                  << std::left  << std::setw(13) << "Nama"
+                  << std::left  << std::setw(17) << "Alamat"
+                  << std::left  << std::setw(12) << "NIP"
+                  << std::right << std::setw(5)  << "Gol"
+                  << std::setw(10) << "Datang"
+                  << std::setw(10) << "Pulang"
+                  << std::setw(12) << "Lama"
+                  << std::setw(12) << "Jam Lembur"
+                  << std::setw(15) << "Gaji Harian"
+                  << std::setw(15) << "Lembur"
+                  << std::setw(15) << "Total"
+                  << "  Status" << "\n";
+        std::cout << std::string(150, '=') << "\n";
 
         double totalSemua = 0;
         int maxGaji = (jumlah > 0) ? arr[0].getTotal() : 0;
         int minGaji = (jumlah > 0) ? arr[0].getTotal() : 0;
 
         for (int i = 0; i < jumlah; i++) {
-            std::cout << Util::baris(arr[i].getBaris(i + 1), LEBAR_GAJI, RATA_GAJI) << "\n";
+            arr[i].printPegawai(i + 1);
             int t = arr[i].getTotal();
             totalSemua += t;
             if (t > maxGaji) maxGaji = t;
             if (t < minGaji) minGaji = t;
         }
-        std::cout << g << "\n";
+        std::cout << std::string(150, '=') << "\n";
 
         double rataRata = (jumlah > 0) ? (totalSemua / jumlah) : 0;
 
@@ -481,7 +419,7 @@ public:
     }
 };
 
-//Superclass Kendaraan (abstract)
+//Supeclass Kendaraan
 class Kendaraan {
 protected:
     std::string merk;
@@ -491,21 +429,17 @@ protected:
     std::string namaPemilik;
     Waktu masuk;
     Waktu keluar;
-    int hariInap;              
-    bool sudahKeluar;
-
-    long durasiDetik() const {
-        return static_cast<long>(hariInap) * 86400L + keluar.totalDetik() - masuk.totalDetik();
-    }
-
 public:
-    Kendaraan() : merk(""), plat(""), warna(""), nipPemilik(""), namaPemilik(""), hariInap(0), sudahKeluar(false) {}
+    // Constructor default dan berparameter
+    Kendaraan() : merk(""), plat(""), warna(""), nipPemilik(""), namaPemilik("") {}
 
-    Kendaraan(const std::string& merk, const std::string& plat, const std::string& warna)
-        : merk(merk), plat(plat), warna(warna), nipPemilik(""), namaPemilik(""), hariInap(0), sudahKeluar(false) {}
+    Kendaraan(const std::string& merk, const std::string& plat, const std::string& warna) 
+        : merk(merk), plat(plat), warna(warna), nipPemilik(""), namaPemilik("") {}
 
+    // Virtual Destructor
     virtual ~Kendaraan() {}
 
+    // Setter dan getter
     void setMerk(const std::string& m) {
         merk = m;
     }
@@ -530,380 +464,561 @@ public:
         return warna;
     }
 
-    void setPemilik(const std::string& nip, const std::string& nama) {
+    void setPemilik(const std::string& nip, const std::string& nama) { // setter pemilik kendaraaan
         nipPemilik = nip;
         namaPemilik = nama;
     }
 
-    std::string getNipPemilik() const {
+    std::string getNipPemilik() const { // getter nip pemilik kendaraan
         return nipPemilik;
     }
 
-    std::string getNamaPemilik() const {
+    std::string getNamaPemilik() const { // getter nama pemillik kendaraan
         return namaPemilik;
     }
 
-    bool isPegawai() const {
-        return !nipPemilik.empty();
-    }
-
-    void setMasuk(const Waktu& w) {
+    void setMasuk(const Waktu& w) { // set jam masuk kendaraan
         masuk = w;
     }
 
-    Waktu getMasuk() const {
+    Waktu getMasuk() const { // get jam masuk kendaraan
         return masuk;
     }
 
-    // Mengembalikan false kalau waktu keluar tidak setelah waktu masuk.
-    bool setKeluar(const Waktu& w, int tambahHari) {
-        long d = static_cast<long>(tambahHari) * 86400L + w.totalDetik() - masuk.totalDetik();
-        if (d <= 0) return false;
+    bool isPegawai() const { // method untuk mengecek apakah kendaraan punya karyawan pt atau bukan
+        return !nipPemilik.empty();
+    }
+
+    bool isSudahKeluar() const { // method untuk mengecek apakah kendaraan sudah keluar atau belum
+        return keluar.totalDetik() > 0;
+    }
+
+    bool setKeluar(const Waktu& w) { 
+        if (w.totalDetik() <= masuk.totalDetik()) { // mengecek apakah waktu keluar lebih dari waktu masuk
+            return false; 
+        } 
         keluar = w;
-        hariInap = tambahHari;
-        sudahKeluar = true;
         return true;
     }
 
-    bool getSudahKeluar() const {
-        return sudahKeluar;
+    Waktu getKeluar() const { // getter jam keluar 
+        return keluar;
+    }
+ 
+    long durasiDetik() const { // menghitung durasi parkir kendaraan dalam detik
+        return static_cast<long>(keluar.totalDetik() - masuk.totalDetik());
     }
 
-    Waktu getDurasi() const {
-        long d = durasiDetik();
-        return Waktu(static_cast<int>(d / 3600), static_cast<int>((d % 3600) / 60), static_cast<int>(d % 60));
+    Waktu getDurasi() const { // getter durasi parkir dalam format jam:menit:detik
+        long dur = durasiDetik();
+        return Waktu(static_cast<int>(dur / 3600), static_cast<int>(dur % 3600 / 60), static_cast<int>(dur % 60));
     }
 
-    int jamTerbayar() const {
-        long j = (durasiDetik() + 3599) / 3600;
-        return static_cast<int>(j < 1 ? 1 : j);
-    }
+    virtual void inputSubclass() = 0; // method input atribut spesifik tiap tipe kendaraan
+    virtual long hitungBiaya(const ArrayPegawai& db) = 0; // method menghitung biaya parkir tiap tipe kendaraan
+    virtual std::string getJenisKendaraan() const = 0; // method untuk endapatkan jenis kendaraan
 
-    int hariTerbayar() const { 
-        long h = (durasiDetik() + 86399) / 86400;
-        return static_cast<int>(h < 1 ? 1 : h);
-    }
-
-    // true kalau kendaraan ini dikenai tarif per hari
-    virtual bool perHari() const {
-        return isPegawai();
-    }
-
-    virtual std::string getJenis() const = 0;
-    virtual std::string getTarif() const = 0;
-    virtual int hitungBiaya() const = 0;
-
-    std::string getDitagih() const {
-        if (perHari()) return std::to_string(hariTerbayar()) + " hari";
-        return std::to_string(jamTerbayar()) + " jam";
-    }
-
-    std::vector<std::string> getBaris(int no) const {
-        std::string pemilik = isPegawai() ? namaPemilik : "Umum";
-        std::string wKeluar = "-";
-        std::string durasi = "-";
-        std::string ditagih = "-";
-        std::string biaya = "-";
-        if (sudahKeluar) {
-            wKeluar = keluar.toString() + (hariInap > 0 ? "+" + std::to_string(hariInap) + "hr" : "");
-            durasi = getDurasi().toString();
-            ditagih = getDitagih();
-            biaya = Util::rupiah(hitungBiaya());
-        }
-        return {
-            std::to_string(no), plat, getJenis(), merk, pemilik,
-            masuk.toString(), wKeluar, durasi, ditagih,
-            getTarif(), biaya, sudahKeluar ? "Selesai" : "Parkir"
-        };
+    // Method input kendaraan umum
+    void inputKendaraanUmum() {
+        std::cout << "Merk      : ";
+        std::getline(std::cin, merk);
+        std::cout << "No. Plat  : ";
+        std::getline(std::cin, plat);
+        std::cout << "Warna     : ";
+        std::getline(std::cin, warna);
+        std::cout << "Waktu Masuk :\n";
+        masuk.inputDalam();
     }
 };
 
-class Mobil : public Kendaraan {
-private:
-    static const int TARIF_UMUM = 3000;      // per jam
-    static const int TARIF_PEGAWAI = 6000;   // per hari
-public:
-    Mobil() : Kendaraan() {}
-
-    Mobil(const std::string& merk, const std::string& plat, const std::string& warna)
-        : Kendaraan(merk, plat, warna) {}
-
-    std::string getJenis() const override {
-        return "Mobil";
-    }
-
-    std::string getTarif() const override {
-        return perHari() ? Util::rupiah(TARIF_PEGAWAI) + "/hari" : Util::rupiah(TARIF_UMUM) + "/jam";
-    }
-
-    int hitungBiaya() const override {
-        return perHari() ? hariTerbayar() * TARIF_PEGAWAI : jamTerbayar() * TARIF_UMUM;
-    }
-};
-
-class Truk : public Kendaraan {
-private:
-    static const int TARIF_UMUM = 5000;      // per jam, pegawai pun sama
-public:
-    Truk() : Kendaraan() {}
-
-    Truk(const std::string& merk, const std::string& plat, const std::string& warna)
-        : Kendaraan(merk, plat, warna) {}
-
-    std::string getJenis() const override {
-        return "Truk";
-    }
-
-    bool perHari() const override {
-        return false;
-    }
-
-    std::string getTarif() const override {
-        return Util::rupiah(TARIF_UMUM) + "/jam";
-    }
-
-    int hitungBiaya() const override {
-        return jamTerbayar() * TARIF_UMUM;
-    }
-};
-
+// Subclass Motor
 class Motor : public Kendaraan {
 private:
-    static const int TARIF_UMUM = 2000;      // per jam
-    static const int TARIF_PEGAWAI = 3000;   // per hari
+bool adaFootStep;
 public:
-    Motor() : Kendaraan() {}
+    // Constructor default dan berparameter
+    Motor() : Kendaraan(), adaFootStep(false) {}
 
-    Motor(const std::string& merk, const std::string& plat, const std::string& warna)
-        : Kendaraan(merk, plat, warna) {}
+    Motor(const std::string& merk, const std::string& plat, const std::string& warna, bool adaFootstep) 
+        : Kendaraan(merk, plat, warna), adaFootStep(adaFootStep) {}
+    
+    // Setter dan Getter
+    void setAdaFootStep(bool ada) {
+        adaFootStep = ada;
+    }
 
-    std::string getJenis() const override {
+    bool getAdaFootStep() const {
+        return adaFootStep;
+    }
+
+    // getter jenis kendaraan (override)
+    std::string getJenisKendaraan() const override {
         return "Motor";
     }
 
-    std::string getTarif() const override {
-        return perHari() ? Util::rupiah(TARIF_PEGAWAI) + "/hari" : Util::rupiah(TARIF_UMUM) + "/jam";
+    // Method Input subclass Motor menggunakan override
+    void inputSubclass() override {
+        std::string input;
+        do {
+            std::cout << "Apakah ada footstep? (y/n): ";
+            std::getline(std::cin, input);
+            if (input == "y" || input == "Y") {
+                adaFootStep = true;
+                break;
+            } else if (input == "n" || input == "N") {
+                adaFootStep = false;
+                break;
+            } else {
+                std::cout << "Input tidak valid. Silakan masukkan 'y' atau 'n'.\n";
+            }
+        } while (true);
     }
 
-    int hitungBiaya() const override {
-        return perHari() ? hariTerbayar() * TARIF_PEGAWAI : jamTerbayar() * TARIF_UMUM;
+    // Method hitung biaya khusus mototr
+    long hitungBiaya(const ArrayPegawai& db) override {
+        long totalDetik = keluar.totalDetik() - masuk.totalDetik();
+        if (totalDetik < 0) totalDetik = 0;
+        
+        // Dibulatkan ke atas per jam, minimal 1 jam
+        long totalJam = (totalDetik + 3599) / 3600;
+        if (totalJam < 1) totalJam = 1;
+
+        // Cek apakah pemilik kendaraan adalah karyawan
+        bool validPegawai = false;
+        if (!nipPemilik.empty()) {
+            for (int i = 0; i < db.getJumlah(); i++) {
+                if (db.getPegawaiAt(i).getNip() == nipPemilik) {
+                    validPegawai = true;
+                    break;
+                }
+            }
+        }
+
+        // Tarif Pegawai: Rp 3000
+        // Tarif Umum: Rp 2000 / jam
+        if (validPegawai) {
+            long totalHari = (totalDetik + 86399) / 86400; // ditambah 86399 untuk pembulatan keatas
+            if (totalHari < 1) totalHari = 1;
+            return totalHari * 3000;
+        } else {
+            return totalJam * 2000;
+        }
     }
 };
 
+// Subclass Mobil
+class Mobil : public Kendaraan {
+private:
+    int jumlahPintu;
+    bool adaSunroof;
+public:
+    // Constructor default dan berparameter
+    Mobil() : Kendaraan(), jumlahPintu(4), adaSunroof(false) {}
 
-const std::vector<std::string> HEADER_PARKIR = {"No", "Plat", "Jenis", "Merk", "Pemilik", "Masuk",
-                                                "Keluar", "Durasi", "Ditagih", "Tarif", "Biaya", "Status"};
-const std::vector<int> LEBAR_PARKIR = {3, 10, 6, 10, 12, 8, 13, 9, 8, 10, 9, 7};
-const std::string RATA_PARKIR = "^<<<<^^^^>>^";
+    Mobil(const std::string& merk, const std::string& plat, const std::string& warna, int jumlahPintu, bool adaSunroof) 
+        : Kendaraan(merk, plat, warna), jumlahPintu(jumlahPintu), adaSunroof(adaSunroof) {}
+    
+    // Setter dan Getter
+    void setJumlahPintu(int pintu) {
+        jumlahPintu = pintu;
+    }
 
-// Array of Kendaraan
+    int getJumlahPintu() const {
+        return jumlahPintu;
+    }
+
+    void setAdaSunroof(bool ada) {
+        adaSunroof = ada;
+    }
+
+    bool getAdaSunroof() const {
+        return adaSunroof;
+    }
+
+    // Getter jenis kendaraan (override)
+    std::string getJenisKendaraan() const override {
+        return "Mobil";
+    }
+
+    // Method Input subclass Mobil menggunakan override
+    void inputSubclass() override {
+        jumlahPintu = Util::bacaInt("Jumlah Pintu : ");
+        
+        std::string input;
+        do {
+            std::cout << "Apakah ada sunroof? (y/n): ";
+            std::getline(std::cin, input);
+            if (input == "y" || input == "Y") {
+                adaSunroof = true;
+                break;
+            } else if (input == "n" || input == "N") {
+                adaSunroof = false;
+                break;
+            } else {
+                std::cout << "Input tidak valid. Silakan masukkan 'y' atau 'n'.\n";
+            }
+        } while (true);
+    }
+
+    // Method hitung biaya khusus Mobil 
+    long hitungBiaya(const ArrayPegawai& db) override {
+        long totalDetik = keluar.totalDetik() - masuk.totalDetik();
+        if (totalDetik < 0) totalDetik = 0;
+        
+        long totalJam = (totalDetik + 3599) / 3600;
+        if (totalJam < 1) totalJam = 1;
+
+        bool validPegawai = false;
+        if (!nipPemilik.empty()) {
+            for (int i = 0; i < db.getJumlah(); i++) {
+                if (db.getPegawaiAt(i).getNip() == nipPemilik) {
+                    validPegawai = true;
+                    break;
+                }
+            }
+        }
+
+        if (validPegawai) {
+            long totalHari = (totalDetik + 86399) / 86400;
+            if (totalHari < 1) totalHari = 1;
+            return totalHari * 6000; // Tarif pegawai mobil
+        } else {
+            return totalJam * 3000;  // Tarif umum mobil
+        }
+    }
+};
+
+//Subclass Truk
+class Truk : public Kendaraan {
+private:
+    double kapasitasMuatanTon;
+    bool adaRemAngin;
+public:
+    // Constructor default dan berparameter
+    Truk() : Kendaraan(), kapasitasMuatanTon(5.0), adaRemAngin(true) {}
+
+    Truk(const std::string& merk, const std::string& plat, const std::string& warna, double muatan, bool remAngin) 
+        : Kendaraan(merk, plat, warna), kapasitasMuatanTon(muatan), adaRemAngin(remAngin) {}
+    
+    // Setter dan Getter
+    void setKapasitasMuatanTon(double muatan) {
+        kapasitasMuatanTon = muatan;
+    }
+
+    double getKapasitasMuatanTon() const {
+        return kapasitasMuatanTon;
+    }
+
+    void setAdaRemAngin(bool ada) {
+        adaRemAngin = ada;
+    }
+
+    bool getAdaRemAngin() const {
+        return adaRemAngin;
+    }
+
+    // Getter jenis kendaraan (override)
+    std::string getJenisKendaraan() const override {
+        return "Truk";
+    }
+
+    // Method Input subclass Truk menggunakan override
+    void inputSubclass() override {
+        std::cout << "Kapasitas Muatan (Ton) : ";
+        while (!(std::cin >> kapasitasMuatanTon)) {
+            std::cout << "Masukkan angka yang valid!\n";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Kapasitas Muatan (Ton) : ";
+        }
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        std::string input;
+        do {
+            std::cout << "Apakah ada rem angin? (y/n): ";
+            std::getline(std::cin, input);
+            if (input == "y" || input == "Y") {
+                adaRemAngin = true;
+                break;
+            } else if (input == "n" || input == "N") {
+                adaRemAngin = false;
+                break;
+            } else {
+                std::cout << "Input tidak valid. Silakan masukkan 'y' atau 'n'.\n";
+            }
+        } while (true);
+    }
+
+    // Method hitung biaya khusus Truk 
+    long hitungBiaya(const ArrayPegawai& db) override {
+        long totalDetik = keluar.totalDetik() - masuk.totalDetik();
+        if (totalDetik < 0) totalDetik = 0;
+        
+        long totalJam = (totalDetik + 3599) / 3600;
+        if (totalJam < 1) totalJam = 1;
+
+        return totalJam * 5000; // Tarif umum truk = tarif pegawai truk
+    }
+};
+
 class Parkir {
 private:
-    static const int max = 100;
-    Kendaraan* arr[max];
-    int jumlah;
-
+    static const int maxKendaraan = 100;
+    Kendaraan* arr[maxKendaraan];
+    int jumlahKendaraan;
 public:
-    Parkir() : jumlah(0) {
-        for (int i = 0; i < max; i++) arr[i] = nullptr;
-    }
+    // Constructor default dan parameter (sudah ada, pertahankan)
+    Parkir() : jumlahKendaraan(0) {
+        for (int i = 0; i < maxKendaraan; i++) {
+            arr[i] = nullptr;
+        }
+    } 
 
     ~Parkir() {
-        for (int i = 0; i < jumlah; i++) delete arr[i];
-    }
-
-    Parkir(const Parkir&) = delete;
-    Parkir& operator=(const Parkir&) = delete;
-
-    int getJumlah() const {
-        return jumlah;
-    }
-
-    // Helper internal untuk memanggil fungsi kalkulasi 
-    int cariAktif(const std::string& plat) const {
-        for (int i = 0; i < jumlah; i++) {
-            if (!arr[i]->getSudahKeluar() && arr[i]->getPlat() == plat) return i;
+        for (int i = 0; i < jumlahKendaraan; i++) {
+            delete arr[i];
         }
-        return -1;
     }
 
-    // 
-    int hitungAktif() const {
-        int n = 0;
-        for (int i = 0; i < jumlah; i++) {
-            if (!arr[i]->getSudahKeluar()) n++;
+    // Setter dan Getter
+    void setJumlahKendaraan(int jml) {
+        if (jml > maxKendaraan || jml < 0) {
+            std::cout << "Jumlah Kendaraan Tidak Valid.\n";
+        } else {
+            jumlahKendaraan = jml;
         }
-        return n;
     }
 
-    // Menambah di belakang, data lama tidak ditimpa.
-    void inputMasuk(const ArrayPegawai& dataPegawai) {
-        if (jumlah >= max) {
-            std::cout << "Data parkir penuh (maksimal " << max << ")!\n";
+    int getJumlahKendaraan() const {
+        return jumlahKendaraan;
+    }
+
+    void setKendaraanAt(int index, Kendaraan* k) {
+        if (index >= 0 && index < maxKendaraan) {
+            arr[index] = k;
+        }
+    }
+
+    Kendaraan* getKendaraanAt(int index) const {
+        if (index >= 0 && index < maxKendaraan) {
+            return arr[index];
+        }
+        return nullptr;
+    }
+
+    // Method untuk mengecek plat nomor aktif
+    bool isPlatAktif(const std::string& plat) const {
+        for (int i = 0; i < jumlahKendaraan; i++) {
+            if (!arr[i]->isSudahKeluar() && arr[i]->getPlat() == plat) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Input Kendaraan Masuk
+    void inputKendaraanMasuk(const ArrayPegawai& dbPegawai) {
+        if (jumlahKendaraan >= maxKendaraan) {
+            std::cout << "\nArea parkir sudah penuh (maksimal 100)!\n";
             return;
         }
 
-        std::cout << "Jenis kendaraan:\n";
-        std::cout << "  1. Mobil\n  2. Truk\n  3. Motor\n";
-        int jenis;
+        int pilihan;
         do {
-            jenis = Util::bacaInt("Pilih jenis (1-3): ");
-        } while (jenis < 1 || jenis > 3);
+            std::cout << "\nPilih Jenis Kendaraan:\n";
+            std::cout << "1. Motor\n2. Mobil\n3. Truk\nPilihan (1-3): ";
+            pilihan = Util::bacaInt("");
+        } while (pilihan < 1 || pilihan > 3);
 
-        std::string plat = Util::kapital(Util::bacaString("Plat nomor : "));
-        if (cariAktif(plat) != -1) {
-            std::cout << "Plat " << plat << " masih terparkir, tidak bisa masuk dua kali!\n";
+        std::string platTemp;
+        std::cout << "No. Plat : ";
+        std::getline(std::cin, platTemp);
+        
+        if (isPlatAktif(platTemp)) {
+            std::cout << "Error: Plat nomor tersebut masih aktif terparkir!\n";
             return;
         }
-        std::string merk = Util::bacaString("Merk        : ");
-        std::string warna = Util::bacaString("Warna       : ");
 
-        Kendaraan* k = nullptr;
-        switch (jenis) {
-            case 1: k = new Mobil(merk, plat, warna); break;
-            case 2: k = new Truk(merk, plat, warna);  break;
-            default: k = new Motor(merk, plat, warna); break;
-        }
+        // Polimorfisme dinamis (membuat objek sesuai pilihan)
+        Kendaraan* kBaru = nullptr;
+        if (pilihan == 1) kBaru = new Motor();
+        else if (pilihan == 2) kBaru = new Mobil();
+        else if (pilihan == 3) kBaru = new Truk();
 
-        std::string nip = Util::bacaString("NIP pegawai (kosongkan jika umum) : ", false);
+        kBaru->setPlat(platTemp);
+
+        std::string merk, warna;
+        std::cout << "Merk  : "; std::getline(std::cin, merk); kBaru->setMerk(merk);
+        std::cout << "Warna : "; std::getline(std::cin, warna); kBaru->setWarna(warna);
+
+        // Input atribut spesifik subclass
+        kBaru->inputSubclass();
+
+        // Validasi NIP Pemilik
+        std::string nip;
+        std::cout << "NIP Pemilik (kosongkan jika umum): ";
+        std::getline(std::cin, nip);
+
+        std::string namaPemilikStr = "Umum / Tamu";
         if (!nip.empty()) {
-            int idx = dataPegawai.cariNip(nip);
-            if (idx >= 0) {
-                k->setPemilik(nip, dataPegawai.getPegawaiAt(idx).getNama());
-                std::cout << "Pemilik terdaftar sebagai pegawai: " << k->getNamaPemilik() << "\n";
-                if (jenis == 2) std::cout << "Catatan: truk tetap dikenai tarif umum.\n";
-            } else {
-                std::cout << "NIP tidak ditemukan, dicatat sebagai umum.\n";
+            for (int i = 0; i < dbPegawai.getJumlah(); i++) {
+                if (dbPegawai.getPegawaiAt(i).getNip() == nip) {
+                    namaPemilikStr = dbPegawai.getPegawaiAt(i).getNama();
+                    break;
+                }
+            }
+        }
+        kBaru->setPemilik(nip, namaPemilikStr);
+
+        std::cout << "Waktu Masuk:\n";
+        Waktu wMasuk;
+        wMasuk.inputDalam();
+        kBaru->setMasuk(wMasuk);
+
+        arr[jumlahKendaraan] = kBaru;
+        jumlahKendaraan++;
+        std::cout << "Kendaraan berhasil masuk area parkir!\n";
+    }
+
+    // Proses Kendaraan Keluar
+    void prosesKendaraanKeluar(const ArrayPegawai& dbPegawai) {
+        int aktifCount = 0;
+        std::cout << "\n--- KENDARAAN YANG MASIH TERPARKIR ---\n";
+        for (int i = 0; i < jumlahKendaraan; i++) {
+            if (!arr[i]->isSudahKeluar()) {
+                std::cout << (i + 1) << ". [" << arr[i]->getJenisKendaraan() << "] Plat: " << arr[i]->getPlat() 
+                          << " (Masuk: " << arr[i]->getMasuk().toString() << ")\n";
+                aktifCount++;
             }
         }
 
-        Waktu w;
-        std::cout << "Waktu Masuk :\n";
-        w.inputDalam();
-        k->setMasuk(w);
-
-        arr[jumlah++] = k;
-        std::cout << k->getJenis() << " " << plat << " berhasil dicatat masuk.\n";
-    }
-
-    void inputKeluar() {
-        if (hitungAktif() == 0) {
-            std::cout << "Tidak ada kendaraan yang sedang parkir.\n";
+        if (aktifCount == 0) {
+            std::cout << "Tidak ada kendaraan yang sedang terparkir.\n";
             return;
         }
 
-        std::string plat = Util::kapital(Util::bacaString("Plat nomor yang keluar : "));
-        int idx = cariAktif(plat);
-        if (idx == -1) {
-            std::cout << "Plat " << plat << " tidak ditemukan di kendaraan yang sedang parkir.\n";
+        int pilih = Util::bacaInt("Pilih nomor kendaraan yang akan keluar: ");
+        if (pilih < 1 || pilih > jumlahKendaraan || arr[pilih - 1]->isSudahKeluar()) {
+            std::cout << "Pilihan tidak valid.\n";
             return;
         }
-        Kendaraan* k = arr[idx];
 
-        bool ok;
+        Kendaraan* k = arr[pilih - 1];
+        Waktu wKeluar;
         do {
-            Waktu w;
-            std::cout << "Waktu Keluar :\n";
-            w.inputDalam();
-            int hari;
-            do {
-                hari = Util::bacaInt("Lama menginap (0-30 hari, 0 jika keluar di hari yang sama) : ");
-            } while (hari < 0 || hari > 30);
-            ok = k->setKeluar(w, hari);
-            if (!ok) std::cout << "Waktu keluar harus setelah waktu masuk, ulangi!\n";
-        } while (!ok);
+            std::cout << "Waktu Keluar:\n";
+            wKeluar.inputDalam();
+            if (wKeluar.totalDetik() <= k->getMasuk().totalDetik()) {
+                std::cout << "Waktu keluar harus setelah waktu masuk, ulangi!\n";
+            } else {
+                break;
+            }
+        } while (true);
 
-        // hitungBiaya() dipanggil lewat pointer Kendaraan menggunakan syntax virtual: versi Mobil/Truk/Motor yang jalan
-        std::cout << "\n========== STRUK PARKIR ==========\n";
-        std::cout << "Plat    : " << k->getPlat() << "\n";
-        std::cout << "Jenis   : " << k->getJenis() << " (" << k->getMerk() << ", " << k->getWarna() << ")\n";
-        std::cout << "Pemilik : " << (k->isPegawai() ? k->getNamaPemilik() + " (pegawai)" : std::string("Umum")) << "\n";
-        std::cout << "Masuk   : " << k->getMasuk().toString() << "\n";
-        std::cout << "Durasi  : " << k->getDurasi().toString() << "\n";
-        std::cout << "Ditagih : " << k->getDitagih() << " x " << k->getTarif() << "\n";
-        std::cout << "BIAYA   : Rp " << Util::rupiah(k->hitungBiaya()) << "\n";
-        std::cout << "==================================\n";
+        k->setKeluar(wKeluar);
+        int totalBiaya = k->hitungBiaya(dbPegawai); 
+
+        std::cout << "\nKendaraan berhasil keluar!\n";
+        std::cout << "Total Biaya Parkir : Rp " << Util::rupiah(totalBiaya) << "\n";
     }
 
-    void outputLaporan() const {
-        std::string g = Util::garis(LEBAR_PARKIR);
-        std::cout << "\n" << Util::pad("Laporan Parkir Kendaraan PT Informatika", static_cast<int>(g.length()), '^') << "\n";
-        std::cout << g << "\n";
-        std::cout << Util::baris(HEADER_PARKIR, LEBAR_PARKIR, RATA_PARKIR) << "\n";
-        std::cout << g << "\n";
+    // Laporan Parkir 
+    void tampilkanLaporanParkir(const ArrayPegawai& dbPegawai) const {
+        if (jumlahKendaraan == 0) {
+            std::cout << "\nBelum ada data parkir.\n";
+            return;
+        }
+
+        std::cout << "\n\t\t\t\tLAPORAN DATA PARKIR KENDARAAN\n";
+        std::cout << std::string(110, '=') << "\n";
+        std::cout << std::left << std::setw(4) << "No"
+                << std::setw(10) << "Jenis"
+                << std::setw(12) << "Plat"
+                << std::setw(15) << "Merk"
+                << std::setw(15) << "Pemilik"
+                << std::setw(12) << "Masuk"
+                << std::setw(12) << "Keluar"
+                << std::setw(12) << "Status" << "\n";
+        std::cout << std::string(110, '=') << "\n";
 
         long totalPendapatan = 0;
-        int nMobil = 0, nTruk = 0, nMotor = 0, nSelesai = 0;
+        for (int i = 0; i < jumlahKendaraan; i++) {
+            std::string status = arr[i]->isSudahKeluar() ? "Keluar" : "Terparkir";
+            std::string jamKeluar = arr[i]->isSudahKeluar() ? arr[i]->getKeluar().toString() : "---";
 
-        for (int i = 0; i < jumlah; i++) {
-            std::cout << Util::baris(arr[i]->getBaris(i + 1), LEBAR_PARKIR, RATA_PARKIR) << "\n";
-            std::string jenis = arr[i]->getJenis();
-            if (jenis == "Mobil") nMobil++;
-            else if (jenis == "Truk") nTruk++;
-            else nMotor++;
-            if (arr[i]->getSudahKeluar()) {
-                nSelesai++;
-                totalPendapatan += arr[i]->hitungBiaya();
+            std::cout << std::left << std::setw(4) << (i + 1)
+                    << std::setw(10) << arr[i]->getJenisKendaraan()
+                    << std::setw(12) << arr[i]->getPlat()
+                    << std::setw(15) << arr[i]->getMerk()
+                    << std::setw(15) << arr[i]->getNamaPemilik()
+                    << std::setw(12) << arr[i]->getMasuk().toString()
+                    << std::setw(12) << jamKeluar
+                    << std::setw(12) << status;
+
+            // Kirim dbPegawai ke hitungBiaya()
+            if (arr[i]->isSudahKeluar()) {
+                long biayaItem = arr[i]->hitungBiaya(dbPegawai); 
+                std::cout << " | Biaya: Rp " << Util::rupiah(biayaItem);
+                totalPendapatan += biayaItem;
             }
+            std::cout << "\n";
         }
-        std::cout << g << "\n";
-
-        std::cout << "Total Kendaraan   : " << jumlah << " (Mobil " << nMobil << ", Truk " << nTruk << ", Motor " << nMotor << ")\n";
-        std::cout << "Sedang Parkir     : " << (jumlah - nSelesai) << "\n";
-        std::cout << "Sudah Keluar      : " << nSelesai << "\n";
-        std::cout << "Total Pendapatan  : " << Util::rupiah(static_cast<int>(totalPendapatan)) << "\n";
+        std::cout << std::string(110, '=') << "\n";
+        std::cout << "Total Pendapatan Parkir : Rp " << Util::rupiah(totalPendapatan) << "\n";
     }
 };
 
 class Menu {
 private:
-    ArrayPegawai dataPegawai;
-    Parkir dataParkir;
+    ArrayPegawai dbPegawai;
+    Parkir dbParkir;
 
 public:
-    Menu() {}
-
-    void tampilkanMenu() const {
-        std::cout << "\n========================================\n";
-        std::cout << "         MENU GAJI & PARKIR PT INFORMATIKA\n";
-        std::cout << "========================================\n";
-        std::cout << "1. Input Data Pegawai (tambah)\n";
-        std::cout << "2. Tampilkan Daftar Gaji\n";
-        std::cout << "3. Kendaraan Masuk\n";
-        std::cout << "4. Kendaraan Keluar (hitung biaya)\n";
-        std::cout << "5. Laporan Parkir\n";
-        std::cout << "6. Keluar\n";
-        std::cout << "----------------------------------------\n";
-    }
-
     void jalankan() {
         int pilihan;
         do {
-            tampilkanMenu();
+            std::cout << "\n==========================================================\n";
+            std::cout << "            MENU GAJI & PARKIR PT INFORMATIKA             \n";
+            std::cout << "==========================================================\n";
+            std::cout << "1. Input Data Pegawai \n";
+            std::cout << "2. Tampilkan Daftar Gaji\n";
+            std::cout << "3. Kendaraan Masuk\n";
+            std::cout << "4. Kendaraan Keluar\n";
+            std::cout << "5. Laporan Parkir\n";
+            std::cout << "6. Keluar\n";
+            std::cout << "----------------------------------------------------------\n";
+            
             pilihan = Util::bacaInt("Pilih menu (1-6): ");
+            std::cout << "\n";
+
             switch (pilihan) {
                 case 1:
-                    dataPegawai.inputDalam();
+                    dbPegawai.inputDalam(); 
                     break;
                 case 2:
-                    dataPegawai.prosesData();
-                    dataPegawai.outputData();
+                    dbPegawai.outputData(); 
                     break;
                 case 3:
-                    dataParkir.inputMasuk(dataPegawai);
+                    dbParkir.inputKendaraanMasuk(dbPegawai);
                     break;
                 case 4:
-                    dataParkir.inputKeluar();
+                    dbParkir.prosesKendaraanKeluar(dbPegawai);
                     break;
                 case 5:
-                    dataParkir.outputLaporan();
+                    dbParkir.tampilkanLaporanParkir(dbPegawai);
                     break;
                 case 6:
-                    std::cout << "Keluar dari program!\n";
+                    std::cout << "Terima kasih telah menggunakan sistem Gaji & Parkir PT Informatika!\n";
                     break;
                 default:
-                    std::cout << "Input tidak valid, silahkan coba lagi!\n";
+                    std::cout << "Pilihan tidak valid! Silakan masukkan angka 1 sampai 6.\n";
             }
+
+            if (pilihan != 6) {
+                std::cout << "\nTekan Enter untuk kembali ke menu...";
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            }
+
         } while (pilihan != 6);
     }
 };
