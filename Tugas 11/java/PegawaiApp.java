@@ -1,102 +1,50 @@
-/*
-Nama Program : PegawaiApp.java
-Anggota Kelompok - NPM:
-    1. Rasya Islami Akbar - 140810250009
-    2. Ghiyats Khairul Mala - 140810250102
-Kelas : A
-Deskripsi Program : Program gaji karyawan (inheritance Person -> Pegawai) dan parkir kendaraan
-                    (inheritance + polimorfisme Kendaraan -> Mobil, Truk, Motor). Data disimpan dalam array.
-
-SPESIFIKASI DAN ATURAN PARKIR
-1. Jenis kendaraan : Mobil, Truk, Motor. Tiap jenis meng-override hitungBiaya() (polimorfisme).
-2. Tarif umum (per jam) : Mobil 3.000, Truk 5.000, Motor 2.000.
-3. Tarif pegawai (per hari, <= 24 jam) : Mobil 6.000, Motor 3.000. Truk milik pegawai tetap tarif umum.
-4. Pegawai dikenali dari NIP yang sudah terdaftar. NIP kosong / tidak ditemukan = umum.
-5. Tarif per jam : durasi dibulatkan ke atas per jam, minimal 1 jam.
-6. Tarif per hari : tiap 24 jam dihitung 1 hari (dibulatkan ke atas), minimal 1 hari.
-7. Plat nomor tidak boleh sama dengan kendaraan yang masih terparkir.
-8. NIP pegawai harus unik.
-9. Waktu keluar harus setelah waktu masuk. Lama menginap (0 - 30 hari) diisi saat keluar.
-10. Data yang sudah diinput tidak ditimpa. Input pegawai selalu menambah data di belakang data lama.
-11. Kapasitas : 100 pegawai dan 100 catatan parkir. Jika penuh, input ditolak.
-12. Biaya baru dihitung dan dikunci saat kendaraan keluar. Pendapatan hanya dari kendaraan yang sudah keluar.
-*/
-
 import java.util.Scanner;
 
+// Kelas utilitas untuk validasi input dan pemformatan
 class Util {
-    static final Scanner sc = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
 
-    static int bacaInt(String pesan) {
+    public static int bacaInt(String pesan) {
+        int val = 0;
         while (true) {
             System.out.print(pesan);
-            String line = sc.nextLine().trim();
-            try {
-                return Integer.parseInt(line);
-            } catch (NumberFormatException e) {
+            if (scanner.hasNextInt()) {
+                val = scanner.nextInt();
+                scanner.nextLine(); 
+                return val;
+            } else {
                 System.out.println("Masukkan angka yang valid!");
+                scanner.next(); // buang input invalid
             }
         }
     }
 
-    static String bacaString(String pesan, boolean wajib) {
-        while (true) {
-            System.out.print(pesan);
-            String s = sc.nextLine().trim();
-            if (!wajib || !s.isEmpty()) return s;
-            System.out.println("Tidak boleh kosong!");
+    public static String bacaString(String pesan) {
+        System.out.print(pesan);
+        return scanner.nextLine();
+    }
+
+    public static String rupiah(int nilai) {
+        String s = String.valueOf(nilai);
+        int n = s.length();
+        StringBuilder sb = new StringBuilder(s);
+        for (int i = n - 3; i > 0; i -= 3) {
+            sb.insert(i, ".");
         }
-    }
-
-    static String bacaString(String pesan) {
-        return bacaString(pesan, true);
-    }
-
-    static String kapital(String s) {
-        return s.toUpperCase();
-    }
-
-    static String rupiah(long nilai) {
-        StringBuilder s = new StringBuilder(Long.toString(nilai));
-        for (int i = s.length() - 3; i > 0; i -= 3) {
-            s.insert(i, ".");
-        }
-        return s.toString();
-    }
-
-    static String pad(String s, int w, char rata) {
-        String t = s.length() > w ? s.substring(0, w) : s;
-        int sisa = w - t.length();
-        if (rata == '<') return t + " ".repeat(sisa);
-        if (rata == '>') return " ".repeat(sisa) + t;
-        int kiri = sisa / 2;
-        return " ".repeat(kiri) + t + " ".repeat(sisa - kiri);
-    }
-
-    static String garis(int[] lebar) {
-        StringBuilder g = new StringBuilder("+");
-        for (int l : lebar) {
-            g.append("-".repeat(l + 2)).append("+");
-        }
-        return g.toString();
-    }
-
-    static String baris(String[] cells, int[] lebar, String rata) {
-        StringBuilder b = new StringBuilder("|");
-        for (int i = 0; i < lebar.length; i++) {
-            b.append(" ").append(pad(cells[i], lebar[i], rata.charAt(i))).append(" |");
-        }
-        return b.toString();
+        return sb.toString();
     }
 }
 
+// Kelas Waktu
 class Waktu {
     private int jam;
     private int menit;
     private int detik;
 
     public Waktu() {
-        this(0, 0, 0);
+        this.jam = 0;
+        this.menit = 0;
+        this.detik = 0;
     }
 
     public Waktu(int jam, int menit, int detik) {
@@ -106,30 +54,14 @@ class Waktu {
     }
 
     public void setWaktu(int j, int m, int d) {
-        jam = j;
-        menit = m;
-        detik = d;
+        this.jam = j;
+        this.menit = m;
+        this.detik = d;
     }
 
-    public void setJam(int j) { 
-        jam = j; 
-    }
-    public void setMenit(int m) { 
-        menit = m; 
-    }
-    public void setDetik(int d) { 
-        detik = d; 
-    }
-
-    public int getJam() { 
-        return jam; 
-    }
-    public int getMenit() { 
-        return menit; 
-    }
-    public int getDetik() { 
-        return detik; 
-    }
+    public int getJam() { return jam; }
+    public int getMenit() { return menit; }
+    public int getDetik() { return detik; }
 
     public void inputDalam() {
         do {
@@ -151,7 +83,11 @@ class Waktu {
 
     public Waktu hitungSelisihFungsi(Waktu w2) {
         int selisihTotal = Math.abs(this.totalDetik() - w2.totalDetik());
-        return new Waktu(selisihTotal / 3600, (selisihTotal % 3600) / 60, selisihTotal % 60);
+        Waktu hasil = new Waktu();
+        hasil.jam = selisihTotal / 3600;
+        hasil.menit = (selisihTotal % 3600) / 60;
+        hasil.detik = selisihTotal % 60;
+        return hasil;
     }
 
     public void hitungSelisihVoid(Waktu w1, Waktu w2) {
@@ -161,22 +97,19 @@ class Waktu {
         this.detik = selisihTotal % 60;
     }
 
-    @Override
     public String toString() {
         return String.format("%02d:%02d:%02d", jam, menit, detik);
     }
-
-    public void outputDalam() {
-        System.out.println("Waktu = " + toString());
-    }
 }
 
+// Superclass Person
 class Person {
     protected String nama;
     protected String alamat;
 
     public Person() {
-        this("", "");
+        this.nama = "";
+        this.alamat = "";
     }
 
     public Person(String nama, String alamat) {
@@ -185,52 +118,43 @@ class Person {
     }
 
     public void inputDalam() {
-        System.out.print("Nama   : ");
-        nama = Util.sc.nextLine();
-        System.out.print("Alamat : ");
-        alamat = Util.sc.nextLine();
+        nama = Util.bacaString("Nama   : ");
+        alamat = Util.bacaString("Alamat : ");
     }
 
-    public void setNama(String nama) { 
-        this.nama = nama; 
-    }
-    public void setAlamat(String alamat) { 
-        this.alamat = alamat; 
-    }
-    public String getNama() { 
-        return nama; 
-    }
-    public String getAlamat() { 
-        return alamat; 
+    public void setNama(String nama) { this.nama = nama; }
+    public void setAlamat(String alamat) { this.alamat = alamat; }
+    public String getNama() { return nama; }
+    public String getAlamat() { return alamat; }
+
+    public void printPerson(int no) {
+        System.out.printf("%-3d %-13s %-17s", no, nama, alamat);
     }
 }
 
+// Subclass Pegawai
 class Pegawai extends Person {
     private int gol;
     private String nip;
-    private Waktu datang = new Waktu();
-    private Waktu pulang = new Waktu();
-    private Waktu lamaKerja = new Waktu();
-    private Waktu jamLembur = new Waktu();
+    private Waktu datang;
+    private Waktu pulang;
+    private Waktu lamaKerja;
+    private Waktu jamLembur;
     private String statusPeringatan;
 
     public Pegawai() {
         super();
-        gol = 1;
-        nip = "";
-        statusPeringatan = "";
-    }
-
-    public Pegawai(String nip, String nama, String alamat, int gol) {
-        super(nama, alamat);
-        this.nip = nip;
-        this.gol = gol;
+        this.gol = 1;
+        this.nip = "";
+        this.datang = new Waktu();
+        this.pulang = new Waktu();
+        this.lamaKerja = new Waktu();
+        this.jamLembur = new Waktu();
         this.statusPeringatan = "";
     }
 
     public void inputPegawai() {
-        System.out.print("NIP     : ");
-        nip = Util.sc.nextLine().trim();
+        nip = Util.bacaString("NIP     : ");
         super.inputDalam();
 
         do {
@@ -242,32 +166,17 @@ class Pegawai extends Person {
             datang.inputDalam();
             System.out.println("Waktu Pulang :");
             pulang.inputDalam();
-            if (pulang.totalDetik() <= datang.totalDetik())
+            if (pulang.totalDetik() <= datang.totalDetik()) {
                 System.out.println("Waktu pulang harus setelah waktu datang, ulangi!");
+            }
         } while (pulang.totalDetik() <= datang.totalDetik());
     }
 
-    public void setNip(String n) { 
-        nip = n; 
-    }
-    public void setGol(int g) { 
-        gol = g; 
-    }
-    public void setDatang(Waktu d) { 
-        datang = d; 
-    }
-    public void setPulang(Waktu p) { 
-        pulang = p; }
-
-    public String getNip() { 
-        return nip; 
-    }
-    public int getGol() { 
-        return gol; 
-    }
-    public String getStatusPeringatan() { 
-        return statusPeringatan; 
-    }
+    public void setNip(String nip) { this.nip = nip; }
+    public void setGol(int gol) { this.gol = gol; }
+    public String getNip() { return nip; }
+    public int getGol() { return gol; }
+    public String getStatusPeringatan() { return statusPeringatan; }
 
     public int getGajiHarian() {
         switch (gol) {
@@ -290,7 +199,7 @@ class Pegawai extends Person {
     }
 
     public int getLembur() {
-        return jamLembur.getJam() * getTarifLembur();
+        return getTarifLembur() * jamLembur.totalDetik() / 3600;
     }
 
     public int getTotal() {
@@ -299,10 +208,8 @@ class Pegawai extends Person {
 
     public void prosesGaji() {
         lamaKerja = pulang.hitungSelisihFungsi(datang);
-
         Waktu batas = new Waktu(8, 0, 0);
         if (lamaKerja.totalDetik() >= batas.totalDetik()) {
-            jamLembur = new Waktu();
             jamLembur.hitungSelisihVoid(lamaKerja, batas);
             statusPeringatan = "ok";
         } else {
@@ -311,79 +218,49 @@ class Pegawai extends Person {
         }
     }
 
-    public String[] getBaris(int no) {
-        return new String[] {
-            String.valueOf(no), nama, alamat, nip, String.valueOf(gol),
-            datang.toString(), pulang.toString(),
-            lamaKerja.toString(), jamLembur.toString(),
-            Util.rupiah(getGajiHarian()), Util.rupiah(getLembur()), Util.rupiah(getTotal()),
-            statusPeringatan
-        };
+    public void printPegawai(int no) {
+        printPerson(no);
+        System.out.printf("%-12s %5d %10s %10s %12s %12s %15s %15s %15s  %-12s%n",
+                nip, gol, datang.toString(), pulang.toString(),
+                lamaKerja.toString(), jamLembur.toString(),
+                Util.rupiah(getGajiHarian()), Util.rupiah(getLembur()),
+                Util.rupiah(getTotal()), statusPeringatan);
     }
 }
 
+// Kelas ArrayPegawai 
 class ArrayPegawai {
-    static final String[] HEADER_GAJI = {"No", "Nama", "Alamat", "NIP", "Gol", "Datang", "Pulang",
-                                         "Lama", "Jam Lembur", "Gaji Harian", "Lembur", "Total", "Status"};
-    static final int[] LEBAR_GAJI = {3, 10, 14, 8, 3, 8, 8, 8, 10, 11, 11, 11, 10};
-    static final String RATA_GAJI = "^<<<^^^^^>>>^";
-
     private static final int MAX = 100;
     private Pegawai[] arr = new Pegawai[MAX];
-    private int jumlah;
+    private int jumlah = 0;
 
     public ArrayPegawai() {
-        jumlah = 0;
-        for (int i = 0; i < MAX; i++) arr[i] = new Pegawai();
-    }
-
-    private int cariNip(String nip, int batas) {
-        for (int i = 0; i < batas; i++) {
-            if (arr[i].getNip().equals(nip)) return i;
+        for (int i = 0; i < MAX; i++) {
+            arr[i] = new Pegawai();
         }
-        return -1;
     }
 
-    public void setJumlah(int jml) {
-        if (jml > MAX || jml < 0) {
-            System.out.println("Jumlah Array Tidak Valid.");
-        }
-        jumlah = (jml > MAX) ? MAX : (jml < 0 ? 0 : jml);
-    }
+    public int getJumlah() { return jumlah; }
 
-    public int getJumlah() {
-        return jumlah;
-    }
-
-    //cari index pegawai berdasarkan NIP, -1 kalau tidak ada.
-    public int cariNip(String nip) {
-        return cariNip(nip, jumlah);
-    }
-
-    //data baru ditambahkan di belakang data lama, data lama tidak ditimpa.
     public void inputDalam() {
-        int sisa = MAX - jumlah;
-        if (sisa <= 0) {
-            System.out.println("Data pegawai penuh (maksimal " + MAX + ")!");
+        if (jumlah >= MAX) {
+            System.out.println("\nKapasitas data pegawai sudah penuh (maksimal 100)!");
             return;
         }
 
-        int tambah;
-        do {
-            tambah = Util.bacaInt("Masukkan jumlah pegawai yang ditambahkan (1-" + sisa + "): ");
-        } while (tambah < 1 || tambah > sisa);
+        int sisaKapasitas = MAX - jumlah;
+        int tambahan = Util.bacaInt("Masukkan jumlah pegawai yang ingin ditambahkan (1-" + sisaKapasitas + "): ");
+        while (tambahan < 1 || tambahan > sisaKapasitas) {
+            System.out.println("Jumlah tidak valid!");
+            tambahan = Util.bacaInt("Masukkan jumlah pegawai yang ingin ditambahkan (1-" + sisaKapasitas + "): ");
+        }
 
-        for (int i = 0; i < tambah; i++) {
-            int idx = jumlah;
-            System.out.println("\nData Pegawai ke-" + (idx + 1));
-            boolean kembar;
-            do {
-                arr[idx].inputPegawai();
-                kembar = (cariNip(arr[idx].getNip(), idx) != -1);
-                if (kembar) System.out.println("NIP sudah dipakai pegawai lain, ulangi!");
-            } while (kembar);
+        for (int i = 0; i < tambahan; i++) {
+            System.out.println("\nData Pegawai ke-" + (jumlah + 1));
+            arr[jumlah].inputPegawai();
             jumlah++;
         }
+        System.out.println("\nBerhasil menambahkan " + tambahan + " data pegawai baru!");
     }
 
     public void prosesData() {
@@ -392,472 +269,476 @@ class ArrayPegawai {
         }
     }
 
-    public void setPegawaiAt(int index, Pegawai p) {
-        if (index >= 0 && index < MAX) {
-            arr[index] = p;
-        }
-    }
-
     public Pegawai getPegawaiAt(int index) {
         if (index >= 0 && index < MAX) {
             return arr[index];
         }
-        return new Pegawai();
+        return null;
     }
 
     public void outputData() {
-        String g = Util.garis(LEBAR_GAJI);
-        System.out.println("\n" + Util.pad("Daftar Gaji Harian PT Informatika", g.length(), '^'));
-        System.out.println(g);
-        System.out.println(Util.baris(HEADER_GAJI, LEBAR_GAJI, RATA_GAJI));
-        System.out.println(g);
+        System.out.println("\n\t\t\t\t\tDaftar Gaji Harian PT Informatika");
+        System.out.println("=" .repeat(150));
+        System.out.printf("%-3s %-13s %-17s %-12s %5s %10s %10s %12s %12s %15s %15s %15s  %-12s%n",
+                "No", "Nama", "Alamat", "NIP", "Gol", "Datang", "Pulang", "Lama", "Jam Lembur",
+                "Gaji Harian", "Lembur", "Total", "Status");
+        System.out.println("=" .repeat(150));
 
         double totalSemua = 0;
         int maxGaji = (jumlah > 0) ? arr[0].getTotal() : 0;
         int minGaji = (jumlah > 0) ? arr[0].getTotal() : 0;
 
         for (int i = 0; i < jumlah; i++) {
-            System.out.println(Util.baris(arr[i].getBaris(i + 1), LEBAR_GAJI, RATA_GAJI));
+            arr[i].printPegawai(i + 1);
             int t = arr[i].getTotal();
             totalSemua += t;
             if (t > maxGaji) maxGaji = t;
             if (t < minGaji) minGaji = t;
         }
-        System.out.println(g);
+        System.out.println("=" .repeat(150));
 
         double rataRata = (jumlah > 0) ? (totalSemua / jumlah) : 0;
-
-        System.out.println("Rata-rata Gaji : " + (jumlah > 0 ? Util.rupiah((long) rataRata) : "---"));
+        System.out.println("Rata-rata Gaji : " + (jumlah > 0 ? Util.rupiah((int)rataRata) : "---"));
         System.out.println("Gaji Tertinggi : " + (jumlah > 0 ? Util.rupiah(maxGaji) : "---"));
         System.out.println("Gaji Terendah  : " + (jumlah > 0 ? Util.rupiah(minGaji) : "---"));
     }
 }
 
-// Superclass Kendaraan (abstract)
+// Abstract Superclass Kendaraan
 abstract class Kendaraan {
     protected String merk;
     protected String plat;
     protected String warna;
     protected String nipPemilik;
     protected String namaPemilik;
-    protected Waktu masuk = new Waktu();
-    protected Waktu keluar = new Waktu();
-    protected int hariInap;
-    protected boolean sudahKeluar;
-
-    protected long durasiDetik() {
-        return (long) hariInap * 86400L + keluar.totalDetik() - masuk.totalDetik();
-    }
+    protected Waktu masuk;
+    protected Waktu keluar;
 
     public Kendaraan() {
-        this("", "", "");
-    }
-
-    public Kendaraan(String merk, String plat, String warna) {
-        this.merk = merk;
-        this.plat = plat;
-        this.warna = warna;
+        this.merk = "";
+        this.plat = "";
+        this.warna = "";
         this.nipPemilik = "";
         this.namaPemilik = "";
-        this.hariInap = 0;
-        this.sudahKeluar = false;
+        this.masuk = new Waktu();
+        this.keluar = new Waktu();
     }
 
-    public void setMerk(String m) { 
-        merk = m; 
-    }
-    public void setPlat(String p) { 
-        plat = p; 
-    }
-    public void setWarna(String w) { 
-        warna = w; 
-    }
-
-    public String getMerk() { 
-        return merk; 
-    }
-    public String getPlat() { 
-        return plat; 
-    }
-    public String getWarna() { 
-        return warna; 
-    }
+    public void setMerk(String merk) { this.merk = merk; }
+    public void setPlat(String plat) { this.plat = plat; }
+    public void setWarna(String warna) { this.warna = warna; }
+    
+    public String getMerk() { return merk; }
+    public String getPlat() { return plat; }
+    public String getWarna() { return warna; }
 
     public void setPemilik(String nip, String nama) {
-        nipPemilik = nip;
-        namaPemilik = nama;
+        this.nipPemilik = nip;
+        this.namaPemilik = nama;
     }
 
-    public String getNipPemilik() { 
-        return nipPemilik; 
-    }
-    public String getNamaPemilik() { 
-        return namaPemilik; 
-    }
+    public String getNipPemilik() { return nipPemilik; }
+    public String getNamaPemilik() { return namaPemilik; }
+
+    public void setMasuk(Waktu w) { this.masuk = w; }
+    public Waktu getMasuk() { return masuk; }
 
     public boolean isPegawai() {
         return !nipPemilik.isEmpty();
     }
 
-    public void setMasuk(Waktu w) { 
-        masuk = w; 
-    }
-    public Waktu getMasuk() { 
-        return masuk; 
+    public boolean isSudahKeluar() {
+        return keluar.totalDetik() > 0;
     }
 
-    //mengembalikan false kalau waktu keluar tidak setelah waktu masuk.
-    public boolean setKeluar(Waktu w, int tambahHari) {
-        long d = (long) tambahHari * 86400L + w.totalDetik() - masuk.totalDetik();
-        if (d <= 0) return false;
+    public boolean setKeluar(Waktu w) {
+        if (w.totalDetik() <= masuk.totalDetik()) {
+            return false;
+        }
         keluar = w;
-        hariInap = tambahHari;
-        sudahKeluar = true;
         return true;
     }
 
-    public boolean getSudahKeluar() { 
-        return sudahKeluar; 
-    }
+    public Waktu getKeluar() { return keluar; }
 
-    public Waktu getDurasi() {
-        long d = durasiDetik();
-        return new Waktu((int) (d / 3600), (int) ((d % 3600) / 60), (int) (d % 60));
-    }
-
-    public int jamTerbayar() {
-        long j = (durasiDetik() + 3599) / 3600;
-        return (int) (j < 1 ? 1 : j);
-    }
-
-    public int hariTerbayar() {
-        long h = (durasiDetik() + 86399) / 86400;
-        return (int) (h < 1 ? 1 : h);
-    }
-
-    //true kalau kendaraan ini dikenai tarif per hari
-    public boolean perHari() {
-        return isPegawai();
-    }
-
-    public abstract String getJenis();
-    public abstract String getTarif();
-    public abstract int hitungBiaya();
-
-    public String getDitagih() {
-        if (perHari()) return hariTerbayar() + " hari";
-        return jamTerbayar() + " jam";
-    }
-
-    public String[] getBaris(int no) {
-        String pemilik = isPegawai() ? namaPemilik : "Umum";
-        String wKeluar = "-";
-        String durasi = "-";
-        String ditagih = "-";
-        String biaya = "-";
-        if (sudahKeluar) {
-            wKeluar = keluar.toString() + (hariInap > 0 ? "+" + hariInap + "hr" : "");
-            durasi = getDurasi().toString();
-            ditagih = getDitagih();
-            biaya = Util.rupiah(hitungBiaya());
-        }
-        return new String[] {
-            String.valueOf(no), plat, getJenis(), merk, pemilik,
-            masuk.toString(), wKeluar, durasi, ditagih,
-            getTarif(), biaya, sudahKeluar ? "Selesai" : "Parkir"
-        };
-    }
+    // Abstract methods untuk polimorfisme
+    public abstract void inputSubclass();
+    public abstract long hitungBiaya(ArrayPegawai db);
+    public abstract String getJenisKendaraan();
 }
 
-class Mobil extends Kendaraan {
-    private static final int TARIF_UMUM = 3000;     // per jam
-    private static final int TARIF_PEGAWAI = 6000;  // per hari
-
-    public Mobil() {
-        super();
-    }
-
-    public Mobil(String merk, String plat, String warna) {
-        super(merk, plat, warna);
-    }
-
-    @Override
-    public String getJenis() {
-        return "Mobil";
-    }
-
-    @Override
-    public String getTarif() {
-        return perHari() ? Util.rupiah(TARIF_PEGAWAI) + "/hari" : Util.rupiah(TARIF_UMUM) + "/jam";
-    }
-
-    @Override
-    public int hitungBiaya() {
-        return perHari() ? hariTerbayar() * TARIF_PEGAWAI : jamTerbayar() * TARIF_UMUM;
-    }
-}
-
-class Truk extends Kendaraan {
-    private static final int TARIF_UMUM = 5000;     // per jam, pegawai sama
-
-    public Truk() {
-        super();
-    }
-
-    public Truk(String merk, String plat, String warna) {
-        super(merk, plat, warna);
-    }
-
-    @Override
-    public String getJenis() {
-        return "Truk";
-    }
-
-    @Override
-    public boolean perHari() {
-        return false;
-    }
-
-    @Override
-    public String getTarif() {
-        return Util.rupiah(TARIF_UMUM) + "/jam";
-    }
-
-    @Override
-    public int hitungBiaya() {
-        return jamTerbayar() * TARIF_UMUM;
-    }
-}
-
+// Subclass Motor
 class Motor extends Kendaraan {
-    private static final int TARIF_UMUM = 2000;     // per jam
-    private static final int TARIF_PEGAWAI = 3000;  // per hari
+    private boolean adaFootStep;
 
     public Motor() {
         super();
+        this.adaFootStep = false;
     }
 
-    public Motor(String merk, String plat, String warna) {
-        super(merk, plat, warna);
-    }
+    public void setAdaFootStep(boolean ada) { this.adaFootStep = ada; }
+    public boolean getAdaFootStep() { return adaFootStep; }
 
     @Override
-    public String getJenis() {
+    public String getJenisKendaraan() {
         return "Motor";
     }
 
     @Override
-    public String getTarif() {
-        return perHari() ? Util.rupiah(TARIF_PEGAWAI) + "/hari" : Util.rupiah(TARIF_UMUM) + "/jam";
+    public void inputSubclass() {
+        while (true) {
+            String input = Util.bacaString("Apakah ada footstep? (y/n): ");
+            if (input.equalsIgnoreCase("y")) {
+                adaFootStep = true;
+                break;
+            } else if (input.equalsIgnoreCase("n")) {
+                adaFootStep = false;
+                break;
+            } else {
+                System.out.println("Input tidak valid. Silakan masukkan 'y' atau 'n'.");
+            }
+        }
     }
 
     @Override
-    public int hitungBiaya() {
-        return perHari() ? hariTerbayar() * TARIF_PEGAWAI : jamTerbayar() * TARIF_UMUM;
-    }
-}
+    public long hitungBiaya(ArrayPegawai db) {
+        long totalDetik = keluar.totalDetik() - masuk.totalDetik();
+        if (totalDetik < 0) totalDetik = 0;
 
-// Array of Kendaraan
-class Parkir {
-    static final String[] HEADER_PARKIR = {"No", "Plat", "Jenis", "Merk", "Pemilik", "Masuk",
-                                           "Keluar", "Durasi", "Ditagih", "Tarif", "Biaya", "Status"};
-    static final int[] LEBAR_PARKIR = {3, 10, 6, 10, 12, 8, 13, 9, 8, 10, 9, 7};
-    static final String RATA_PARKIR = "^<<<<^^^^>>^";
+        long totalJam = (totalDetik + 3599) / 3600;
+        if (totalJam < 1) totalJam = 1;
 
-    private static final int MAX = 100;
-    private Kendaraan[] arr = new Kendaraan[MAX];
-    private int jumlah = 0;
-
-    public int getJumlah() {
-        return jumlah;
-    }
-
-    public int cariAktif(String plat) {
-        for (int i = 0; i < jumlah; i++) {
-            if (!arr[i].getSudahKeluar() && arr[i].getPlat().equals(plat)) return i;
-        }
-        return -1;
-    }
-
-    public int hitungAktif() {
-        int n = 0;
-        for (int i = 0; i < jumlah; i++) {
-            if (!arr[i].getSudahKeluar()) n++;
-        }
-        return n;
-    }
-
-    //menambah di belakang, data lama tidak ditimpa.
-    public void inputMasuk(ArrayPegawai dataPegawai) {
-        if (jumlah >= MAX) {
-            System.out.println("Data parkir penuh (maksimal " + MAX + ")!");
-            return;
-        }
-
-        System.out.println("Jenis kendaraan:");
-        System.out.println("  1. Mobil\n  2. Truk\n  3. Motor");
-        int jenis;
-        do {
-            jenis = Util.bacaInt("Pilih jenis (1-3): ");
-        } while (jenis < 1 || jenis > 3);
-
-        String plat = Util.kapital(Util.bacaString("Plat nomor : "));
-        if (cariAktif(plat) != -1) {
-            System.out.println("Plat " + plat + " masih terparkir, tidak bisa masuk dua kali!");
-            return;
-        }
-        String merk = Util.bacaString("Merk        : ");
-        String warna = Util.bacaString("Warna       : ");
-
-        Kendaraan k;
-        switch (jenis) {
-            case 1:  k = new Mobil(merk, plat, warna); break;
-            case 2:  k = new Truk(merk, plat, warna);  break;
-            default: k = new Motor(merk, plat, warna); break;
-        }
-
-        String nip = Util.bacaString("NIP pegawai (kosongkan jika umum) : ", false);
-        if (!nip.isEmpty()) {
-            int idx = dataPegawai.cariNip(nip);
-            if (idx >= 0) {
-                k.setPemilik(nip, dataPegawai.getPegawaiAt(idx).getNama());
-                System.out.println("Pemilik terdaftar sebagai pegawai: " + k.getNamaPemilik());
-                if (jenis == 2) System.out.println("Catatan: truk tetap dikenai tarif umum.");
-            } else {
-                System.out.println("NIP tidak ditemukan, dicatat sebagai umum.");
+        boolean validPegawai = false;
+        if (!nipPemilik.isEmpty()) {
+            for (int i = 0; i < db.getJumlah(); i++) {
+                if (db.getPegawaiAt(i).getNip().equals(nipPemilik)) {
+                    validPegawai = true;
+                    break;
+                }
             }
         }
 
-        Waktu w = new Waktu();
-        System.out.println("Waktu Masuk :");
-        w.inputDalam();
-        k.setMasuk(w);
+        if (validPegawai) {
+            long totalHari = (totalDetik + 86399) / 86400;
+            if (totalHari < 1) totalHari = 1;
+            return totalHari * 3000; // Tarif pegawai motor
+        } else {
+            return totalJam * 2000;  // Tarif umum motor
+        }
+    }
+}
 
-        arr[jumlah++] = k;
-        System.out.println(k.getJenis() + " " + plat + " berhasil dicatat masuk.");
+// Subclass Mobil
+class Mobil extends Kendaraan {
+    private int jumlahPintu;
+    private boolean adaSunroof;
+
+    public Mobil() {
+        super();
+        this.jumlahPintu = 4;
+        this.adaSunroof = false;
     }
 
-    public void inputKeluar() {
-        if (hitungAktif() == 0) {
-            System.out.println("Tidak ada kendaraan yang sedang parkir.");
+    @Override
+    public String getJenisKendaraan() {
+        return "Mobil";
+    }
+
+    @Override
+    public void inputSubclass() {
+        jumlahPintu = Util.bacaInt("Jumlah Pintu : ");
+        while (true) {
+            String input = Util.bacaString("Apakah ada sunroof? (y/n): ");
+            if (input.equalsIgnoreCase("y")) {
+                adaSunroof = true;
+                break;
+            } else if (input.equalsIgnoreCase("n")) {
+                adaSunroof = false;
+                break;
+            } else {
+                System.out.println("Input tidak valid. Silakan masukkan 'y' atau 'n'.");
+            }
+        }
+    }
+
+    @Override
+    public long hitungBiaya(ArrayPegawai db) {
+        long totalDetik = keluar.totalDetik() - masuk.totalDetik();
+        if (totalDetik < 0) totalDetik = 0;
+
+        long totalJam = (totalDetik + 3599) / 3600;
+        if (totalJam < 1) totalJam = 1;
+
+        boolean validPegawai = false;
+        if (!nipPemilik.isEmpty()) {
+            for (int i = 0; i < db.getJumlah(); i++) {
+                if (db.getPegawaiAt(i).getNip().equals(nipPemilik)) {
+                    validPegawai = true;
+                    break;
+                }
+            }
+        }
+
+        if (validPegawai) {
+            long totalHari = (totalDetik + 86399) / 86400;
+            if (totalHari < 1) totalHari = 1;
+            return totalHari * 6000; // Tarif pegawai mobil
+        } else {
+            return totalJam * 3000;  // Tarif umum mobil
+        }
+    }
+}
+
+// Subclass Truk
+class Truk extends Kendaraan {
+    private double kapasitasMuatanTon;
+    private boolean adaRemAngin;
+
+    public Truk() {
+        super();
+        this.kapasitasMuatanTon = 5.0;
+        this.adaRemAngin = true;
+    }
+
+    @Override
+    public String getJenisKendaraan() {
+        return "Truk";
+    }
+
+    @Override
+    public void inputSubclass() {
+        kapasitasMuatanTon = (double) Util.bacaInt("Kapasitas Muatan (Ton) : ");
+        while (true) {
+            String input = Util.bacaString("Apakah ada rem angin? (y/n): ");
+            if (input.equalsIgnoreCase("y")) {
+                adaRemAngin = true;
+                break;
+            } else if (input.equalsIgnoreCase("n")) {
+                adaRemAngin = false;
+                break;
+            } else {
+                System.out.println("Input tidak valid. Silakan masukkan 'y' atau 'n'.");
+            }
+        }
+    }
+
+    @Override
+    public long hitungBiaya(ArrayPegawai db) {
+        long totalDetik = keluar.totalDetik() - masuk.totalDetik();
+        if (totalDetik < 0) totalDetik = 0;
+
+        long totalJam = (totalDetik + 3599) / 3600;
+        if (totalJam < 1) totalJam = 1;
+
+        return totalJam * 5000; // Truk pegawai tetap menggunakan tarif umum
+    }
+}
+
+// Kelas Parkir
+class Parkir {
+    private static final int MAX_KENDARAAN = 100;
+    private Kendaraan[] arr = new Kendaraan[MAX_KENDARAAN];
+    private int jumlahKendaraan = 0;
+
+    public int getjumlahKendaraan() { return jumlahKendaraan; }
+
+    public boolean isPlatAktif(String plat) {
+        for (int i = 0; i < jumlahKendaraan; i++) {
+            if (!arr[i].isSudahKeluar() && arr[i].getPlat().equalsIgnoreCase(plat)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void inputKendaraanMasuk(ArrayPegawai dbPegawai) {
+        if (jumlahKendaraan >= MAX_KENDARAAN) {
+            System.out.println("\nArea parkir sudah penuh (maksimal 100)!");
             return;
         }
 
-        String plat = Util.kapital(Util.bacaString("Plat nomor yang keluar : "));
-        int idx = cariAktif(plat);
-        if (idx == -1) {
-            System.out.println("Plat " + plat + " tidak ditemukan di kendaraan yang sedang parkir.");
-            return;
-        }
-        Kendaraan k = arr[idx];
-
-        boolean ok;
+        int pilihan;
         do {
-            Waktu w = new Waktu();
-            System.out.println("Waktu Keluar :");
-            w.inputDalam();
-            int hari;
-            do {
-                hari = Util.bacaInt("Lama menginap (0-30 hari, 0 jika keluar di hari yang sama) : ");
-            } while (hari < 0 || hari > 30);
-            ok = k.setKeluar(w, hari);
-            if (!ok) System.out.println("Waktu keluar harus setelah waktu masuk, ulangi!");
-        } while (!ok);
+            System.out.println("\nPilih Jenis Kendaraan:");
+            System.out.println("1. Motor\n2. Mobil\n3. Truk");
+            pilihan = Util.bacaInt("Pilihan (1-3): ");
+        } while (pilihan < 1 || pilihan > 3);
 
-        //hitungBiaya() dipanggil lewat referensi Kendaraan (polimorfisme): versi Mobil/Truk/Motor yang jalan
-        System.out.println("\n========== STRUK PARKIR ==========");
-        System.out.println("Plat    : " + k.getPlat());
-        System.out.println("Jenis   : " + k.getJenis() + " (" + k.getMerk() + ", " + k.getWarna() + ")");
-        System.out.println("Pemilik : " + (k.isPegawai() ? k.getNamaPemilik() + " (pegawai)" : "Umum"));
-        System.out.println("Masuk   : " + k.getMasuk().toString());
-        System.out.println("Durasi  : " + k.getDurasi().toString());
-        System.out.println("Ditagih : " + k.getDitagih() + " x " + k.getTarif());
-        System.out.println("BIAYA   : Rp " + Util.rupiah(k.hitungBiaya()));
-        System.out.println("==================================");
+        String platTemp = Util.bacaString("No. Plat : ");
+        if (isPlatAktif(platTemp)) {
+            System.out.println("Error: Plat nomor tersebut masih aktif terparkir!");
+            return;
+        }
+
+        Kendaraan kBaru = null;
+        if (pilihan == 1) kBaru = new Motor();
+        else if (pilihan == 2) kBaru = new Mobil();
+        else if (pilihan == 3) kBaru = new Truk();
+
+        kBaru.setPlat(platTemp);
+
+        String merk = Util.bacaString("Merk  : ");
+        kBaru.setMerk(merk);
+        String warna = Util.bacaString("Warna : ");
+        kBaru.setWarna(warna);
+
+        kBaru.inputSubclass();
+
+        String nip = Util.bacaString("NIP Pemilik (kosongkan jika umum): ");
+        String namaPemilikStr = "Umum / Tamu";
+        if (!nip.isEmpty()) {
+            for (int i = 0; i < dbPegawai.getJumlah(); i++) {
+                if (dbPegawai.getPegawaiAt(i).getNip().equals(nip)) {
+                    namaPemilikStr = dbPegawai.getPegawaiAt(i).getNama();
+                    break;
+                }
+            }
+        }
+        kBaru.setPemilik(nip, namaPemilikStr);
+
+        System.out.println("Waktu Masuk:");
+        Waktu wMasuk = new Waktu();
+        wMasuk.inputDalam();
+        kBaru.setMasuk(wMasuk);
+
+        arr[jumlahKendaraan] = kBaru;
+        jumlahKendaraan++;
+        System.out.println("Kendaraan berhasil masuk area parkir!");
     }
 
-    public void outputLaporan() {
-        String g = Util.garis(LEBAR_PARKIR);
-        System.out.println("\n" + Util.pad("Laporan Parkir Kendaraan PT Informatika", g.length(), '^'));
-        System.out.println(g);
-        System.out.println(Util.baris(HEADER_PARKIR, LEBAR_PARKIR, RATA_PARKIR));
-        System.out.println(g);
+    public void prosesKendaraanKeluar(ArrayPegawai dbPegawai) {
+        int aktifCount = 0;
+        System.out.println("\n--- KENDARAAN YANG MASIH TERPARKIR ---");
+        for (int i = 0; i < jumlahKendaraan; i++) {
+            if (!arr[i].isSudahKeluar()) {
+                System.out.println((i + 1) + ". [" + arr[i].getJenisKendaraan() + "] Plat: " + arr[i].getPlat() 
+                        + " (Masuk: " + arr[i].getMasuk().toString() + ")");
+                aktifCount++;
+            }
+        }
+
+        if (aktifCount == 0) {
+            System.out.println("Tidak ada kendaraan yang sedang terparkir.");
+            return;
+        }
+
+        int pilih = Util.bacaInt("Pilih nomor kendaraan yang akan keluar: ");
+        if (pilih < 1 || pilih > jumlahKendaraan || arr[pilih - 1].isSudahKeluar()) {
+            System.out.println("Pilihan tidak valid.");
+            return;
+        }
+
+        Kendaraan k = arr[pilih - 1];
+        Waktu wKeluar = new Waktu();
+        do {
+            System.out.println("Waktu Keluar:");
+            wKeluar.inputDalam();
+            if (!k.setKeluar(wKeluar)) {
+                System.out.println("Waktu keluar harus setelah waktu masuk, ulangi!");
+            } else {
+                break;
+            }
+        } while (true);
+
+        long totalBiaya = k.hitungBiaya(dbPegawai);
+        System.out.println("\nKendaraan berhasil keluar!");
+        System.out.println("Total Biaya Parkir : Rp " + Util.rupiah((int)totalBiaya));
+    }
+
+    public void tampilkanLaporanParkir(ArrayPegawai dbPegawai) {
+        if (jumlahKendaraan == 0) {
+            System.out.println("\nBelum ada data parkir.");
+            return;
+        }
+
+        System.out.println("\n\t\t\t\tLAPORAN DATA PARKIR KENDARAAN");
+        System.out.println("=" .repeat(110));
+        System.out.printf("%-4s %-10s %-12s %-15s %-15s %-12s %-12s %-12s%n",
+                "No", "Jenis", "Plat", "Merk", "Pemilik", "Masuk", "Keluar", "Status");
+        System.out.println("=" .repeat(110));
 
         long totalPendapatan = 0;
-        int nMobil = 0, nTruk = 0, nMotor = 0, nSelesai = 0;
+        for (int i = 0; i < jumlahKendaraan; i++) {
+            String status = arr[i].isSudahKeluar() ? "Keluar" : "Terparkir";
+            String jamKeluar = arr[i].isSudahKeluar() ? arr[i].getKeluar().toString() : "---";
 
-        for (int i = 0; i < jumlah; i++) {
-            System.out.println(Util.baris(arr[i].getBaris(i + 1), LEBAR_PARKIR, RATA_PARKIR));
-            String jenis = arr[i].getJenis();
-            if (jenis.equals("Mobil")) nMobil++;
-            else if (jenis.equals("Truk")) nTruk++;
-            else nMotor++;
-            if (arr[i].getSudahKeluar()) {
-                nSelesai++;
-                totalPendapatan += arr[i].hitungBiaya();
+            System.out.printf("%-4d %-10s %-12s %-15s %-15s %-12s %-12s %-12s",
+                    (i + 1), arr[i].getJenisKendaraan(), arr[i].getPlat(),
+                    arr[i].getMerk(), arr[i].getNamaPemilik(),
+                    arr[i].getMasuk().toString(), jamKeluar, status);
+
+            if (arr[i].isSudahKeluar()) {
+                long biayaItem = arr[i].hitungBiaya(dbPegawai);
+                System.out.print(" | Biaya: Rp " + Util.rupiah((int)biayaItem));
+                totalPendapatan += biayaItem;
             }
+            System.out.println();
         }
-        System.out.println(g);
-
-        System.out.println("Total Kendaraan   : " + jumlah + " (Mobil " + nMobil + ", Truk " + nTruk + ", Motor " + nMotor + ")");
-        System.out.println("Sedang Parkir     : " + (jumlah - nSelesai));
-        System.out.println("Sudah Keluar      : " + nSelesai);
-        System.out.println("Total Pendapatan  : " + Util.rupiah(totalPendapatan));
+        System.out.println("=" .repeat(110));
+        System.out.println("Total Pendapatan Parkir : Rp " + Util.rupiah((int)totalPendapatan));
     }
 }
 
+// Kelas Menu
 class Menu {
-    private ArrayPegawai dataPegawai = new ArrayPegawai();
-    private Parkir dataParkir = new Parkir();
-
-    public void tampilkanMenu() {
-        System.out.println("\n========================================");
-        System.out.println("         MENU GAJI & PARKIR PT INFORMATIKA");
-        System.out.println("========================================");
-        System.out.println("1. Input Data Pegawai (tambah)");
-        System.out.println("2. Tampilkan Daftar Gaji");
-        System.out.println("3. Kendaraan Masuk");
-        System.out.println("4. Kendaraan Keluar (hitung biaya)");
-        System.out.println("5. Laporan Parkir");
-        System.out.println("6. Keluar");
-        System.out.println("----------------------------------------");
-    }
+    private ArrayPegawai dbPegawai = new ArrayPegawai();
+    private Parkir dbParkir = new Parkir();
 
     public void jalankan() {
         int pilihan;
+        Scanner scanner = new Scanner(System.in);
         do {
-            tampilkanMenu();
+            System.out.println("\n==========================================================");
+            System.out.println("            MENU GAJI & PARKIR PT INFORMATIKA             ");
+            System.out.println("==========================================================");
+            System.out.println("1. Input Data Pegawai");
+            System.out.println("2. Tampilkan Daftar Gaji");
+            System.out.println("3. Kendaraan Masuk");
+            System.out.println("4. Kendaraan Keluar");
+            System.out.println("5. Laporan Parkir");
+            System.out.println("6. Keluar");
+            System.out.println("----------------------------------------------------------");
+
             pilihan = Util.bacaInt("Pilih menu (1-6): ");
+            System.out.println();
+
             switch (pilihan) {
                 case 1:
-                    dataPegawai.inputDalam();
+                    dbPegawai.inputDalam();
                     break;
                 case 2:
-                    dataPegawai.prosesData();
-                    dataPegawai.outputData();
+                    dbPegawai.prosesData();
+                    dbPegawai.outputData();
                     break;
                 case 3:
-                    dataParkir.inputMasuk(dataPegawai);
+                    dbParkir.inputKendaraanMasuk(dbPegawai);
                     break;
                 case 4:
-                    dataParkir.inputKeluar();
+                    dbParkir.prosesKendaraanKeluar(dbPegawai);
                     break;
                 case 5:
-                    dataParkir.outputLaporan();
+                    dbParkir.tampilkanLaporanParkir(dbPegawai);
                     break;
                 case 6:
-                    System.out.println("Keluar dari program!");
+                    System.out.println("Terima kasih telah menggunakan sistem Gaji & Parkir PT Informatika!");
                     break;
                 default:
-                    System.out.println("Input tidak valid, silahkan coba lagi!");
+                    System.out.println("Pilihan tidak valid! Silakan masukkan angka 1 sampai 6.");
             }
+
+            if (pilihan != 6) {
+                System.out.print("\nTekan Enter untuk kembali ke menu...");
+                scanner.nextLine();
+            }
+
         } while (pilihan != 6);
     }
 }
 
+// Main Class
 public class PegawaiApp {
     public static void main(String[] args) {
-        Menu pegawaiApp = new Menu();
-        pegawaiApp.jalankan();
+        Menu menuAplikasi = new Menu();
+        menuAplikasi.jalankan();
     }
 }

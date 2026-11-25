@@ -767,12 +767,18 @@ private:
     Kendaraan* arr[maxKendaraan];
     int jumlahKendaraan;
 public:
-    // Constructor default dan parameter (sudah ada, pertahankan)
+    // Constructor default dan parameter 
     Parkir() : jumlahKendaraan(0) {
         for (int i = 0; i < maxKendaraan; i++) {
             arr[i] = nullptr;
         }
     } 
+
+    Parkir(int jml) : jumlahKendaraan(jml) {
+        for (int i = 0; i < maxKendaraan; i++) {
+            arr[i] = nullptr;
+        }
+    }
 
     ~Parkir() {
         for (int i = 0; i < jumlahKendaraan; i++) {

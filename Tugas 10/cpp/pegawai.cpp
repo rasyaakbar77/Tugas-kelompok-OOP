@@ -132,7 +132,7 @@ public:
 
 // Superclass Person
 class Person {
-private:
+protected:
     std::string nama;
     std::string alamat;
 public:
@@ -181,8 +181,6 @@ private:
     std::string nip;
     Waktu datang;
     Waktu pulang;
-    Waktu lamaKerja;
-    Waktu jamLembur;
     std::string statusPeringatan;
 public:
     Pegawai() : Person(), gol(1), nip(""), statusPeringatan("") {}
@@ -260,8 +258,14 @@ public:
         }
     }
 
+    Waktu getLamaKerja() const {
+        Waktu lamaKerja ;
+        return lamaKerja = pulang.hitungSelisihFungsi(datang);
+    } 
+
     int getLembur() const {
-        return getTarifLembur() * jamLembur.totalDetik() / 3600;
+        int jamLembur = getLamaKerja().getJam() - 8;
+        return getTarifLembur() * (jamLembur > 0 ? jamLembur : 0);
     }
 
     int getTotal() const {
@@ -270,14 +274,13 @@ public:
 
     void prosesGaji() {
         int gajiHarian = 0;
-        lamaKerja = pulang.hitungSelisihFungsi(datang);
+        Waktu lamaKerja = getLamaKerja();
 
         Waktu batas(8, 0, 0);
         if (lamaKerja.totalDetik() >= batas.totalDetik()) {
-            jamLembur.hitungSelisihVoid(lamaKerja, batas);
+            lamaKerja.hitungSelisihVoid(lamaKerja, batas);
             statusPeringatan = "ok";
         } else {
-            jamLembur = Waktu();
             statusPeringatan = "Peringatan";
         }
     }
@@ -288,8 +291,10 @@ public:
                   << std::right << std::setw(5)  << gol
                   << std::setw(10) << datang.toString()
                   << std::setw(10) << pulang.toString()
-                  << std::setw(12) << lamaKerja.toString()
-                  << std::setw(12) << jamLembur.toString()
+                  << std::setw(12) << getLamaKerja().toString()
+                  << std::setw(12) << (getLamaKerja().totalDetik() >= Waktu(8, 0, 0).totalDetik()
+                      ? getLamaKerja().hitungSelisihFungsi(Waktu(8, 0, 0)).toString()
+                      : Waktu().toString())
                   << std::setw(15) << Util::rupiah(getGajiHarian())
                   << std::setw(15) << Util::rupiah(getLembur())
                   << std::setw(15) << Util::rupiah(getTotal())
