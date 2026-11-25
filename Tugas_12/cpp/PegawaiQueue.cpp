@@ -1206,7 +1206,7 @@ public:
                     dbParkir.tampilkanLaporanParkir(dbPegawai);
                     break;
                 case 6:
-                    std::cout << "Terima kasih telah menggunakan sistem Gaji & Parkir PT Informatika!\n";
+                    std::cout << "Terima kasih, Sampai Jumpa!\n";
                     break;
                 default:
                     std::cout << "Pilihan tidak valid! Silakan masukkan angka 1 sampai 6.\n";
